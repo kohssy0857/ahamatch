@@ -1,3 +1,4 @@
+import 'package:ahamatch/main.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -134,6 +135,7 @@ class _UserInput extends State<UserInput> {
                       break;
                   }
                   user!.updatePhotoURL("profile/${user!.uid}.jpg");
+                  main();
                 } catch (e) {
                   const UserInput();
                 }
