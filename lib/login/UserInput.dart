@@ -1,3 +1,4 @@
+import 'package:ahamatch/main.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -88,11 +89,11 @@ class _UserInput extends State<UserInput> {
             //         return null;
             //       },
             //     )),
-            FloatingActionButton(
-              onPressed: _upload, //カメラから画像を取得
-              tooltip: 'Pick Image From Camera',
-              child: const Icon(Icons.add_a_photo),
-            ),
+            // FloatingActionButton(
+            //   onPressed: _upload, //カメラから画像を取得
+            //   tooltip: 'Pick Image From Camera',
+            //   child: const Icon(Icons.add_a_photo),
+            // ),
             const SizedBox(
               height: 40.0,
             ),
@@ -127,11 +128,14 @@ class _UserInput extends State<UserInput> {
                       user!.updateDisplayName(name + " -" + id);
                       break;
                     case 1:
+                      user!.updateDisplayName(name + " #" + id);
                       break;
                     case 2:
+                      user!.updateDisplayName(name + " @" + id);
                       break;
                   }
                   user!.updatePhotoURL("profile/${user!.uid}.jpg");
+                  main();
                 } catch (e) {
                   const UserInput();
                 }
