@@ -58,6 +58,9 @@ class _UserInput extends State<UserInput> {
                 child: TextFormField(
                   autofocus: true,
                   decoration: const InputDecoration(labelText: "ID"),
+                  onChanged: (value) {
+                    id = value;
+                  },
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "必須です";
@@ -70,6 +73,9 @@ class _UserInput extends State<UserInput> {
                 child: TextFormField(
                   autofocus: true,
                   decoration: const InputDecoration(labelText: "表示名"),
+                  onChanged: (value) {
+                    name = value;
+                  },
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "必須です";
@@ -125,20 +131,18 @@ class _UserInput extends State<UserInput> {
                   _upload;
                   switch (isSelectedItem) {
                     case 0:
-                      user!.updateDisplayName(name + " -" + id);
+                      user!.updateDisplayName(name + "-" + id);
                       break;
                     case 1:
-                      user!.updateDisplayName(name + " #" + id);
+                      user!.updateDisplayName(name + "#" + id);
                       break;
                     case 2:
-                      user!.updateDisplayName(name + " @" + id);
+                      user!.updateDisplayName(name + "@" + id);
                       break;
                   }
                   user!.updatePhotoURL("profile/${user!.uid}.jpg");
                   main();
-                } catch (e) {
-                  const UserInput();
-                }
+                } catch (e) {}
               },
               child: const Text('送信'),
             ),
