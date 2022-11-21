@@ -129,6 +129,8 @@ import 'firebase_options.dart';
 import 'home/home.dart';
 import 'login/login.dart';
 import 'login/signup.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'login/UserInput.dart';
 
 Future<void> main() async {
   // Firebase初期化
@@ -136,6 +138,8 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final storage = FirebaseStorage.instance;
+  final storageRef = FirebaseStorage.instance.ref();
   runApp(App());
 }
 
@@ -152,13 +156,24 @@ class App extends StatelessWidget {
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
+            User? user = FirebaseAuth.instance.currentUser;
+            // user!.updateDisplayName()
             if (snapshot.connectionState == ConnectionState.waiting) {
               // スプラッシュ画面などに書き換えても良い
               return const SizedBox();
             }
             if (snapshot.hasData) {
-              // User が null でなない、つまりサインイン済みのホーム画面へ
-              return Home();
+              if (user!.photoURL == null) {
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   SnackBar(
+                //     content: Text('v'),
+                //   ),
+                // );
+                return UserInput();
+              } else {
+                // User が null でなない、つまりサインイン済みのホーム画面へ
+                return Home();
+              }
             }
             // User が null である、つまり未サインインのサインイン画面へ
             return UserLogin();
