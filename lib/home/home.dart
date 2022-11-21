@@ -41,7 +41,7 @@ class Home extends StatelessWidget {
       ),
       body: Center(
         // ユーザー情報を表示
-        child: Text('ログイン情報：${user!.photoURL}'),
+        child: Text('ログイン情報：${user!.displayName}'),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
