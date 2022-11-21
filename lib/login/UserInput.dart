@@ -88,11 +88,11 @@ class _UserInput extends State<UserInput> {
             //         return null;
             //       },
             //     )),
-            FloatingActionButton(
-              onPressed: _upload, //カメラから画像を取得
-              tooltip: 'Pick Image From Camera',
-              child: const Icon(Icons.add_a_photo),
-            ),
+            // FloatingActionButton(
+            //   onPressed: _upload, //カメラから画像を取得
+            //   tooltip: 'Pick Image From Camera',
+            //   child: const Icon(Icons.add_a_photo),
+            // ),
             const SizedBox(
               height: 40.0,
             ),
@@ -127,8 +127,10 @@ class _UserInput extends State<UserInput> {
                       user!.updateDisplayName(name + " -" + id);
                       break;
                     case 1:
+                      user!.updateDisplayName(name + " #" + id);
                       break;
                     case 2:
+                      user!.updateDisplayName(name + " @" + id);
                       break;
                   }
                   user!.updatePhotoURL("profile/${user!.uid}.jpg");
