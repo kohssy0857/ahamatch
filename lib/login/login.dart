@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'signup.dart';
 import "../home/home.dart";
+import '../main.dart';
 
 class UserLogin extends StatefulWidget {
   const UserLogin({Key? key}) : super(key: key);
@@ -55,7 +56,7 @@ class _UserLogin extends State<UserLogin> {
                     email: email, password: password);
                 if (newUser != null) {
                   Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => Home()));
+                      context, MaterialPageRoute(builder: (context) => App()));
                 }
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'invalid-email') {
