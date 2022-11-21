@@ -1,3 +1,4 @@
+import 'package:ahamatch/home/home.dart';
 import 'package:ahamatch/main.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -56,7 +57,6 @@ class _UserInput extends State<UserInput> {
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
                 child: TextFormField(
-                  autofocus: true,
                   decoration: const InputDecoration(labelText: "ID"),
                   onChanged: (value) {
                     id = value;
@@ -71,7 +71,6 @@ class _UserInput extends State<UserInput> {
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
                 child: TextFormField(
-                  autofocus: true,
                   decoration: const InputDecoration(labelText: "表示名"),
                   onChanged: (value) {
                     name = value;
@@ -83,23 +82,6 @@ class _UserInput extends State<UserInput> {
                     return null;
                   },
                 )),
-            // Padding(
-            //     padding: const EdgeInsets.all(10),
-            //     child: TextFormField(
-            //       autofocus: true,
-            //       decoration: const InputDecoration(labelText: "表示名"),
-            //       validator: (value) {
-            //         if (value!.isEmpty) {
-            //           return "必須です";
-            //         }
-            //         return null;
-            //       },
-            //     )),
-            // FloatingActionButton(
-            //   onPressed: _upload, //カメラから画像を取得
-            //   tooltip: 'Pick Image From Camera',
-            //   child: const Icon(Icons.add_a_photo),
-            // ),
             const SizedBox(
               height: 40.0,
             ),
@@ -127,8 +109,8 @@ class _UserInput extends State<UserInput> {
             ),
             ElevatedButton(
               onPressed: () {
+                _upload();
                 try {
-                  _upload;
                   switch (isSelectedItem) {
                     case 0:
                       user!.updateDisplayName(name + "-" + id);
@@ -141,7 +123,8 @@ class _UserInput extends State<UserInput> {
                       break;
                   }
                   user!.updatePhotoURL("profile/${user!.uid}.jpg");
-                  main();
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => Home()));
                 } catch (e) {}
               },
               child: const Text('送信'),
