@@ -56,6 +56,7 @@ class _RegisterState extends State<Register> {
                 final newUser = await _auth.createUserWithEmailAndPassword(
                     email: email, password: password);
                 User? user = FirebaseAuth.instance.currentUser;
+
                 if (user != null && !user.emailVerified) {
                   await user.sendEmailVerification();
                   ScaffoldMessenger.of(context).showSnackBar(
