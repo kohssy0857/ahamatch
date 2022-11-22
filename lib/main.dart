@@ -160,6 +160,7 @@ class App extends StatelessWidget {
             // user!.updateDisplayName()
             if (snapshot.connectionState == ConnectionState.waiting) {
               // スプラッシュ画面などに書き換えても良い
+              
               return const SizedBox();
             }
             if (snapshot.hasData) {

@@ -13,6 +13,7 @@ class UserLogin extends StatefulWidget {
 
 class _UserLogin extends State<UserLogin> {
   final _auth = FirebaseAuth.instance;
+  
 
   String email = '';
   String password = '';
@@ -96,7 +97,34 @@ class _UserLogin extends State<UserLogin> {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => Register()));
               },
-              child: Text('新規登録はこちらから'))
+              child: Text('新規登録はこちらから')),
+              // メールアドレスを入力後、パスワードリセットボタンを押下
+          ElevatedButton(
+                  child: const Text('パスワードリセット'),
+                  onPressed: () async {
+                    try {
+                      await FirebaseAuth.instance
+                          .sendPasswordResetEmail(email: email);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('パスワードリセット用のメールを送信しました。確認してください'),
+                        ),
+                      );
+                      print("パスワードリセット用のメールを送信しました");
+                    } on FirebaseAuthException catch (e) {
+                        if (e.code == 'invalid-email') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('メールアドレスのフォーマットが正しくありません'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          print('メールアドレスのフォーマットが正しくありません');
+                        } 
+                } catch (e) {
+                      print(e);
+                    }
+                  })
         ],
       ),
     );
