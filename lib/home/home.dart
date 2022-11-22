@@ -4,7 +4,11 @@ import 'package:firebase_core/firebase_core.dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../parts/footer.dart';
+
 import '../parts/header.dart';
+
 
 class Home extends StatelessWidget {
   User? user = FirebaseAuth.instance.currentUser;
@@ -34,6 +38,9 @@ class Home extends StatelessWidget {
           /* --- 省略 --- */
         },
       ),
+      bottomNavigationBar: Footer(
+      ),
+
     );
   }
 }

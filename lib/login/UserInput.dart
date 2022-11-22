@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:ahamatch/home/home.dart';
 import 'package:ahamatch/main.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserInput extends StatefulWidget {
   const UserInput({Key? key}) : super(key: key);
@@ -16,28 +19,46 @@ class UserInput extends StatefulWidget {
 
 enum Kind { admin, geinin, owaraizuki }
 
-var _radVal = Kind.owaraizuki;
-// void _onChanged(Kind value) {
-//   setState(() {
-//     _radVal = value;
-//   });
-// }
-
 class _UserInput extends State<UserInput> {
-  final Kind _first_button = Kind.admin;
   final user = FirebaseAuth.instance.currentUser;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
-  void _upload() async {
-    // imagePickerで画像を選択する
-    // upload
 
+  void _upload(int type, String name, String id) async {
+    String userid = "";
     final pickerFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
     File file = File(pickerFile!.path);
+    user!.updatePhotoURL("profile/${user!.uid}.jpg");
     await FirebaseStorage.instance
         .ref("profile/${user!.uid}.jpg")
         .putFile(file);
+
+    switch (isSelectedItem) {
+      case 0:
+        userid = "-$id";
+        user!.updateDisplayName("$name-$id");
+        break;
+      case 1:
+        userid = "#$id";
+        user!.updateDisplayName("$name#$id");
+        break;
+      case 2:
+        userid = "@$id";
+        user!.updateDisplayName("$name@$id");
+        break;
+    }
+    await FirebaseFirestore.instance
+        .collection('T01_Person') // コレクションID
+        .doc(user!.uid) // ドキュメントID
+        .set({
+      'T01_AhaPoint': 0,
+      'T01_Kind': type,
+      "T01_Subscribe": false,
+      "T01_UserId": userid,
+      "T01_DisplayName": name,
+      'T01_Create': Timestamp.fromDate(DateTime.now())
+    });
   }
 
   String name = "名無し";
@@ -88,16 +109,16 @@ class _UserInput extends State<UserInput> {
             DropdownButton(
               items: const [
                 DropdownMenuItem(
-                  child: Text('システム管理者'),
                   value: 0,
+                  child: Text('システム管理者'),
                 ),
                 DropdownMenuItem(
-                  child: Text('芸人'),
                   value: 1,
+                  child: Text('芸人'),
                 ),
                 DropdownMenuItem(
-                  child: Text('お笑い好き'),
                   value: 2,
+                  child: Text('お笑い好き'),
                 ),
               ],
               onChanged: (int? value) {
@@ -108,21 +129,9 @@ class _UserInput extends State<UserInput> {
               value: isSelectedItem,
             ),
             ElevatedButton(
-              onPressed: () {
-                _upload();
+              onPressed: () async {
+                _upload(isSelectedItem!, name, id);
                 try {
-                  switch (isSelectedItem) {
-                    case 0:
-                      user!.updateDisplayName(name + "-" + id);
-                      break;
-                    case 1:
-                      user!.updateDisplayName(name + "#" + id);
-                      break;
-                    case 2:
-                      user!.updateDisplayName(name + "@" + id);
-                      break;
-                  }
-                  user!.updatePhotoURL("profile/${user!.uid}.jpg");
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => Home()));
                 } catch (e) {}
