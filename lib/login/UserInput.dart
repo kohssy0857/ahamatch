@@ -9,6 +9,7 @@ import '../firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'GeininInput.dart';
 
 class UserInput extends StatefulWidget {
   const UserInput({Key? key}) : super(key: key);
@@ -52,7 +53,7 @@ class _UserInput extends State<UserInput> {
         .collection('T01_Person') // コレクションID
         .doc(user!.uid) // ドキュメントID
         .set({
-      'T01_AhaPoint': 0,
+      'T01_AhaCoin': 0,
       'T01_Kind': type,
       "T01_Subscribe": false,
       "T01_UserId": userid,
@@ -132,8 +133,13 @@ class _UserInput extends State<UserInput> {
               onPressed: () async {
                 _upload(isSelectedItem!, name, id);
                 try {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => Home()));
+                  if (isSelectedItem == 1) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => GeininInput()));
+                  } else {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Home()));
+                  }
                 } catch (e) {}
               },
               child: const Text('送信'),
