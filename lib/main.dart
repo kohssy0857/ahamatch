@@ -155,6 +155,7 @@ class App extends StatelessWidget {
             // ユーザーの宣言
             User? user = FirebaseAuth.instance.currentUser;
             if (snapshot.connectionState == ConnectionState.waiting) {
+
               return const SizedBox();
             }
             // ログイン情報があるなら
