@@ -133,11 +133,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'login/UserInput.dart';
 
 Future<void> main() async {
-  // Firebase初期化
+  // ウィジェット初期化
   WidgetsFlutterBinding.ensureInitialized();
+  // firebase初期化
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // ストレージの初期化有効化
   final storage = FirebaseStorage.instance;
   final storageRef = FirebaseStorage.instance.ref();
   runApp(App());
@@ -146,38 +148,29 @@ Future<void> main() async {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
-        // initialRoute: '/login',
-        // routes: {
-        //   '/': (context) => Home(),
-        //   '/login': (context) => UserLogin(),
-        //   "/sign_up": (context) => Register(),
-        // },
         title: 'Flutter app',
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
+            // ユーザーの宣言
             User? user = FirebaseAuth.instance.currentUser;
-            // user!.updateDisplayName()
             if (snapshot.connectionState == ConnectionState.waiting) {
-              // スプラッシュ画面などに書き換えても良い
-              
               return const SizedBox();
             }
+            // ログイン情報があるなら
             if (snapshot.hasData) {
+              // ユーザーの詳細情報が入力されていないなら
               if (user!.photoURL == null) {
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   SnackBar(
-                //     content: Text('v'),
-                //   ),
-                // );
-                return UserInput();
+                // ユーザー情報入力ページへ
+                return const UserInput();
+                // ないなら
               } else {
                 // User が null でなない、つまりサインイン済みのホーム画面へ
                 return Home();
               }
             }
             // User が null である、つまり未サインインのサインイン画面へ
-            return UserLogin();
+            return const UserLogin();
           },
         ),
       );
