@@ -55,6 +55,7 @@ class Home extends StatelessWidget {
           bottomNavigationBar: Footer(),
         );
 
+
       case 2:
         return Scaffold(
           appBar: AppBar(
