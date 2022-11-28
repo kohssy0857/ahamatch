@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../functions.dart';
 
 class Footer extends StatefulWidget {
   Footer({Key? key}) : super(key: key);
@@ -21,20 +22,13 @@ class _Footer extends State {
     User? user=FirebaseAuth.instance.currentUser;
     String? keys=FirebaseAuth.instance.currentUser!.displayName;
 
-    // @、#、-のインデックス位置取得
-    var nameid = 1;
-    if(user!.displayName!.indexOf('@')!=-1){
-      nameid = user!.displayName!.indexOf('@');
-    } else if(user!.displayName!.indexOf('#')!=-1){
-      nameid = user!.displayName!.indexOf('#');
-    }else{
-      nameid = user!.displayName!.indexOf('-');
-    }
+    var nameid = devideUser(user!);
+
     
     
     // 取得した@、#、-でボタンの数を分ける
-    switch (user!.displayName![nameid]) {
-            case "@":
+    switch (nameid) {
+            case 2:
               return BottomNavigationBar(
                   items: const [
                     BottomNavigationBarItem(
@@ -58,7 +52,7 @@ class _Footer extends State {
                     type: BottomNavigationBarType.fixed,
               );
               break;
-          case "#":
+          case 1:
               return BottomNavigationBar(
                   items: const [
                     BottomNavigationBarItem(

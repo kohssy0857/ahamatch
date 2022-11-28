@@ -25,7 +25,7 @@ class _UserInput extends State<UserInput> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
 
-  void _upload(int type, String name, String id) async {
+  Future _upload(int type, String name, String id) async {
     String userid = "";
     final pickerFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
@@ -131,7 +131,7 @@ class _UserInput extends State<UserInput> {
             ),
             ElevatedButton(
               onPressed: () async {
-                _upload(isSelectedItem!, name, id);
+                await _upload(isSelectedItem!, name, id);
                 try {
                   if (isSelectedItem == 1) {
                     Navigator.push(context,
@@ -143,7 +143,7 @@ class _UserInput extends State<UserInput> {
                 } catch (e) {}
               },
               child: const Text('送信'),
-            ),
+            ), 
           ],
         ),
       ),

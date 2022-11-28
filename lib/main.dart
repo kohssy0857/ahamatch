@@ -131,10 +131,13 @@ import 'login/login.dart';
 import 'login/signup.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'login/UserInput.dart';
+import 'functions.dart';
+import 'home/SysHome.dart';
 
 Future<void> main() async {
   // ウィジェット初期化
   WidgetsFlutterBinding.ensureInitialized();
+
   // firebase初期化
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -156,16 +159,27 @@ class App extends StatelessWidget {
             User? user = FirebaseAuth.instance.currentUser;
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox();
-            }
+            }        
             // ログイン情報があるなら
             if (snapshot.hasData) {
+              print(1);
+              print(user);
+              // FirebaseAuth.instance.signOut();
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   SnackBar(
+              //     content: Text(user.toString()),
+              //   ),
+              // );
               // ユーザーの詳細情報が入力されていないなら
               if (user!.photoURL == null) {
+                print(2);
                 // ユーザー情報入力ページへ
                 return const UserInput();
                 // ないなら
-              } else {
-                // User が null でなない、つまりサインイン済みのホーム画面へ
+
+              }else if (snapshot.data!.displayName!.contains("-") == true){
+                return SysHome();
+              }else {
                 return Home();
               }
             }
