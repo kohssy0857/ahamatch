@@ -162,8 +162,8 @@ class App extends StatelessWidget {
             }        
             // ログイン情報があるなら
             if (snapshot.hasData) {
-              print(1);
-              print(user);
+              print("snapshot.hasData");
+              print(snapshot.hasData);
               // FirebaseAuth.instance.signOut();
               // ScaffoldMessenger.of(context).showSnackBar(
               //   SnackBar(
@@ -180,6 +180,7 @@ class App extends StatelessWidget {
               }else if (snapshot.data!.displayName!.contains("-") == true){
                 return SysHome();
               }else {
+                print(snapshot.data!.displayName);
                 return Home();
               }
             }
