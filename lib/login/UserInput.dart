@@ -135,7 +135,7 @@ class _UserInput extends State<UserInput> {
                 try {
                   if (isSelectedItem == 1) {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => GeininInput()));
+                        MaterialPageRoute(builder: (context) => App()));
                   } else {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => App()));

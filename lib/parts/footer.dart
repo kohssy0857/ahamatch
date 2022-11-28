@@ -22,8 +22,8 @@ class _Footer extends State {
     User? user=FirebaseAuth.instance.currentUser;
     String? keys=FirebaseAuth.instance.currentUser!.displayName;
 
-    // @、#、-のインデックス位置取得
     var nameid = devideUser(user!);
+
     
     
     // 取得した@、#、-でボタンの数を分ける
