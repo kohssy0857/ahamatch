@@ -131,6 +131,8 @@ import 'login/login.dart';
 import 'login/signup.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'login/UserInput.dart';
+import 'functions.dart';
+import 'home/SysHome.dart';
 
 Future<void> main() async {
   // ウィジェット初期化
@@ -157,7 +159,7 @@ class App extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
 
               return const SizedBox();
-            }
+            }        
             // ログイン情報があるなら
             if (snapshot.hasData) {
               // ユーザーの詳細情報が入力されていないなら
@@ -165,7 +167,9 @@ class App extends StatelessWidget {
                 // ユーザー情報入力ページへ
                 return const UserInput();
                 // ないなら
-              } else {
+              }else if (snapshot.data!.displayName!.contains("-") == true){
+                return SysHome();
+              }else {
                 // User が null でなない、つまりサインイン済みのホーム画面へ
                 return Home();
               }
