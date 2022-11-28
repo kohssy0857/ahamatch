@@ -26,7 +26,6 @@ class _Footer extends State {
     var nameid = devideUser(user!);
     
     
-    
     // 取得した@、#、-でボタンの数を分ける
     switch (nameid) {
             case 2:

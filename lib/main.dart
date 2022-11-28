@@ -131,6 +131,8 @@ import 'login/login.dart';
 import 'login/signup.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'login/UserInput.dart';
+import 'functions.dart';
+import 'home/SysHome.dart';
 
 Future<void> main() async {
   // ウィジェット初期化
@@ -157,7 +159,7 @@ class App extends StatelessWidget {
             User? user = FirebaseAuth.instance.currentUser;
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox();
-            }
+            }        
             // ログイン情報があるなら
             if (snapshot.hasData) {
               print(1);
@@ -174,10 +176,10 @@ class App extends StatelessWidget {
                 // ユーザー情報入力ページへ
                 return const UserInput();
                 // ないなら
-                // } else if (user.photoURL != null) {
-                //   return const UserLogin();
-              } else {
-                print(3);
+
+              }else if (snapshot.data!.displayName!.contains("-") == true){
+                return SysHome();
+              }else {
                 return Home();
               }
             }

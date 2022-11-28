@@ -143,7 +143,7 @@ class _UserInput extends State<UserInput> {
                 } catch (e) {}
               },
               child: const Text('送信'),
-            ),
+            ), 
           ],
         ),
       ),
