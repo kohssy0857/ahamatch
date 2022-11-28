@@ -23,9 +23,9 @@ class _Footer extends State {
 
     // @、#、-のインデックス位置取得
     var nameid = 1;
-    if(user!.displayName!.indexOf('@')!=null){
+    if(user!.displayName!.indexOf('@')!=-1){
       nameid = user!.displayName!.indexOf('@');
-    } else if(user!.displayName!.indexOf('#')!=null){
+    } else if(user!.displayName!.indexOf('#')!=-1){
       nameid = user!.displayName!.indexOf('#');
     }else{
       nameid = user!.displayName!.indexOf('-');

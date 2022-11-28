@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 class Header extends StatefulWidget with PreferredSizeWidget {
     const Header({
     Key? key,
@@ -15,39 +15,26 @@ class Header extends StatefulWidget with PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
+
+
 class _Header extends State<Header> {
   bool _searchBoolean = false;
-
-  Widget _searchTextField() { //検索バーの見た目
-    return TextField(
-      autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
-      cursorColor: Colors.white, //カーソルの色
-      style: TextStyle( //テキストのスタイル
-        color: Colors.white,
-        fontSize: 20,
-      ),
-      textInputAction: TextInputAction.search, //キーボードのアクションボタンを指定
-      decoration: InputDecoration( //TextFiledのスタイル
-        enabledBorder: UnderlineInputBorder( //デフォルトのTextFieldの枠線
-          borderSide: BorderSide(color: Colors.white)
-        ),
-        focusedBorder: UnderlineInputBorder( //TextFieldにフォーカス時の枠線
-          borderSide: BorderSide(color: Colors.white)
-        ),
-        hintText: 'Search', //何も入力してないときに表示されるテキスト
-        hintStyle: TextStyle( //hintTextのスタイル
-          color: Colors.white60,
-          fontSize: 20,
-        ),
-      ),
-    );
-  }
-
-
+  final User? user = FirebaseAuth.instance.currentUser;
+  // final docs = FirebaseFirestore.instance.collection('T01_Person').doc(FirebaseAuth.instance.currentUser!.uid).get();
+  //final coin = fetchCoin();
 
   @override
   Widget build(BuildContext context) {
+    // final docSnapshot = FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).get();
+    Future<String> fetchCoin() async {
+      final docs = await FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).get();
+      final data = docs.exists ? docs.data() : null;
+      print('out = '+ data!['T01_AhaCoin'].toString());
+      return data['T01_AhaCoin'].toString();
+    }
+    
     return AppBar(
+      
       title: !_searchBoolean ? Text('アハマッチ!') : _searchTextField(),
       actions: !_searchBoolean
         ? [
@@ -58,6 +45,14 @@ class _Header extends State<Header> {
               _searchBoolean = true;
             });
           }),
+          TextButton.icon(
+              icon: const Icon(Icons.monetization_on),
+              label: Text(fetchCoin().then((value) => value).toString()),
+              style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                    ),
+              onPressed: () {},
+          ),
           IconButton(
           icon: Icon(Icons.notifications),
           onPressed: () {
@@ -91,6 +86,31 @@ class _Header extends State<Header> {
             }
           )
         ]
+    );
+  }
+
+  Widget _searchTextField() { //検索バーの見た目
+    return TextField(
+      autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
+      cursorColor: Colors.white, //カーソルの色
+      style: TextStyle( //テキストのスタイル
+        color: Colors.white,
+        fontSize: 20,
+      ),
+      textInputAction: TextInputAction.search, //キーボードのアクションボタンを指定
+      decoration: InputDecoration( //TextFiledのスタイル
+        enabledBorder: UnderlineInputBorder( //デフォルトのTextFieldの枠線
+          borderSide: BorderSide(color: Colors.white)
+        ),
+        focusedBorder: UnderlineInputBorder( //TextFieldにフォーカス時の枠線
+          borderSide: BorderSide(color: Colors.white)
+        ),
+        hintText: 'Search', //何も入力してないときに表示されるテキスト
+        hintStyle: TextStyle( //hintTextのスタイル
+          color: Colors.white60,
+          fontSize: 20,
+        ),
+      ),
     );
   }
 }
