@@ -60,7 +60,7 @@ class _RegisterState extends State<Register> {
                 if (user != null && !user.emailVerified) {
                   await user.sendEmailVerification();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('認証メールを送信しました。確認してください'),
                     ),
                   );
@@ -68,34 +68,34 @@ class _RegisterState extends State<Register> {
                 ;
 
                 if (newUser != null) {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => Home()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => UserLogin()));
                 }
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'email-already-in-use') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('指定したメールアドレスは登録済みです'),
                     ),
                   );
                   print('指定したメールアドレスは登録済みです');
                 } else if (e.code == 'invalid-email') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('メールアドレスのフォーマットが正しくありません'),
                     ),
                   );
                   print('メールアドレスのフォーマットが正しくありません');
                 } else if (e.code == 'operation-not-allowed') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('指定したメールアドレス・パスワードは現在使用できません'),
                     ),
                   );
                   print('指定したメールアドレス・パスワードは現在使用できません');
                 } else if (e.code == 'weak-password') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('パスワードは６文字以上にしてください'),
                     ),
                   );
