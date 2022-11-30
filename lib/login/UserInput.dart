@@ -25,7 +25,7 @@ class _UserInput extends State<UserInput> {
   final user = FirebaseAuth.instance.currentUser;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
-
+  
   Future _upload(int type, String name, String id) async {
     String userid = "";
     final pickerFile =
@@ -51,7 +51,7 @@ class _UserInput extends State<UserInput> {
         break;
     }
     await FirebaseFirestore.instance
-        .collection('T02_gerson') // コレクションID
+        .collection('T01_Person') // コレクションID
         .doc(user!.uid) // ドキュメントID
         .set({
       'T01_AhaCoin': 0,
@@ -136,7 +136,7 @@ class _UserInput extends State<UserInput> {
                 try {
                   if (isSelectedItem == 1) {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => App()));
+                        MaterialPageRoute(builder: (context) => GeininInput()));
                   } else {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => App()));
