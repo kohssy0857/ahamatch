@@ -23,9 +23,6 @@ class AuditionInput extends StatefulWidget {
   _AuditionInput createState() => _AuditionInput();
 }
 
-
-
-
 class _AuditionInput extends State<AuditionInput> {
   final user = FirebaseAuth.instance.currentUser;
   final _formKey = GlobalKey<FormState>();
@@ -34,29 +31,30 @@ class _AuditionInput extends State<AuditionInput> {
   // 画像アップロードに必要な物
   final picker = ImagePicker();
   File? imageFile;
-  Future pickImage() async{
+  Future pickImage() async {
     final pickerFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
 
-        if(pickerFile != null){
-          imageFile = File(pickerFile.path);
-        }
+    if (pickerFile != null) {
+      imageFile = File(pickerFile.path);
+    }
   }
 
-  void _upload(String item, DateTime schedule, String company, String AuditionName) async {
-
+  void _upload(String item, DateTime schedule, String company,
+      String AuditionName) async {
     String? T06_image;
 
     final doc = FirebaseFirestore.instance
         .collection('T04_Event') // コレクションID
         .doc("cvabc8IsVAGQjYwPv0fR")
-        .collection('T01_Audition').doc();
+        .collection('T01_Audition')
+        .doc();
 
-    if(imageFile != null){
+    if (imageFile != null) {
       // storageにアップロード
       final task = await FirebaseStorage.instance
-        .ref("audition/${doc.id}.jpg")
-        .putFile(imageFile!);
+          .ref("audition/${doc.id}.jpg")
+          .putFile(imageFile!);
       T06_image = await task.ref.getDownloadURL();
     }
 
@@ -91,20 +89,18 @@ class _AuditionInput extends State<AuditionInput> {
     }
   }
 
-
-String item = "初期募集要項";
-String AuditionName = "初期オーディションネーム";
-DateTime schedule = DateTime(2020, 10, 2, 12, 10);
-String company = "初期会社名";
-final textEditingController = TextEditingController();
+  String item = "初期募集要項";
+  String AuditionName = "初期オーディションネーム";
+  DateTime schedule = DateTime(2020, 10, 2, 12, 10);
+  String company = "初期会社名";
+  final textEditingController = TextEditingController();
 
   @override
-    Widget build(BuildContext context) {
-
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-            title: Text('オーディション情報入力'),
-          ),
+        title: Text('オーディション情報入力'),
+      ),
       key: _scaffoldKey,
       body: Form(
         key: _formKey,
@@ -112,29 +108,28 @@ final textEditingController = TextEditingController();
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              width:200,
+              width: 200,
               height: 30,
-              child:imageFile != null
-              ? Image.file(imageFile!) 
-              : ElevatedButton(
-                  onPressed: () async {
-                    await pickImage();
-                  },
-                  child: Text('オーディション画像選択'),
-                ),
+              child: imageFile != null
+                  ? Image.file(imageFile!)
+                  : ElevatedButton(
+                      onPressed: () async {
+                        await pickImage();
+                      },
+                      child: Text('オーディション画像選択'),
+                    ),
             ),
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
                   decoration: const InputDecoration(labelText: "オーディション名"),
                   onChanged: (value) {
-                    
                     print("valueは何だい？？？？");
                     print(value);
                     AuditionName = value;
                   },
                   validator: (value) {
-                    if (value == null||value!.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return "必須です";
                     }
                     return null;
@@ -161,7 +156,6 @@ final textEditingController = TextEditingController();
                   onChanged: (value) => {},
                   controller: textEditingController,
                   onTap: () {
-                    
                     _getDate(context);
                   },
                   validator: (context) {
@@ -190,14 +184,14 @@ final textEditingController = TextEditingController();
             ),
             ElevatedButton(
               onPressed: () async {
-                _upload(item, schedule, company,AuditionName);
+                _upload(item, schedule, company, AuditionName);
                 try {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => SysHome()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SysHome()));
                 } catch (e) {}
               },
               child: const Text('登録'),
-            ), 
+            ),
           ],
         ),
       ),
