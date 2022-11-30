@@ -38,6 +38,7 @@ class _Header extends State<Header> {
   @override
   Widget build(BuildContext context) {
     // final docSnapshot = FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).get();
+
     fetchCoin().then(
       (value) {
         print(value);

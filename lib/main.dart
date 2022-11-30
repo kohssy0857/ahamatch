@@ -122,6 +122,7 @@
 // }
 
 // 認証
+import 'package:ahamatch/parts/footer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -180,9 +181,10 @@ class App extends StatelessWidget {
 
               } else if (snapshot.data!.displayName!.contains("-") == true) {
                 return SysHome();
-              } else {
-                print(snapshot.data!.displayName);
-                return Home();
+
+              }else {
+                return Footer();
+
               }
             }
             // User が null である、つまり未サインインのサインイン画面へ

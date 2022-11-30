@@ -33,9 +33,8 @@ class Home extends StatelessWidget {
               /* --- 省略 --- */
             },
           ),
-          bottomNavigationBar: Footer(),
+          // bottomNavigationBar: Footer(),
         );
-
       case 2:
         return Scaffold(
           appBar: const Header(),
@@ -43,6 +42,7 @@ class Home extends StatelessWidget {
             // ユーザー情報を表示
             child: Text('ログイン情報：${user!.displayName}====2'),
           ),
+
           floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () async {
@@ -89,7 +89,7 @@ class Home extends StatelessWidget {
               /* --- 省略 --- */
             },
           ),
-          bottomNavigationBar: Footer(),
+          // bottomNavigationBar: Footer(),
         );
     }
   }
