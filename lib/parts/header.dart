@@ -26,12 +26,12 @@ class _Header extends State<Header> {
   @override
   Widget build(BuildContext context) {
     // final docSnapshot = FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).get();
-    Future<String> fetchCoin() async {
-      final docs = await FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).get();
-      final data = docs.exists ? docs.data() : null;
-      print('out = '+ data!['T01_AhaCoin'].toString());
-      return data['T01_AhaCoin'].toString();
-    }
+    // Future<String> fetchCoin() async {
+    //   final docs = await FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).get();
+    //   final data = docs.exists ? docs.data() : null;
+    //   print('out = '+ data!['T01_AhaCoin'].toString());
+    //   return data['T01_AhaCoin'].toString();
+    // }
     
     return AppBar(
       
@@ -45,14 +45,14 @@ class _Header extends State<Header> {
               _searchBoolean = true;
             });
           }),
-          TextButton.icon(
-              icon: const Icon(Icons.monetization_on),
-              label: Text(fetchCoin().then((value) => value).toString()),
-              style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                    ),
-              onPressed: () {},
-          ),
+          // TextButton.icon(
+          //     icon: const Icon(Icons.monetization_on),
+          //     label: Text(fetchCoin().then((value) => value).toString()),
+          //     style: TextButton.styleFrom(
+          //             foregroundColor: Colors.white,
+          //           ),
+          //     onPressed: () {},
+          // ),
           IconButton(
           icon: Icon(Icons.notifications),
           onPressed: () {

@@ -38,15 +38,15 @@ class _UserInput extends State<UserInput> {
     switch (isSelectedItem) {
       case 0:
         userid = "-$id";
-        user!.updateDisplayName("$name-$id");
+        await user!.updateDisplayName("$name-$id");
         break;
       case 1:
         userid = "#$id";
-        user!.updateDisplayName("$name#$id");
+        await user!.updateDisplayName("$name#$id");
         break;
       case 2:
         userid = "@$id";
-        user!.updateDisplayName("$name@$id");
+        await user!.updateDisplayName("$name@$id");
         break;
     }
     await FirebaseFirestore.instance

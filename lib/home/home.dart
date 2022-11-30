@@ -33,10 +33,11 @@ class Home extends StatelessWidget {
               /* --- 省略 --- */
             },
           ),
-          bottomNavigationBar: Footer(),
+          // bottomNavigationBar: Footer(),
         );
 
 
+      // お笑い好き
       case 2:
         return Scaffold(
           appBar: Header(),
@@ -53,7 +54,7 @@ class Home extends StatelessWidget {
           //     /* --- 省略 --- */
           //   },
           // ),
-          bottomNavigationBar: Footer(),
+          // bottomNavigationBar: Footer(),
         );
 
       default:
@@ -91,7 +92,7 @@ class Home extends StatelessWidget {
               /* --- 省略 --- */
             },
           ),
-          bottomNavigationBar: Footer(),
+          // bottomNavigationBar: Footer(),
         );
     }
   }
