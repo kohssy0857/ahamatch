@@ -6,9 +6,11 @@ import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../parts/footer.dart';
-
+import 'ConventionManagement.dart';
 import '../parts/header.dart';
 import 'AuditionManagement.dart';
+
+
 
 class SysHome extends StatelessWidget {
   User? user = FirebaseAuth.instance.currentUser;
@@ -27,7 +29,6 @@ class SysHome extends StatelessWidget {
       appBar: Header(),
       body: Center(
         // ユーザー情報を表示
-        
         child: ListView(
           children:  <Widget>[
             Text('システムログイン情報：${user!.displayName}'),
@@ -36,12 +37,22 @@ class SysHome extends StatelessWidget {
             ListTile(
               leading: FlutterLogo(),
               title: Text('管理'),
+              onTap: () async {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => AuditonMane()));
+                /* --- 省略 --- */
+              },
             ),
             ListTile(title: Text('大会')),
             Divider(),
             ListTile(
               leading: FlutterLogo(),
               title: Text('管理'),
+              onTap: () async {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => ConventionMane()));
+                /* --- 省略 --- */
+              },
             ),
             ListTile(
               leading: FlutterLogo(),
