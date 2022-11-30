@@ -14,7 +14,7 @@ class Header extends StatefulWidget with PreferredSizeWidget {
   _Header createState() => _Header();
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class _Header extends State<Header> {
@@ -30,7 +30,7 @@ class _Header extends State<Header> {
     return data['T01_AhaCoin'].toString();
   }
 
-  String _coin = "2";
+  String _coin = "";
   int i = 0;
   // final docs = FirebaseFirestore.instance.collection('T01_Person').doc(FirebaseAuth.instance.currentUser!.uid).get();
   //final coin = fetchCoin();
@@ -51,11 +51,11 @@ class _Header extends State<Header> {
       },
     );
     return AppBar(
-        title: !_searchBoolean ? Text('アハマッチ!') : _searchTextField(),
+        title: !_searchBoolean ? const Text('アハマッチ!') : searchTextField(),
         actions: !_searchBoolean
             ? [
                 IconButton(
-                    icon: Icon(Icons.search),
+                    icon: const Icon(Icons.search),
                     onPressed: () {
                       setState(() {
                         _searchBoolean = true;
@@ -70,12 +70,12 @@ class _Header extends State<Header> {
                   onPressed: () {},
                 ),
                 IconButton(
-                    icon: Icon(Icons.notifications),
+                    icon: const Icon(Icons.notifications),
                     onPressed: () {
                       setState(() {});
                     }),
                 IconButton(
-                  icon: Icon(Icons.logout),
+                  icon: const Icon(Icons.logout),
                   onPressed: () async {
                     // ログアウト処理
                     // 内部で保持しているログイン情報等が初期化される
@@ -84,7 +84,7 @@ class _Header extends State<Header> {
                     // ログイン画面に遷移＋チャット画面を破棄
                     await Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (context) {
-                        return UserLogin();
+                        return const UserLogin();
                       }),
                     );
                   },
@@ -92,7 +92,7 @@ class _Header extends State<Header> {
               ]
             : [
                 IconButton(
-                    icon: Icon(Icons.clear),
+                    icon: const Icon(Icons.clear),
                     onPressed: () {
                       setState(() {
                         _searchBoolean = false;
@@ -101,9 +101,9 @@ class _Header extends State<Header> {
               ]);
   }
 
-  Widget _searchTextField() {
+  Widget searchTextField() {
     //検索バーの見た目
-    return TextField(
+    return const TextField(
       autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
       cursorColor: Colors.white, //カーソルの色
       style: TextStyle(

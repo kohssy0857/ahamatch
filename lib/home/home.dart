@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import "../post/uploadPost.dart";
 import '../parts/footer.dart';
 
 import '../parts/header.dart';
@@ -22,14 +22,14 @@ class Home extends StatelessWidget {
           appBar: const Header(),
           body: Center(
             // ユーザー情報を表示
-            child: Text('ログイン情報：${user!.displayName}=====1'),
+            child: Text('ログイン情報：${user!.displayName}=====1==up'),
           ),
           floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () async {
               // await FirebaseAuth.instance.signOut();
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const UserLogin()));
+                  MaterialPageRoute(builder: (context) => const uploadPost()));
               /* --- 省略 --- */
             },
           ),

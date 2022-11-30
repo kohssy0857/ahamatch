@@ -51,7 +51,7 @@ class _UserInput extends State<UserInput> {
         break;
     }
     await FirebaseFirestore.instance
-        .collection('T02_gerson') // コレクションID
+        .collection('T01_Person') // コレクションID
         .doc(user!.uid) // ドキュメントID
         .set({
       'T01_AhaCoin': 0,
@@ -144,7 +144,7 @@ class _UserInput extends State<UserInput> {
                 } catch (e) {}
               },
               child: const Text('送信'),
-            ), 
+            ),
           ],
         ),
       ),
