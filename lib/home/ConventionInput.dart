@@ -9,21 +9,24 @@ import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../parts/footer.dart';
 import '../parts/header.dart';
-import 'AuditionManagement.dart';
+import 'ConventionManagement.dart';
 import 'package:ahamatch/home/home.dart';
 import 'package:ahamatch/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
-class AuditionInput extends StatefulWidget {
-  const AuditionInput({Key? key}) : super(key: key);
+class ConventionInput extends StatefulWidget {
+  const ConventionInput({Key? key}) : super(key: key);
 
   @override
-  _AuditionInput createState() => _AuditionInput();
+  _ConventionInput createState() => _ConventionInput();
 }
 
-class _AuditionInput extends State<AuditionInput> {
+
+
+
+class _ConventionInput extends State<ConventionInput> {
   final user = FirebaseAuth.instance.currentUser;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
@@ -31,39 +34,38 @@ class _AuditionInput extends State<AuditionInput> {
   // 画像アップロードに必要な物
   final picker = ImagePicker();
   File? imageFile;
-  Future pickImage() async {
+  Future pickImage() async{
     final pickerFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
 
-    if (pickerFile != null) {
-      imageFile = File(pickerFile.path);
-    }
+        if(pickerFile != null){
+          imageFile = File(pickerFile.path);
+        }
   }
 
-  void _upload(String item, DateTime schedule, String company,
-      String AuditionName) async {
+  void _upload(String conditions, DateTime schedule, String prize, String ConventionName) async {
+
     String? T06_image;
 
     final doc = FirebaseFirestore.instance
         .collection('T04_Event') // コレクションID
         .doc("cvabc8IsVAGQjYwPv0fR")
-        .collection('T01_Audition')
-        .doc();
+        .collection('T02_Convention').doc();
 
-    if (imageFile != null) {
+    if(imageFile != null){
       // storageにアップロード
       final task = await FirebaseStorage.instance
-          .ref("audition/${doc.id}.jpg")
-          .putFile(imageFile!);
+        .ref("convention/${doc.id}.jpg")
+        .putFile(imageFile!);
       T06_image = await task.ref.getDownloadURL();
     }
 
     await doc.set({
-      'T01_Item': item,
+      'T01_Conditions': conditions,
       'T02_Schedule': schedule,
-      "T03_Company": company,
+      "T03_Prize": prize,
       "T04_Create": Timestamp.fromDate(DateTime.now()),
-      "T05_Name": AuditionName,
+      "T05_Name": ConventionName,
       "T06_image": T06_image,
     });
     print("登録できました");
@@ -89,18 +91,20 @@ class _AuditionInput extends State<AuditionInput> {
     }
   }
 
-  String item = "初期募集要項";
-  String AuditionName = "初期オーディションネーム";
-  DateTime schedule = DateTime(2020, 10, 2, 12, 10);
-  String company = "初期会社名";
-  final textEditingController = TextEditingController();
+
+String conditions = "初期条件";
+String ConventionName = "初期大会名";
+DateTime schedule = DateTime(2020, 10, 2, 12, 10);
+String prize = "初期賞品";
+final textEditingController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('オーディション情報入力'),
-      ),
+            title: Text('大会情報入力'),
+          ),
       key: _scaffoldKey,
       body: Form(
         key: _formKey,
@@ -108,28 +112,29 @@ class _AuditionInput extends State<AuditionInput> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              width: 200,
+              width:200,
               height: 30,
-              child: imageFile != null
-                  ? Image.file(imageFile!)
-                  : ElevatedButton(
-                      onPressed: () async {
-                        await pickImage();
-                      },
-                      child: Text('オーディション画像選択'),
-                    ),
+              child:imageFile != null
+              ? Image.file(imageFile!) 
+              : ElevatedButton(
+                  onPressed: () async {
+                    await pickImage();
+                  },
+                  child: Text('大会画像選択'),
+                ),
             ),
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
-                  decoration: const InputDecoration(labelText: "オーディション名"),
+                  decoration: const InputDecoration(labelText: "大会名"),
                   onChanged: (value) {
+                    
                     print("valueは何だい？？？？");
                     print(value);
-                    AuditionName = value;
+                    ConventionName = value;
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null||value!.isEmpty) {
                       return "必須です";
                     }
                     return null;
@@ -138,9 +143,9 @@ class _AuditionInput extends State<AuditionInput> {
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
-                  decoration: const InputDecoration(labelText: "募集要項"),
+                  decoration: const InputDecoration(labelText: "大会条件"),
                   onChanged: (value) {
-                    item = value;
+                    conditions = value;
                   },
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -156,6 +161,7 @@ class _AuditionInput extends State<AuditionInput> {
                   onChanged: (value) => {},
                   controller: textEditingController,
                   onTap: () {
+                    
                     _getDate(context);
                   },
                   validator: (context) {
@@ -168,9 +174,9 @@ class _AuditionInput extends State<AuditionInput> {
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
-                  decoration: const InputDecoration(labelText: "開催社名"),
+                  decoration: const InputDecoration(labelText: "賞品"),
                   onChanged: (value) {
-                    company = value;
+                    prize = value;
                   },
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -184,14 +190,14 @@ class _AuditionInput extends State<AuditionInput> {
             ),
             ElevatedButton(
               onPressed: () async {
-                _upload(item, schedule, company, AuditionName);
+                _upload(conditions, schedule, prize,ConventionName);
                 try {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SysHome()));
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => SysHome()));
                 } catch (e) {}
               },
               child: const Text('登録'),
-            ),
+            ), 
           ],
         ),
       ),

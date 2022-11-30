@@ -9,15 +9,14 @@ import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../parts/footer.dart';
 import '../parts/header.dart';
-import 'AuditionManagement.dart';
 import 'package:ahamatch/home/home.dart';
 import 'package:ahamatch/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
-import 'AuditionManagement.dart';
+import 'ConventionManagement.dart';
 
-class AuditionEdit extends StatefulWidget {
+class ConventionEdit extends StatefulWidget {
   // AuditionManagement画面にあるmodelを取得している
   final MainModel model;
   // AuditionManagement画面にあるそれぞれのindex番号を取得している
@@ -29,94 +28,90 @@ class AuditionEdit extends StatefulWidget {
   final imageController = TextEditingController();
   final scheduleController = TextEditingController();
   // 入力したデータを格納するそれぞれの変数
-  String AuditionName = "****";
-  String item = "ちょめ";
+  String ConventionName = "****";
+  String conditions = "ちょめ";
   DateTime schedule = DateTime(2020, 10, 2, 12, 10);
-  String company = "ちゃめ放送";
+  String prize = "ちゃめ放送";
   String? T06Image;
 
-  AuditionEdit(this.model, this.index) {
+  ConventionEdit(this.model,this.index){
     // それぞれ入力してもらったデータを表示させるための準備
-    nameController.text = model.T01_Audition[index].T05_Name;
-    itemController.text = model.T01_Audition[index].T01_Item;
-    companyController.text = model.T01_Audition[index].T03_Company;
-    scheduleController.text =
-        model.T01_Audition[index].T02_Schedule.toDate().toString();
+    nameController.text=model.T02_Convention[index].T05_Name;
+    itemController.text=model.T02_Convention[index].T01_Conditions;
+    companyController.text=model.T02_Convention[index].T03_Prize;
+    scheduleController.text=model.T02_Convention[index].T02_Schedule.toDate().toString();
     print("君はなにタイプだい？");
-    print(model.T01_Audition[index].T02_Schedule);
+    print(model.T02_Convention[index].T02_Schedule);
     // 新規登録で入力されていた場合に、その値がそのまま更新されるようにしている
     // 例：編集ボタンを押した後、AuditionNameにあった名前が"****"に元に戻ってしまうため
-    if (model.T01_Audition[index].T06_image != null) {
-      T06Image = model.T01_Audition[index].T06_image;
-    }
-    ;
-    if (model.T01_Audition[index].T05_Name != null) {
-      AuditionName = model.T01_Audition[index].T05_Name;
-    }
-    ;
-    if (model.T01_Audition[index].T01_Item != null) {
-      item = model.T01_Audition[index].T01_Item;
-    }
-    ;
-    if (model.T01_Audition[index].T02_Schedule != null) {
-      schedule = model.T01_Audition[index].T02_Schedule.toDate();
-    }
-    ;
-    if (model.T01_Audition[index].T03_Company != null) {
-      company = model.T01_Audition[index].T03_Company;
-    }
-    ;
+    if(model.T02_Convention[index].T06_image!=null){
+      T06Image = model.T02_Convention[index].T06_image;
+    };
+    if(model.T02_Convention[index].T05_Name!=null){
+      ConventionName = model.T02_Convention[index].T05_Name;
+    };
+    if(model.T02_Convention[index].T01_Conditions!=null){
+      conditions = model.T02_Convention[index].T01_Conditions;
+    };
+    if(model.T02_Convention[index].T02_Schedule!=null){
+      schedule = model.T02_Convention[index].T02_Schedule.toDate();
+    };
+    if(model.T02_Convention[index].T03_Prize!=null){
+      prize = model.T02_Convention[index].T03_Prize;
+    };
   }
-
+  
   // const AuditionEdit({Key? key, this.T01_Audition}) : super(key: key);
-
+  
   @override
-  _AuditionEdit createState() => _AuditionEdit();
+  _ConventionEdit createState() => _ConventionEdit();
 }
 
-class _AuditionEdit extends State<AuditionEdit> {
+
+
+
+class _ConventionEdit extends State<ConventionEdit> {
+  
   final user = FirebaseAuth.instance.currentUser;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
   dynamic value;
-
+  
   // 画像の取得に必要なもの
   final picker = ImagePicker();
   File? imageFile;
-  Future pickImage() async {
+  Future pickImage() async{
     final pickerFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
 
-    if (pickerFile != null) {
-      imageFile = File(pickerFile.path);
-    }
+        if(pickerFile != null){
+          imageFile = File(pickerFile.path);
+        }
   }
 
   // 編集している関数
-  void _edit(String item, DateTime schedule, String company,
-      String AuditionName) async {
+  void _edit(String conditions, DateTime schedule, String prize, String ConventionName) async {
     final doc = FirebaseFirestore.instance
         .collection('T04_Event') // コレクションID
         .doc("cvabc8IsVAGQjYwPv0fR")
         // widget.indexは親のクラスのindexを読んでいる
-        .collection('T01_Audition')
-        .doc(widget.model.T01_Audition[widget.index].ID);
+        .collection('T02_Convention').doc(widget.model.T02_Convention[widget.index].ID); 
 
     // 画像取得に必要
-    if (imageFile != null) {
+    if(imageFile != null){
       // storageにアップロード
       final task = await FirebaseStorage.instance
-          .ref("audition/${doc.id}.jpg")
-          .putFile(imageFile!);
+        .ref("convention/${doc.id}.jpg")
+        .putFile(imageFile!);
       widget.T06Image = await task.ref.getDownloadURL();
     }
 
     await doc.update({
-      'T01_Item': item,
+      'T01_Conditions': conditions,
       'T02_Schedule': schedule,
-      "T03_Company": company,
+      "T03_Prize": prize,
       "T04_Create": Timestamp.fromDate(DateTime.now()),
-      "T05_Name": AuditionName,
+      "T05_Name": ConventionName,
       "T06_image": widget.T06Image,
     });
   }
@@ -142,12 +137,14 @@ class _AuditionEdit extends State<AuditionEdit> {
     }
   }
 
+
+
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('オーディション情報入力'),
-      ),
+            title: Text('オーディション情報入力'),
+          ),
       key: _scaffoldKey,
       body: Form(
         key: _formKey,
@@ -155,16 +152,16 @@ class _AuditionEdit extends State<AuditionEdit> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              width: 200,
+              width:200,
               height: 30,
-              child: imageFile != null
-                  ? Image.file(imageFile!)
-                  : ElevatedButton(
-                      onPressed: () async {
-                        await pickImage();
-                      },
-                      child: Text('オーディション画像選択'),
-                    ),
+              child:imageFile != null
+              ? Image.file(imageFile!) 
+              : ElevatedButton(
+                  onPressed: () async {
+                    await pickImage();
+                  },
+                  child: Text('オーディション画像選択'),
+                ),
             ),
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -172,10 +169,10 @@ class _AuditionEdit extends State<AuditionEdit> {
                   decoration: const InputDecoration(labelText: "オーディション名"),
                   controller: widget.nameController,
                   onChanged: (value) {
-                    widget.AuditionName = value;
+                    widget.ConventionName = value;
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null||value!.isEmpty) {
                       return "必須です";
                     }
                     return null;
@@ -187,7 +184,7 @@ class _AuditionEdit extends State<AuditionEdit> {
                   controller: widget.itemController,
                   decoration: const InputDecoration(labelText: "募集要項"),
                   onChanged: (value) {
-                    widget.item = value;
+                    widget.conditions = value;
                   },
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -217,7 +214,7 @@ class _AuditionEdit extends State<AuditionEdit> {
                   controller: widget.companyController,
                   decoration: const InputDecoration(labelText: "開催社名"),
                   onChanged: (value) {
-                    widget.company = value;
+                    widget.prize = value;
                   },
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -231,15 +228,14 @@ class _AuditionEdit extends State<AuditionEdit> {
             ),
             ElevatedButton(
               onPressed: () async {
-                _edit(widget.item, widget.schedule, widget.company,
-                    widget.AuditionName);
+                _edit(widget.conditions, widget.schedule, widget.prize,widget.ConventionName);
                 try {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SysHome()));
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => SysHome()));
                 } catch (e) {}
               },
               child: const Text('変更'),
-            ),
+            ), 
           ],
         ),
       ),

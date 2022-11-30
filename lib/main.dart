@@ -122,6 +122,7 @@
 // }
 
 // 認証
+import 'package:ahamatch/parts/footer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -157,9 +158,10 @@ class App extends StatelessWidget {
           builder: (context, snapshot) {
             // ユーザーの宣言
             User? user = FirebaseAuth.instance.currentUser;
+            print(user);
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox();
-            }        
+            }
             // ログイン情報があるなら
             if (snapshot.hasData) {
               print("snapshot.hasData");
@@ -177,11 +179,12 @@ class App extends StatelessWidget {
                 return const UserInput();
                 // ないなら
 
-              }else if (snapshot.data!.displayName!.contains("-") == true){
+              } else if (snapshot.data!.displayName!.contains("-") == true) {
                 return SysHome();
+
               }else {
-                print(snapshot.data!.displayName);
-                return Home();
+                return Footer();
+
               }
             }
             // User が null である、つまり未サインインのサインイン画面へ
