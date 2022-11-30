@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'GeininInput.dart';
+import '../login/login.dart';
 
 class UserInput extends StatefulWidget {
   const UserInput({Key? key}) : super(key: key);
@@ -50,7 +51,7 @@ class _UserInput extends State<UserInput> {
         break;
     }
     await FirebaseFirestore.instance
-        .collection('T01_Person') // コレクションID
+        .collection('T02_gerson') // コレクションID
         .doc(user!.uid) // ドキュメントID
         .set({
       'T01_AhaCoin': 0,

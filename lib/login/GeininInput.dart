@@ -35,18 +35,18 @@ class _GeininInput extends State<GeininInput> {
     );
     //  var doclist = document.docs;
 
-    // await FirebaseFirestore.instance
-    //     .collection('T02_Person') // コレクションID
-    //     .doc(user!.uid) // ドキュメントID
-    //     .set({
-    //   'T02_GeininId': 0,
-    //   'T02_UnitName': type,
-    //   "T02_PartnerRecruit": false,
-    //   "T02_Tags": user,
-    //   "T02_describe": name,
-    //   'T02_Create': Timestamp.fromDate(DateTime.now()),
-    //   "T02_production": user,
-    // });
+    await FirebaseFirestore.instance
+        .collection('T02_Person') // コレクションID
+        .doc(user!.uid) // ドキュメントID
+        .set({
+      'T02_GeininId': 0,
+      'T02_UnitName': type,
+      "T02_PartnerRecruit": false,
+      "T02_Tags": user,
+      "T02_describe": name,
+      'T02_Create': Timestamp.fromDate(DateTime.now()),
+      "T02_production": user,
+    });
   }
 
   String name = "名無し";
@@ -59,6 +59,20 @@ class _GeininInput extends State<GeininInput> {
           child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Padding(
+                padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
+                child: TextFormField(
+                  decoration: const InputDecoration(labelText: "ユニット名"),
+                  onChanged: (value) {
+                    name = value;
+                  },
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "必須です";
+                    }
+                    return null;
+                  },
+                )),
           Expanded(
             child: Container(
               height: double.infinity,
