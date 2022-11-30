@@ -17,7 +17,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'AuditionManagement.dart';
 
-
 class AuditionEdit extends StatefulWidget {
   // AuditionManagement画面にあるmodelを取得している
   final MainModel model;
@@ -36,75 +35,79 @@ class AuditionEdit extends StatefulWidget {
   String company = "ちゃめ放送";
   String? T06Image;
 
-  AuditionEdit(this.model,this.index){
+  AuditionEdit(this.model, this.index) {
     // それぞれ入力してもらったデータを表示させるための準備
-    nameController.text=model.T01_Audition[index].T05_Name;
-    itemController.text=model.T01_Audition[index].T01_Item;
-    companyController.text=model.T01_Audition[index].T03_Company;
-    scheduleController.text=model.T01_Audition[index].T02_Schedule.toDate().toString();
+    nameController.text = model.T01_Audition[index].T05_Name;
+    itemController.text = model.T01_Audition[index].T01_Item;
+    companyController.text = model.T01_Audition[index].T03_Company;
+    scheduleController.text =
+        model.T01_Audition[index].T02_Schedule.toDate().toString();
     print("君はなにタイプだい？");
     print(model.T01_Audition[index].T02_Schedule);
     // 新規登録で入力されていた場合に、その値がそのまま更新されるようにしている
     // 例：編集ボタンを押した後、AuditionNameにあった名前が"****"に元に戻ってしまうため
-    if(model.T01_Audition[index].T06_image!=null){
+    if (model.T01_Audition[index].T06_image != null) {
       T06Image = model.T01_Audition[index].T06_image;
-    };
-    if(model.T01_Audition[index].T05_Name!=null){
+    }
+    ;
+    if (model.T01_Audition[index].T05_Name != null) {
       AuditionName = model.T01_Audition[index].T05_Name;
-    };
-    if(model.T01_Audition[index].T01_Item!=null){
+    }
+    ;
+    if (model.T01_Audition[index].T01_Item != null) {
       item = model.T01_Audition[index].T01_Item;
-    };
-    if(model.T01_Audition[index].T02_Schedule!=null){
+    }
+    ;
+    if (model.T01_Audition[index].T02_Schedule != null) {
       schedule = model.T01_Audition[index].T02_Schedule.toDate();
-    };
-    if(model.T01_Audition[index].T03_Company!=null){
+    }
+    ;
+    if (model.T01_Audition[index].T03_Company != null) {
       company = model.T01_Audition[index].T03_Company;
-    };
+    }
+    ;
   }
-  
+
   // const AuditionEdit({Key? key, this.T01_Audition}) : super(key: key);
-  
+
   @override
   _AuditionEdit createState() => _AuditionEdit();
 }
 
-
-
-
 class _AuditionEdit extends State<AuditionEdit> {
-  
   final user = FirebaseAuth.instance.currentUser;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
   dynamic value;
-  
+
   // 画像の取得に必要なもの
   final picker = ImagePicker();
   File? imageFile;
-  Future pickImage() async{
+  Future pickImage() async {
     final pickerFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
 
-        if(pickerFile != null){
-          imageFile = File(pickerFile.path);
-        }
+    if (pickerFile != null) {
+      imageFile = File(pickerFile.path);
+    }
   }
 
   // 編集している関数
-  void _edit(String item, DateTime schedule, String company, String AuditionName) async {
+  void _edit(String item, DateTime schedule, String company,
+      String AuditionName) async {
     final doc = FirebaseFirestore.instance
         .collection('T04_Event') // コレクションID
         .doc("cvabc8IsVAGQjYwPv0fR")
         // widget.indexは親のクラスのindexを読んでいる
-        .collection('T01_Audition').doc(widget.model.T01_Audition[widget.index].ID); 
+        .collection('T01_Audition')
+        .doc(widget.model.T01_Audition[widget.index].ID);
 
     // 画像取得に必要
-    if(imageFile != null){
+    if (imageFile != null) {
       // storageにアップロード
       final task = await FirebaseStorage.instance
-        .ref("audition/${doc.id}.jpg")
-        .putFile(imageFile!);
+          .ref("audition/${doc.id}.jpg")
+          .putFile(imageFile!);
       widget.T06Image = await task.ref.getDownloadURL();
     }
 
@@ -139,14 +142,12 @@ class _AuditionEdit extends State<AuditionEdit> {
     }
   }
 
-
-
   @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-            title: Text('オーディション情報入力'),
-          ),
+        title: Text('オーディション情報入力'),
+      ),
       key: _scaffoldKey,
       body: Form(
         key: _formKey,
@@ -154,16 +155,16 @@ class _AuditionEdit extends State<AuditionEdit> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              width:200,
+              width: 200,
               height: 30,
-              child:imageFile != null
-              ? Image.file(imageFile!) 
-              : ElevatedButton(
-                  onPressed: () async {
-                    await pickImage();
-                  },
-                  child: Text('オーディション画像選択'),
-                ),
+              child: imageFile != null
+                  ? Image.file(imageFile!)
+                  : ElevatedButton(
+                      onPressed: () async {
+                        await pickImage();
+                      },
+                      child: Text('オーディション画像選択'),
+                    ),
             ),
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -174,7 +175,7 @@ class _AuditionEdit extends State<AuditionEdit> {
                     widget.AuditionName = value;
                   },
                   validator: (value) {
-                    if (value == null||value!.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return "必須です";
                     }
                     return null;
@@ -230,14 +231,15 @@ class _AuditionEdit extends State<AuditionEdit> {
             ),
             ElevatedButton(
               onPressed: () async {
-                _edit(widget.item, widget.schedule, widget.company,widget.AuditionName);
+                _edit(widget.item, widget.schedule, widget.company,
+                    widget.AuditionName);
                 try {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => SysHome()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SysHome()));
                 } catch (e) {}
               },
               child: const Text('変更'),
-            ), 
+            ),
           ],
         ),
       ),

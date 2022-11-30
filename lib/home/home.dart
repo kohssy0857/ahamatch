@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import "../post/uploadPost.dart";
 import '../parts/footer.dart';
 
 import '../parts/header.dart';
@@ -19,60 +19,57 @@ class Home extends StatelessWidget {
     switch (devideUser(user)) {
       case 1:
         return Scaffold(
-          appBar: Header(),
+          appBar: const Header(),
           body: Center(
             // ユーザー情報を表示
-            child: Text('ログイン情報：${user!.displayName}=====1'),
+            child: Text('ログイン情報：${user!.displayName}=====1==up'),
           ),
           floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
             onPressed: () async {
               // await FirebaseAuth.instance.signOut();
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UserLogin()));
+                  MaterialPageRoute(builder: (context) => const uploadPost()));
               /* --- 省略 --- */
             },
           ),
           // bottomNavigationBar: Footer(),
         );
-
-
-      // お笑い好き
       case 2:
         return Scaffold(
-          appBar: Header(),
+          appBar: const Header(),
           body: Center(
             // ユーザー情報を表示
             child: Text('ログイン情報：${user!.displayName}====2'),
           ),
-          // floatingActionButton: FloatingActionButton(
-          //   child: Icon(Icons.add),
-          //   onPressed: () async {
-          //     await FirebaseAuth.instance.signOut();
-          //     Navigator.push(context,
-          //         MaterialPageRoute(builder: (context) => UserLogin()));
-          //     /* --- 省略 --- */
-          //   },
-          // ),
-          // bottomNavigationBar: Footer(),
+
+          floatingActionButton: FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () async {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const UserLogin()));
+              /* --- 省略 --- */
+            },
+          ),
+          bottomNavigationBar: Footer(),
         );
 
       default:
         return Scaffold(
           appBar: AppBar(
-            title: Text(''),
+            title: const Text(''),
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.logout),
+                icon: const Icon(Icons.logout),
                 onPressed: () async {
                   // ログアウト処理
                   // 内部で保持しているログイン情報等が初期化される
                   // （現時点ではログアウト時はこの処理を呼び出せばOKと、思うぐらいで大丈夫です）
-                  await FirebaseAuth.instance.signOut();
+                  // await FirebaseAuth.instance.signOut();
                   // ログイン画面に遷移＋チャット画面を破棄
                   await Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (context) {
-                      return UserLogin();
+                      return const UserLogin();
                     }),
                   );
                 },
@@ -84,11 +81,11 @@ class Home extends StatelessWidget {
             child: Text('ログイン情報：${user!.displayName}'),
           ),
           floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UserLogin()));
+                  MaterialPageRoute(builder: (context) => const UserLogin()));
               /* --- 省略 --- */
             },
           ),
