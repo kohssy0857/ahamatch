@@ -14,32 +14,34 @@ class sendNeta extends StatefulWidget {
 
 class _sendNetaState extends State<sendNeta> {
   // 入力された内容を保持するコントローラ
-  late File movie;
+  File? movie = null;
   final picker = ImagePicker();
-  Stream<PickedFile> _getmovie() async* {
+  Future _getmovie() async {
     final pickedFile = await picker.getVideo(source: ImageSource.gallery);
+    print(pickedFile.toString());
 
-    // setState(() {
-    //   if (pickedFile != null) {
-    //     movie = File(pickedFile.path);
-    //   } else {
-    //     print('No image selected.');
-    //   }
-    // });
+    setState(() {
+      if (pickedFile != null) {
+        movie = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(movie);
+    // print(movie);
     return Center(
       child: Column(
         children: [
           Center(
             child: movie == null
                 ? const Text('No image selected.')
-                : Image.file(movie),
+                : Image.file(movie!),
           ),
-          OutlinedButton(onPressed: _getmovie, child: const Text("動画を選択"))
+          OutlinedButton(
+              onPressed: (() async => _getmovie()), child: const Text("動画を選択"))
         ],
       ),
     );
