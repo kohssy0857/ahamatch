@@ -158,14 +158,11 @@ class App extends StatelessWidget {
           builder: (context, snapshot) {
             // ユーザーの宣言
             User? user = FirebaseAuth.instance.currentUser;
-            print(user);
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox();
             }
             // ログイン情報があるなら
             if (snapshot.hasData) {
-              print("snapshot.hasData");
-              print(snapshot.hasData);
               // FirebaseAuth.instance.signOut();
               // ScaffoldMessenger.of(context).showSnackBar(
               //   SnackBar(
@@ -178,13 +175,11 @@ class App extends StatelessWidget {
                 // ユーザー情報入力ページへ
                 return const UserInput();
                 // ないなら
-
               } else if (snapshot.data!.displayName!.contains("-") == true) {
                 return SysHome();
-
               }else {
-                return Footer();
 
+                return Footer();
               }
             }
             // User が null である、つまり未サインインのサインイン画面へ
