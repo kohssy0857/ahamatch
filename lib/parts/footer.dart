@@ -214,7 +214,6 @@ class _Footer extends State {
               );
               break;
           default:
-
         return BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(
