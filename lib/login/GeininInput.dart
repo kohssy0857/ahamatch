@@ -17,12 +17,15 @@ class GeininInput extends StatefulWidget {
   _GeininInput createState() => _GeininInput();
 }
 
+
+// enum RadioValue { TRUE, FALSE }
+
 class _GeininInput extends State<GeininInput> {
   final user = FirebaseAuth.instance.currentUser;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
 
-  void _upload(String name, String tags, String describe, String production, bool isOn) async {
+  void _upload(String name, List tags, String describe, String production, bool isOn) async {
     final id = await FirebaseFirestore.instance
         .collection("T01_Person")
         .doc(user!.uid);
@@ -52,11 +55,17 @@ class _GeininInput extends State<GeininInput> {
   String name = "";
   String describe = "";
   String production = "";
-  String tags = "";
+  List<String> tags = [];
   bool isOn = false;
+  String tag1 = "";
+  String tag2 = "";
+  String tag3 = "";
+  String tag4 = "";
+  String tag5 = "";
 
   @override
   Widget build(BuildContext context) {
+    // RadioValue _gValue = RadioValue.FALSE;
     return Scaffold(
       body: SafeArea(
           child: Column(
@@ -68,20 +77,6 @@ class _GeininInput extends State<GeininInput> {
                   decoration: const InputDecoration(labelText: "ユニット名"),
                   onChanged: (value) {
                     name = value;
-                  },
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "必須です";
-                    }
-                    return null;
-                  },
-                )),
-          Padding(
-                padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
-                child: TextFormField(
-                  decoration: const InputDecoration(labelText: "タグ名"),
-                  onChanged: (value) {
-                    tags = value;
                   },
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -118,6 +113,36 @@ class _GeininInput extends State<GeininInput> {
                     return null;
                   },
                 )),
+          // Text('相方(トリオも含む)を募集しますか？'),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //   children: [
+          //     Row(
+          //       children: [
+          //         RadioListTile(
+          //           value: RadioValue.TRUE,
+          //           groupValue: _gValue,
+          //           onChanged: (value){
+          //             isOn = true;
+          //           },
+          //         ),
+          //         Text('はい'),
+          //       ],
+          //     ),
+          //     Row(
+          //       children: [
+          //         RadioListTile(
+          //           value: RadioValue.FALSE,
+          //           groupValue: _gValue,
+          //           onChanged: (value) {
+          //             isOn = false;
+          //           },
+          //         ),
+          //         Text('いいえ'),
+          //       ],
+          //     ),
+          //   ],
+          // ),
           SwitchListTile(
             title: const Text('相方募集中'),
             value: isOn,
@@ -128,10 +153,56 @@ class _GeininInput extends State<GeininInput> {
                 });
               }
             },
-            secondary: const Icon(Icons.lightbulb_outline),
           ),
+          Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  decoration: const InputDecoration(labelText: "タグ1"),
+                  onChanged: (value) {
+                    tag1 = value;
+                  },
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "必須です";
+                    }
+                    return null;
+                  },
+                )),
+          Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  decoration: const InputDecoration(labelText: "タグ2"),
+                  onChanged: (value) {
+                    tag2 = value;
+                  },
+                )),
+          Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  decoration: const InputDecoration(labelText: "タグ3"),
+                  onChanged: (value) {
+                    tag3 = value;
+                  },
+                )),
+          Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  decoration: const InputDecoration(labelText: "タグ4"),
+                  onChanged: (value) {
+                    tag4 = value;
+                  },
+                )),
+          Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  decoration: const InputDecoration(labelText: "タグ5"),
+                  onChanged: (value) {
+                    tag5 = value;
+                  },
+                )),
           ElevatedButton(
               onPressed: () async {
+                tags.addAll([tag1,tag2,tag3,tag4,tag5]);
                 _upload(name, tags, describe, production, isOn);
                 try {
                   Navigator.push(
@@ -140,46 +211,6 @@ class _GeininInput extends State<GeininInput> {
               },
               child: const Text('登録'),
             ), 
-          // Expanded(
-          //   child: Container(
-          //     height: double.infinity,
-          //     alignment: Alignment.topCenter,
-          //     child: StreamBuilder<QuerySnapshot>(
-          //       stream: FirebaseFirestore.instance
-          //           .collection('T01_Person')
-          //           // .orderBy('createdAt')
-          //           .snapshots(),
-          //       builder: (context, snapshot) {
-          //         if (snapshot.hasError) {
-          //           return const Text('エラーが発生しました');
-          //         }
-          //         if (!snapshot.hasData) {
-          //           return const Center(child: CircularProgressIndicator());
-          //         }
-          //         final list = snapshot.requireData.docs
-          //             .map<String>((DocumentSnapshot document) {
-          //           final documentData =
-          //               document.data()! as Map<String, dynamic>;
-          //           return documentData['T01_DisplayName']! as String;
-          //         }).toList();
-          //         _upload(name, describe, production, isOn);
-          //         final reverseList = list.reversed.toList();
-
-          //         return ListView.builder(
-          //           itemCount: reverseList.length,
-          //           itemBuilder: (BuildContext context, int index) {
-          //             return Center(
-          //               child: Text(
-          //                 reverseList[index],
-          //                 style: const TextStyle(fontSize: 20),
-          //               ),
-          //             );
-          //           },
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ),
         ],
       )),
     );
