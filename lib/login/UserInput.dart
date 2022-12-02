@@ -25,7 +25,7 @@ class _UserInput extends State<UserInput> {
   final user = FirebaseAuth.instance.currentUser;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
-  
+
   Future _upload(int type, String name, String id) async {
     String userid = "";
     final pickerFile =
