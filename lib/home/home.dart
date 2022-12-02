@@ -51,7 +51,7 @@ class Home extends StatelessWidget {
               /* --- 省略 --- */
             },
           ),
-          bottomNavigationBar: Footer(),
+          // bottomNavigationBar: Footer(),
         );
 
       default:

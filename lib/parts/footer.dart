@@ -8,15 +8,14 @@
 //   Footer({Key? key}) : super(key: key);
 //   @override
 //   _Footer createState() => _Footer();
-      
+
 // }
 
 // class _Footer extends State {
 //   // var user_Q = FirebaseFirestore.instance
 //   //     .collection('T01_Person')
 //   //     .where('T01_AuthId', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
-  
-  
+
 //   @override
 //   Widget build(BuildContext context) {
 //     User? user=FirebaseAuth.instance.currentUser;
@@ -24,8 +23,6 @@
 
 //     var nameid = devideUser(user!);
 
-    
-    
 //     // 取得した@、#、-でボタンの数を分ける
 //     switch (nameid) {
 //             case 2:
@@ -47,7 +44,7 @@
 //                       icon: Icon(Icons.format_list_numbered_rtl),
 //                       label: "ランキング",
 //                     ),
-                    
+
 //                   ],
 //                     type: BottomNavigationBarType.fixed,
 //               );
@@ -103,10 +100,9 @@
 //             );
 //             break;
 //     }
-    
+
 //   }
 // }
-
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -122,7 +118,6 @@ class Footer extends StatefulWidget {
   Footer({Key? key}) : super(key: key);
   @override
   _Footer createState() => _Footer();
-      
 }
 
 class _Footer extends State {
@@ -130,28 +125,24 @@ class _Footer extends State {
   //     .collection('T01_Person')
   //     .where('T01_AuthId', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
   var _selectIndex = 0;
-  
+
   // BottomNavigationBarで画面遷移先の一覧
-    
-  
   @override
   Widget build(BuildContext context) {
-    User? user=FirebaseAuth.instance.currentUser;
-    String? keys=FirebaseAuth.instance.currentUser!.displayName;
-    
+    User? user = FirebaseAuth.instance.currentUser;
+    String? keys = FirebaseAuth.instance.currentUser!.displayName;
 
     // BottomNavigationBarがタップされた時に、選択中のインデックスを変更する関数を用意します。
     void _onTapItem(int index) {
-        setState(() {
-          _selectIndex = index; //インデックスの更新
-          print("_selectIndexは何番だい？？");
-          print(_selectIndex);
-        });
-      }
+      setState(() {
+        _selectIndex = index; //インデックスの更新
+      });
+    }
 
     var nameid = devideUser(user!);
     // 取得した@、#、-でボタンの数を分ける
     switch (nameid) {
+
             case 2:
             var _pages = <Widget>[
               Home(),
@@ -223,29 +214,29 @@ class _Footer extends State {
               );
               break;
           default:
-            return BottomNavigationBar(
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: "管理者",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: "",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: "",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: "",
-                ),
-              ],
-                type: BottomNavigationBarType.fixed,
-            );
-            break;
+
+        return BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "管理者",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "",
+            ),
+          ],
+          type: BottomNavigationBarType.fixed,
+        );
+        break;
     }
-    
   }
 }
