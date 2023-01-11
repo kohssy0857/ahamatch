@@ -5,18 +5,20 @@ import '../parts/footer.dart';
 import '../parts/header.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'uploadAhaPuch.dart';
-import 'uploadAnnounce.dart';
-import 'uploadNeta.dart';
-import 'uploadSinme.dart';
+import 'RoomRistPage.dart';
+// import 'RoomPage.dart';
+// import 'uploadAhaPuch.dart';
+// import 'uploadAnnounce.dart';
+// import 'uploadNeta.dart';
+// import 'uploadSinme.dart';
 
-void uploadNeta() {}
-void uploadSinme() {}
-void uploadAnnounce() {}
-void uploadAhapuch() {}
+void RoomRistPage() {}
+// void RoomPage () {}
+// void uploadAnnounce() {}
+// void uploadAhapuch() {}
 
-class uploadPost extends StatelessWidget {
-  const uploadPost({Key? key}) : super(key: key);
+class ChatMane extends StatelessWidget {
+  const ChatMane({Key? key}) : super(key: key);
 
   // @override
   // Widget build(BuildContext context) {
@@ -34,30 +36,30 @@ class uploadPost extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0, // 最初に表示するタブ
-      length: 4, // タブの数
+      length: 1, // タブの数
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('投稿'),
+          title: const Text('チャット'),
           bottom: const TabBar(
             isScrollable: true, // スクロールを有効化
             tabs: <Widget>[
-              Tab(text: 'ネタ'),
-              Tab(text: 'アハプッチ'),
-              Tab(text: '新芽'),
-              Tab(text: '告知'),
+              Tab(text: '相手'),
+              // Tab(text: 'チャット履歴'),
+              // Tab(text: '新芽'),
+              // Tab(text: '告知'),
             ],
           ),
         ),
         body: TabBarView(
           children: <Widget>[
             // type1
-            sendNeta(),
-            // type2
-            sendAhaPuch(),
-            // type3
-            sendSinme(),
-            // type4
-            sendAnnounce(),
+            Chat(),
+            // // type2
+            // RoomChat(),
+            // // type3
+            // sendSinme(),
+            // // type4
+            // sendAnnounce(),
           ],
         ),
       ),

@@ -56,11 +56,6 @@ class mylist extends StatelessWidget {
   // storegeの中の動画を取得してくる
 void _getVideo() async {
     String? T06_image;
-    // final doc = FirebaseFirestore.instance
-    //     .collection('T01_Person') // コレクションID
-    //     .doc("cvabc8IsVAGQjYwPv0fR")
-    //     .collection('T01_Audition')
-    //     .doc();
 
     if (imageFile != null) {
       // storageにアップロード
@@ -87,7 +82,7 @@ void _getVideo() async {
       // no need of the file extension, the name will do fine.
           var url = await ref.getDownloadURL();
           yield MoviePlayerWidget(
-            url,
+            url,""
           );
       }
       

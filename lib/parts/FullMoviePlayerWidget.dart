@@ -5,14 +5,13 @@ import 'FullscreenVideo.dart';
 /*
  * 動画ウィジェット
  */
-class MoviePlayerWidget extends StatefulWidget {
+class FullMoviePlayerWidget extends StatefulWidget {
 
   String movieURL; // 動画URL
-  String movieId; // 動画URL
-  MoviePlayerWidget(this.movieURL,this.movieId) : super();
+  FullMoviePlayerWidget(this.movieURL,) : super();
 
   @override
-  _MoviePlayerWidgetState createState() => _MoviePlayerWidgetState();
+  _FullMoviePlayerWidgetState createState() => _FullMoviePlayerWidgetState();
 }
 
 
@@ -20,7 +19,7 @@ class MoviePlayerWidget extends StatefulWidget {
  * ステート
  */
 
-class _MoviePlayerWidgetState extends State<MoviePlayerWidget> {
+class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
 
   // コントローラー
   late VideoPlayerController _controller;
@@ -107,23 +106,6 @@ class _MoviePlayerWidgetState extends State<MoviePlayerWidget> {
               _controller.pause();
             },
             icon: Icon(Icons.pause),
-          ),
-          IconButton(
-            onPressed: () async{
-              // 動画をフルスクリーン
-              // await Navigator.of(context).pushReplacement(
-              //         MaterialPageRoute(builder: (context) {
-              //           return FullscreenVideo();
-              //         }),
-              //       );
-              Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => FullscreenVideo(widget.movieId)))
-                      .then((value) {
-                // 再描画
-                setState(() {});
-              });;
-            },
-            icon: Icon(Icons.fullscreen),
           ),
           
         ],

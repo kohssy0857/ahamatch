@@ -16,7 +16,8 @@ import '../parts/header.dart';
 import 'mylist.dart';
 
 
-class owaraizukiProfile extends StatelessWidget {
+class geininProfile extends StatelessWidget {
+  // final User?
   User? user = FirebaseAuth.instance.currentUser;
       Stream<Image> getAvatarUrlForProfile() async* {
           final ref =  FirebaseStorage.instance.ref().child('profile/${user!.uid}.jpg');
