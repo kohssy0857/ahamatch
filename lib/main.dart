@@ -178,7 +178,7 @@ class App extends StatelessWidget {
               } else if (snapshot.data!.displayName!.contains("-") == true) {
                 return SysHome();
               }else {
-
+                print("Footer東リマース");
                 return Footer();
               }
             }
