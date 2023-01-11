@@ -65,6 +65,7 @@ class _AuditionInput extends State<AuditionInput> {
       "T04_Create": Timestamp.fromDate(DateTime.now()),
       "T05_Name": AuditionName,
       "T06_image": T06_image,
+      "T07_DocumentId": doc.id,
     });
     print("登録できました");
   }
