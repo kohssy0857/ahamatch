@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'package:ahamatch/home/home.dart';
+import 'package:ahamatch/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,6 +7,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:video_player/video_player.dart';
+import 'dart:io';
+import '../parts/MoviePlayerWidget .dart';
 
 class sendNeta extends StatefulWidget {
   @override
@@ -13,47 +16,182 @@ class sendNeta extends StatefulWidget {
 }
 
 class _sendNetaState extends State<sendNeta> {
+  final user = FirebaseAuth.instance.currentUser;
+  String title = "";
+  String shoukai = "";
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey();
   // 入力された内容を保持するコントローラ
+  // final inputController = TextEditingController();
+  VideoPlayerController? MovieController = null;
   File? movie = null;
+  dynamic movie_file;
+  // 画像アップロードに必要な物
   final picker = ImagePicker();
-  Future _getmovie() async {
-    final pickedFile = await picker.getVideo(source: ImageSource.gallery);
-    print(pickedFile.toString());
+  File? imageFile;
 
-    setState(() {
-      if (pickedFile != null) {
-        movie = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
+  Future pickImage() async{
+    final pickerFile =
+        await ImagePicker().getVideo(source: ImageSource.gallery);
+        if(pickerFile != null){
+          imageFile = File(pickerFile.path);
+          MovieController = await VideoPlayerController.file(imageFile!)
+      ..initialize().then((_) async {
+        // print("444444444444444444444444444444${MovieController!.value}");
+        setState(() {});
+        // print("dddddddddddddddddddddddddddddddddddddddddddddddd" +
+        //     MovieController.toString());
+        await MovieController?.play();
+        // print("00000000000000000000000");
+      });
+        }
+  }
+  
+
+  // title,,
+  void _upload(String title, String shoukai) async {
+
+    String? video;
+    String? documentId;
+    String? unitName;
+
+    final doc = FirebaseFirestore.instance
+        .collection('T05_Toukou').doc();
+
+    final gid = FirebaseFirestore.instance
+        .collection("T01_Person")
+        .doc(user!.uid);
+    // print("gidってなにーー？？");
+    // print(gid);
+    // print(gid.runtimeType);
+
+      await FirebaseFirestore.instance
+        .collection('T02_Geinin').where('T02_GeininId', isEqualTo: gid).get().then(
+      (QuerySnapshot querySnapshot) => {
+          querySnapshot.docs.forEach(
+            (doc) {
+              documentId=doc.id;
+              unitName=doc["T02_UnitName"];
+            },
+          ),
+        });
+        // print("idは本当に入っているのか？？");
+        // print(documentId);
+
+      final id = await FirebaseFirestore.instance
+        .collection("T02_Geinin")
+        .doc(documentId);
+
+    if(imageFile != null){
+      // storageにアップロード
+      final task = await FirebaseStorage.instance
+        .ref("post/neta/${doc.id}.mp4")
+        .putFile(imageFile!);
+      video = await task.ref.getDownloadURL();
+    }
+
+    // 紹介文、視聴回数は0
+    await doc.set({
+      'T05_Geinin': id,
+      'T05_Title': title,
+      "T05_Create": Timestamp.fromDate(DateTime.now()),
+      "T05_VideoUrl": video,
+      "T05_Type": 1,
+      "T05_Shoukai": shoukai,
+      "T05_ShityouKaisu": 0,
+      "T05_UnitName": unitName,
     });
+    print("登録できました");
   }
 
-  @override
   Widget build(BuildContext context) {
-    // print(movie);
-    return Center(
+    return Form(
+      key: _formKey,
       child: Column(
-        children: [
-          Center(
-            child: movie == null
-                ? const Text('No image selected.')
-                : Image.file(movie!),
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(
+            width: 200,
+            height: 200,
+            child: imageFile == null
+                  ? const Text('No video selected.')
+                  : AspectRatio(
+                      aspectRatio: MovieController!.value.aspectRatio,
+                      child: VideoPlayer(MovieController!),
+                    )
           ),
-          OutlinedButton(
-              onPressed: (() async => _getmovie()), child: const Text("動画を選択"))
+          // OutlinedButton(
+          //     onPressed: (() async => pickImage()), child: const Text("動画を選択")),
+          // Column1
+          Container(
+              alignment: Alignment.center,
+              child: Container(
+                width: 300,
+                height: 100,
+                child:SizedBox(
+              width:200,
+              height: 30,
+              child:ElevatedButton(
+                  onPressed: () async {
+                    await pickImage();
+                  },
+                  child: Text('ネタ動画を選択'),
+                ),
+            ),
+              ),
+              
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  maxLength: 50,
+                  decoration: const InputDecoration(labelText: "動画タイトル"),
+                  onChanged: (value) {
+                    title = value;
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "必須です";
+                    }
+                    return null;
+                  },
+                )),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  maxLength: 50,
+                  decoration: const InputDecoration(labelText: "紹介文"),
+                  onChanged: (value) {
+                    shoukai = value;
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "必須です";
+                    }
+                    return null;
+                  },
+                )),
+          // Column2
+          // Column3
+          // Text(inputText),
+          ElevatedButton(
+              onPressed: () async {
+                // _tachikame();
+                if (_formKey.currentState!.validate() && imageFile != null) {
+                      print("登録完了");
+                      _upload(title, shoukai);
+                try {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => App()));
+                } catch (e) {}
+                    }
+                
+              },
+              child: const Text('登録'),
+            ),
         ],
       ),
     );
-
-    // Scaffold(
-    //   body: Center(
-    //     child: movie == null ? Text('No image selected.') : Image.file(movie),
-    //   ),
-    //   floatingActionButton: FloatingActionButton(
-    //     onPressed: _getImage,
-    //     child: Icon(Icons.image),
-    //   ),
-    // );
   }
 }
+

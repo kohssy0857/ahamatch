@@ -113,6 +113,9 @@ import '../functions.dart';
 import '../profile/owaraizukiProfile.dart';
 import '../home/home.dart';
 import '../event/convention_list.dart';
+import '../profile/geininProfile.dart';
+// import '../chat/RoomRistPage.dart';
+import '../chat/ChatMane.dart';
 
 class Footer extends StatefulWidget {
   Footer({Key? key}) : super(key: key);
@@ -174,7 +177,9 @@ class _Footer extends State {
       case 1:
         var _pages = <Widget>[
           Home(),
+          geininProfile(),
           Conventions(),
+          ChatMane(),
         ];
         return Scaffold(
             body: _pages[_selectIndex],
@@ -193,12 +198,12 @@ class _Footer extends State {
                   label: "イベント",
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.format_list_numbered_rtl),
-                  label: "ランキング",
-                ),
-                BottomNavigationBarItem(
                   icon: Icon(Icons.chat),
                   label: "チャット",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.format_list_numbered_rtl),
+                  label: "ランキング",
                 ),
               ],
               currentIndex: _selectIndex,

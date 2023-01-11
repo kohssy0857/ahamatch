@@ -1,10 +1,14 @@
+import 'package:ahamatch/home/home.dart';
+import 'package:ahamatch/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:video_player/video_player.dart';
 import 'dart:io';
+import '../parts/MoviePlayerWidget .dart';
 
 class sendSinme extends StatefulWidget {
   @override
@@ -12,48 +16,109 @@ class sendSinme extends StatefulWidget {
 }
 
 class _sendSinmeState extends State<sendSinme> {
+  final user = FirebaseAuth.instance.currentUser;
+  String toukou = "";
+  String bosyuu = "";
+  int secret = 0;
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey();
   // 入力された内容を保持するコントローラ
-  final inputController = TextEditingController();
-  // 表示用の変数
-  String inputText = "最初の表示";
-  // 入力されたときの処理
-  void setText(String s) {
-    setState(() {
-      inputText = s;
+  // final inputController = TextEditingController();
+  VideoPlayerController? MovieController = null;
+
+
+  
+
+  // title,,
+  void _upload(String bosyuu) async {
+
+    String? video;
+    String? documentId;
+    String? unitName;
+
+    final doc = FirebaseFirestore.instance
+        .collection('T05_Toukou').doc();
+
+    final gid = FirebaseFirestore.instance
+        .collection("T01_Person")
+        .doc(user!.uid);
+    // print("gidってなにーー？？");
+    // print(gid);
+
+      await FirebaseFirestore.instance
+        .collection('T02_Geinin').where('T02_GeininId', isEqualTo: gid).get().then(
+      (QuerySnapshot querySnapshot) => {
+          querySnapshot.docs.forEach(
+            (doc) {
+              documentId=doc.id;
+              unitName=doc["T02_UnitName"];
+            },
+          ),
+        });
+        // print("idは本当に入っているのか？？");
+        // print(documentId);
+
+      final id = await FirebaseFirestore.instance
+        .collection("T02_Geinin")
+        .doc(documentId);
+
+
+    // 紹介文、視聴回数は0
+    await doc.set({
+      'T05_Geinin': id,
+      "T05_Create": Timestamp.fromDate(DateTime.now()),
+      "T05_Type": 3,
+      "T05_Toukou": toukou,
+      "T05_Bosyu": bosyuu,
+      "T05_Secret": secret,
+      "T05_UnitName": unitName,
+      "T05_ToukouId": "",
     });
+    print("登録できました");
   }
 
   Widget build(BuildContext context) {
-    return Center(
+    return Form(
+      key: _formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          // Column1
-          Container(
-              alignment: Alignment.center,
-              child: Container(
-                width: 300,
-                height: 100,
-                child: TextField(
-                  enabled: true, //活性or非活性
-                  maxLength: 10, //入力最大文字数
-                  style: TextStyle(color: Colors.red), //入力文字のスタイル
-                  obscureText: false, //trueでマスク（****表記）にする
-                  maxLines: 1, //入力可能行数
-                  controller: inputController,
-                ),
-              )),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: TextFormField(
+                  maxLength: 50,
+                  decoration: const InputDecoration(labelText: "ネタの募集内容"),
+                  onChanged: (value) {
+                    bosyuu = value;
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "必須です";
+                    }
+                    return null;
+                  },
+                )),
           // Column2
-          GestureDetector(
-            onTap: () {
-              setText(inputController.text);
-            },
-            child: Text("入力が終わったら押してみて"),
-          ),
           // Column3
-          Text(inputText),
+          // Text(inputText),
+          ElevatedButton(
+              onPressed: () async {
+                // _tachikame();
+                if (_formKey.currentState!.validate()) {
+                      print("登録完了");
+                      _upload(bosyuu);
+                try {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => App()));
+                } catch (e) {}
+                    }
+                
+              },
+              child: const Text('登録'),
+            ),
         ],
       ),
     );
   }
 }
+
