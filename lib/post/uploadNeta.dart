@@ -1,5 +1,7 @@
+
 import 'package:ahamatch/home/home.dart';
 import 'package:ahamatch/main.dart';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,6 +24,7 @@ class _sendNetaState extends State<sendNeta> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
   // 入力された内容を保持するコントローラ
+
   // final inputController = TextEditingController();
   VideoPlayerController? MovieController = null;
   File? movie = null;
@@ -102,12 +105,14 @@ class _sendNetaState extends State<sendNeta> {
       "T05_UnitName": unitName,
     });
     print("登録できました");
+
   }
 
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Column(
+
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           SizedBox(
@@ -189,6 +194,7 @@ class _sendNetaState extends State<sendNeta> {
               },
               child: const Text('登録'),
             ),
+
         ],
       ),
     );
