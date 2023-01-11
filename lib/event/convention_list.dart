@@ -2,6 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +12,8 @@ import '../parts/header.dart';
 import 'package:flutter/cupertino.dart';
 import '../functions.dart';
 import 'package:provider/provider.dart';
+import 'convention_overview.dart';
+import 'events_list.dart';
 
 class MainModel extends ChangeNotifier {
   // ListView.builderで使うためのBookのList booksを用意しておく。
@@ -41,20 +44,23 @@ class Conventions extends StatelessWidget {
   final docs = FirebaseFirestore.instance
       .collection('T04_Event') // コレクションID
       .doc("cvabc8IsVAGQjYwPv0fR")
-      .collection('T02_Convention').doc();
+      .collection('T02_Convention')
+      .doc();
 
-  Stream<Image> getAvatarUrlForProfile() async* {
-    final ref =
-        FirebaseStorage.instance.ref().child('convention/${docs.id}.jpg');
-        print('ref =${docs.id}');
+  Stream<Image> getAvatarUrlForProfile(
+      List<Convention> events, int index) async* {
+    // final ref =
+    //     FirebaseStorage.instance.ref().child('convention/${docs.id}.jpg');
+    // print('ref =${docs.id}');
     // no need of the file extension, the name will do fine.
-    var url = await ref.getDownloadURL();
-
+    // var url = await ref.getDownloadURL();
+    var url = events[index].url;
+    print('url = ${events[index].url}');
 
     yield Image.network(
       url,
-      height: 300,
-      width: 300,
+      height: 100,
+      width: 100,
     );
   }
 
@@ -70,41 +76,66 @@ class Conventions extends StatelessWidget {
             builder: (context, model, child) {
               final events = model.events;
               return Container(
-                height: 500,
+                // height: 500,
                 padding: EdgeInsets.all(2),
                 // 各アイテムの間にスペースなどを挟みたい場合
                 child: ListView.separated(
-                  itemCount: events.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: <Widget>[
-                        // StreamBuilder(
-                        //   stream: getAvatarUrlForProfile(),
-                        //   builder: (BuildContext context,
-                        //       AsyncSnapshot<dynamic> snapshot) {
-                        //     if (snapshot.connectionState ==
-                        //         ConnectionState.waiting) {
-                        //       return const Text("wait");
-                        //     } else if (snapshot.hasData) {
-                        //       Image photo = snapshot.data!;
-                        //       return photo;
-                        //     } else {
-                        //       return const Text("not photo");
-                        //     }
-                        //   },
-                        // ),
-                        Container(
-                          height: 50,
-                          // color: books[index]['color'],
-                          child: Text(events[index].name),
-                        ),
-                      ],
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider();
-                  },
-                ),
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: <Widget>[
+                          StreamBuilder(
+                            stream: getAvatarUrlForProfile(events, index),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<dynamic> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Text("wait");
+                              } else if (snapshot.hasData) {
+                                Image photo = snapshot.data!;
+                                return photo;
+                              } else {
+                                return const Text("not photo");
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            width: 75.0,
+                          ),
+                          Container(
+                            height: 50,
+                            // color: books[index]['color'],
+                            child: Text(
+                              events[index].name,
+                              // style: TextStyle(fontSize: ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 75.0,
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.info),
+                            onPressed: () {
+                              print('model = ${model}');
+                              print('events = ${events}');
+                              Navigator.push(
+                                  // ボタン押下でオーディション編集画面に遷移する
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ConOverview(events, index)));
+                              // AlertDialog(
+                              //   title: Text('大会名：${}'),);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                  ),
+                
               );
             },
           ),
@@ -115,11 +146,20 @@ class Conventions extends StatelessWidget {
 }
 
 class Convention {
-  // Bookで扱うフィールドを定義しておく。
+  // Conventionで扱うフィールドを定義しておく。
   String name = "";
+  String condition = "";
+  Timestamp schedule = Timestamp(2020, 10);
+  String prize = "";
+  String url = "";
+
   // ドキュメントを扱うDocumentSnapshotを引数にしたコンストラクタを作る
   Convention(DocumentSnapshot doc) {
-    //　ドキュメントの持っているフィールド'title'をこのBookのフィールドtitleに代入
+    //　ドキュメントの持っているフィールド'T05_Name'をこのConventionのフィールドnameに代入
     name = doc['T05_Name'];
+    condition = doc['T01_Conditions'];
+    schedule = doc['T02_Schedule'];
+    prize = doc['T03_Prize'];
+    url = doc['T06_image'];
   }
 }

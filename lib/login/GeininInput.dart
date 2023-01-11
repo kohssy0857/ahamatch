@@ -17,7 +17,6 @@ class GeininInput extends StatefulWidget {
   _GeininInput createState() => _GeininInput();
 }
 
-
 // enum RadioValue { TRUE, FALSE }
 
 class _GeininInput extends State<GeininInput> {
@@ -25,7 +24,8 @@ class _GeininInput extends State<GeininInput> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
 
-  void _upload(String name, List tags, String describe, String production, bool isOn) async {
+  void _upload(String name, List tags, String describe, String production,
+      bool isOn) async {
     final id = await FirebaseFirestore.instance
         .collection("T01_Person")
         .doc(user!.uid);
@@ -68,10 +68,11 @@ class _GeininInput extends State<GeininInput> {
     // RadioValue _gValue = RadioValue.FALSE;
     return Scaffold(
       body: SafeArea(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
+        child: SingleChildScrollView(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
                 padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
                 child: TextFormField(
                   decoration: const InputDecoration(labelText: "ユニット名"),
@@ -85,7 +86,7 @@ class _GeininInput extends State<GeininInput> {
                     return null;
                   },
                 )),
-          Padding(
+            Padding(
                 padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
                 child: TextFormField(
                   decoration: const InputDecoration(labelText: "所属事務所"),
@@ -99,7 +100,7 @@ class _GeininInput extends State<GeininInput> {
                     return null;
                   },
                 )),
-          Padding(
+            Padding(
                 padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
                 child: TextFormField(
                   decoration: const InputDecoration(labelText: "紹介文"),
@@ -113,48 +114,48 @@ class _GeininInput extends State<GeininInput> {
                     return null;
                   },
                 )),
-          // Text('相方(トリオも含む)を募集しますか？'),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //   children: [
-          //     Row(
-          //       children: [
-          //         RadioListTile(
-          //           value: RadioValue.TRUE,
-          //           groupValue: _gValue,
-          //           onChanged: (value){
-          //             isOn = true;
-          //           },
-          //         ),
-          //         Text('はい'),
-          //       ],
-          //     ),
-          //     Row(
-          //       children: [
-          //         RadioListTile(
-          //           value: RadioValue.FALSE,
-          //           groupValue: _gValue,
-          //           onChanged: (value) {
-          //             isOn = false;
-          //           },
-          //         ),
-          //         Text('いいえ'),
-          //       ],
-          //     ),
-          //   ],
-          // ),
-          SwitchListTile(
-            title: const Text('相方募集中'),
-            value: isOn,
-            onChanged: (bool? value) {
-              if (value != null) {
-                setState(() {
-                  isOn = value;
-                });
-              }
-            },
-          ),
-          Padding(
+            // Text('相方(トリオも含む)を募集しますか？'),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //   children: [
+            //     Row(
+            //       children: [
+            //         RadioListTile(
+            //           value: RadioValue.TRUE,
+            //           groupValue: _gValue,
+            //           onChanged: (value){
+            //             isOn = true;
+            //           },
+            //         ),
+            //         Text('はい'),
+            //       ],
+            //     ),
+            //     Row(
+            //       children: [
+            //         RadioListTile(
+            //           value: RadioValue.FALSE,
+            //           groupValue: _gValue,
+            //           onChanged: (value) {
+            //             isOn = false;
+            //           },
+            //         ),
+            //         Text('いいえ'),
+            //       ],
+            //     ),
+            //   ],
+            // ),
+            SwitchListTile(
+              title: const Text('相方募集中'),
+              value: isOn,
+              onChanged: (bool? value) {
+                if (value != null) {
+                  setState(() {
+                    isOn = value;
+                  });
+                }
+              },
+            ),
+            Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
                   decoration: const InputDecoration(labelText: "タグ1"),
@@ -168,7 +169,7 @@ class _GeininInput extends State<GeininInput> {
                     return null;
                   },
                 )),
-          Padding(
+            Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
                   decoration: const InputDecoration(labelText: "タグ2"),
@@ -176,7 +177,7 @@ class _GeininInput extends State<GeininInput> {
                     tag2 = value;
                   },
                 )),
-          Padding(
+            Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
                   decoration: const InputDecoration(labelText: "タグ3"),
@@ -184,7 +185,7 @@ class _GeininInput extends State<GeininInput> {
                     tag3 = value;
                   },
                 )),
-          Padding(
+            Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
                   decoration: const InputDecoration(labelText: "タグ4"),
@@ -192,7 +193,7 @@ class _GeininInput extends State<GeininInput> {
                     tag4 = value;
                   },
                 )),
-          Padding(
+            Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
                   decoration: const InputDecoration(labelText: "タグ5"),
@@ -200,9 +201,9 @@ class _GeininInput extends State<GeininInput> {
                     tag5 = value;
                   },
                 )),
-          ElevatedButton(
+            ElevatedButton(
               onPressed: () async {
-                tags.addAll([tag1,tag2,tag3,tag4,tag5]);
+                tags.addAll([tag1, tag2, tag3, tag4, tag5]);
                 _upload(name, tags, describe, production, isOn);
                 try {
                   Navigator.push(
@@ -210,9 +211,10 @@ class _GeininInput extends State<GeininInput> {
                 } catch (e) {}
               },
               child: const Text('登録'),
-            ), 
-        ],
-      )),
+            ),
+          ],
+        )),
+      ),
     );
   }
 }

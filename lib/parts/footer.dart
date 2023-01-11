@@ -113,6 +113,7 @@ import '../functions.dart';
 import '../profile/owaraizukiProfile.dart';
 import '../home/home.dart';
 import '../event/convention_list.dart';
+import '../event/events_list.dart';
 
 class Footer extends StatefulWidget {
   Footer({Key? key}) : super(key: key);
@@ -143,7 +144,7 @@ class _Footer extends State {
     // 取得した@、#、-でボタンの数を分ける
     switch (nameid) {
       case 2:
-        var _pages = <Widget>[Home(), owaraizukiProfile()];
+        var _pages = <Widget>[Home(), owaraizukiProfile(),Conventions()];
         return Scaffold(
             body: _pages[_selectIndex],
             bottomNavigationBar: BottomNavigationBar(
@@ -174,7 +175,7 @@ class _Footer extends State {
       case 1:
         var _pages = <Widget>[
           Home(),
-          Conventions(),
+          Events(),
         ];
         return Scaffold(
             body: _pages[_selectIndex],
