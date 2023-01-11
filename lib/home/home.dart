@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,9 +11,29 @@ import '../parts/footer.dart';
 import '../parts/header.dart';
 
 import '../functions.dart';
+import '../parts/MoviePlayerWidget .dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
-class Home extends StatelessWidget {
+// 
+import '../homeTab/shinmeTab.dart';
+import '../homeTab/netaTab.dart';
+import '../homeTab/announceTab.dart';
+// void senddNeta() {}
+
+class Home extends StatefulWidget {
+  Home({Key? key}) : super(key: key);
+  // Home(){
+  // }
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   User? user = FirebaseAuth.instance.currentUser;
+  List<String> videoUrls = [];
+  // ドキュメント情報を入れる箱を用意
+  List documentList = [];
+  List toukouList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +41,31 @@ class Home extends StatelessWidget {
       case 1:
         return Scaffold(
           appBar: const Header(),
-          body: Center(
-            // ユーザー情報を表示
-            child: Text('ログイン情報：${user!.displayName}=====1==up'),
-          ),
-          floatingActionButton: FloatingActionButton(
+          body: SafeArea(
+                child: DefaultTabController(
+                    length: 3,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children:  [
+                          Center(
+                            child: Text("芸人ログイン情報:${user!.displayName}")
+                          ),
+                          TabBar(
+                              labelColor: Colors.blue,
+                              unselectedLabelColor: Colors.black12,
+                              tabs: [Tab(text: "ネタ"), Tab(text: "新芽"),Tab(text: "告知")]),
+                          Expanded(
+                              child: TabBarView(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  children: <Widget>[
+                                netaResult(),
+                                ShinmeResult(),
+                                AnnounceResult(),
+                                // Center(child: Text("RIGHT"))
+                              ])
+                              )
+                        ]))),
+            floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () async {
               // await FirebaseAuth.instance.signOut();
@@ -38,10 +79,70 @@ class Home extends StatelessWidget {
       case 2:
         return Scaffold(
           appBar: const Header(),
-          body: Center(
-            // ユーザー情報を表示
-            child: Text('ログイン情報：${user!.displayName}====2'),
-          ),
+          body: 
+          SafeArea(
+                child: DefaultTabController(
+                    length: 3,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children:  [
+                          Center(
+                            child: Text("ログイン情報:${user!.displayName}")
+                          ),
+                          TabBar(
+                              labelColor: Colors.blue,
+                              unselectedLabelColor: Colors.black12,
+                              tabs: [Tab(text: "ネタ"), Tab(text: "新芽"),Tab(text: "告知")]),
+                          Expanded(
+                              child: TabBarView(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  children: <Widget>[
+                                netaResult(),
+                                ShinmeResult(),
+                                AnnounceResult(),
+                                // Center(child: Text("RIGHT"))
+                              ]))
+                        ]))),
+          // ユーザー情報を表示
+          // Center(child: Text('ログイン情報：${user!.displayName}====2'),),
+          // StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          //           if(snapshot.connectionState == ConnectionState.waiting){
+          //             return const Text("no photo");
+          //           }else if (snapshot.hasData){
+          //             List photo = snapshot.data!;
+          //                 return Column(
+          //                   children: [
+          //                     Text("ログイン情報:${user!.displayName}"),
+          //                     Expanded(
+          //                         child:SizedBox(
+          //                             height: 250,
+          //                               width: 250,
+          //                             child: ListView.builder(
+          //                               shrinkWrap: true,
+          //                             // padding: EdgeInsets.all(250),
+          //                           itemCount: videoUrls.length,
+          //                           itemBuilder: (context, index){
+          //                             return SizedBox(
+          //                               height: 500,
+          //                               width: 250,
+          //                               child: MoviePlayerWidget(photo[index]),
+          //                             );
+          //                           }
+          //                             )
+          //                         )
+          //                 ),
+          //                   ],
+          //                 );
+          //           } else {
+          //             return Column(
+          //               children: [
+          //                 Text("ログイン情報:${user!.displayName}"),
+          //                 Text("芸人をフォローしてください"),
+          //               ],
+          //             );
+          //             // return const Text("not photo");
+          //           }
+          //           },),
 
           floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),

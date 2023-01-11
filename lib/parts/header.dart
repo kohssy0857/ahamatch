@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../home/SearchResult.dart';
+import 'Notification.dart';
 
 class Header extends StatefulWidget with PreferredSizeWidget {
   const Header({
@@ -51,17 +53,22 @@ class _Header extends State<Header> {
         }
       },
     );
-    return AppBar(
+    return 
+    AppBar(
         title: !_searchBoolean ? const Text('アハマッチ!') : searchTextField(),
         actions: !_searchBoolean
             ? [
                 IconButton(
                     icon: const Icon(Icons.search),
-                    onPressed: () {
-                      setState(() {
-                        _searchBoolean = true;
-                      });
-                    }),
+                    onPressed: () async {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => SearchResultMane()));},
+                    // onPressed: () {
+                    //   setState(() {
+                    //     _searchBoolean = true;
+                    //   });
+                    // }
+                    ),
                 TextButton.icon(
                   icon: const Icon(Icons.monetization_on),
                   label: Text(_coin),
@@ -72,8 +79,11 @@ class _Header extends State<Header> {
                 ),
                 IconButton(
                     icon: const Icon(Icons.notifications),
-                    onPressed: () {
-                      setState(() {});
+                    onPressed: () async {
+                      // await Navigator.push(
+                      //               // ボタン押下でオーディション編集画面に遷移する
+                      //                 context, MaterialPageRoute(builder: (context) => NotificationMane()));
+                      // setState(() {});
                     }),
                 IconButton(
                   icon: const Icon(Icons.logout),
