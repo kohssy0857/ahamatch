@@ -49,7 +49,9 @@ class _GeininInput extends State<GeininInput> {
       "T02_describe": describe,
       'T02_Create': Timestamp.fromDate(DateTime.now()),
       "T02_production": production,
+      "T02_Follower": 0,
     });
+    
   }
 
   String name = "";

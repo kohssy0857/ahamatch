@@ -1,4 +1,7 @@
 import 'package:ahamatch/home/home.dart';
+
+import 'package:ahamatch/main.dart';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,12 +39,14 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
           imageFile = File(pickerFile.path);
           MovieController = await VideoPlayerController.file(imageFile!)
       ..initialize().then((_) async {
-        print("444444444444444444444444444444${MovieController!.value}");
+
+        // print("444444444444444444444444444444${MovieController!.value}");
         setState(() {});
-        print("dddddddddddddddddddddddddddddddddddddddddddddddd" +
-            MovieController.toString());
+        // print("dddddddddddddddddddddddddddddddddddddddddddddddd" +
+        //     MovieController.toString());
         await MovieController?.play();
-        print("00000000000000000000000");
+        // print("00000000000000000000000");
+
       });
         }
   }
@@ -53,15 +58,16 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
     String? video;
     String? documentId;
 
+    String? unitName;
+
     final doc = FirebaseFirestore.instance
-        .collection('T05_Toukou').doc("88W9CMnDSghnz6AKZMsi").collection("otameshi").doc();
+        .collection('T05_Toukou').doc();
+
 
     final gid = FirebaseFirestore.instance
         .collection("T01_Person")
         .doc(user!.uid);
-    print("gidってなにーー？？");
-    print(gid);
-    print(gid.runtimeType);
+
 
       await FirebaseFirestore.instance
         .collection('T02_Geinin').where('T02_GeininId', isEqualTo: gid).get().then(
@@ -69,6 +75,9 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
           querySnapshot.docs.forEach(
             (doc) {
               documentId=doc.id;
+
+              unitName=doc["T02_UnitName"];
+
             },
           ),
         });
@@ -96,6 +105,9 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
       "T05_Type": 2,
       "T05_Shoukai": shoukai,
       "T05_ShityouKaisu": 0,
+
+      "T05_UnitName": unitName,
+
     });
     print("登録できました");
   }
@@ -132,7 +144,9 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
                     await pickImage();
                     
                   },
-                  child: Text('動画を選択'),
+
+                  child: Text('アハプチ動画を選択'),
+
                 ),
             ),
               ),
@@ -141,6 +155,9 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
+
+                  maxLength: 50,
+
                   decoration: const InputDecoration(labelText: "動画タイトル"),
                   onChanged: (value) {
                     title = value;
@@ -155,6 +172,9 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
+
+                  maxLength: 50,
+
                   decoration: const InputDecoration(labelText: "紹介文"),
                   onChanged: (value) {
                     shoukai = value;
@@ -172,11 +192,17 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
           ElevatedButton(
               onPressed: () async {
                 // _tachikame();
-                _upload(title, shoukai);
+
+                if (_formKey.currentState!.validate() && imageFile != null) {
+                      print("登録完了");
+                      _upload(title, shoukai);
                 try {
                   Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => Home()));
+                      context, MaterialPageRoute(builder: (context) => App()));
                 } catch (e) {}
+                    }
+                
+
               },
               child: const Text('登録'),
             ),

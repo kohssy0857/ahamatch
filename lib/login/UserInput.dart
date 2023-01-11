@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'GeininInput.dart';
 import '../login/login.dart';
+import 'loginFollow.dart';
 
 class UserInput extends StatefulWidget {
   const UserInput({Key? key}) : super(key: key);
@@ -136,10 +137,10 @@ class _UserInput extends State<UserInput> {
                 try {
                   if (isSelectedItem == 1) {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => GeininInput()));
+                        MaterialPageRoute(builder: (context) => loginFollowMane()));
                   } else {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => App()));
+                        MaterialPageRoute(builder: (context) => loginFollowMane()));
                   }
                 } catch (e) {}
               },
