@@ -87,7 +87,7 @@ class _searchNetaState extends State<searchNeta> {
                                       return SizedBox(
                                         height: 500,
                                         width: 250,
-                                        child: MoviePlayerWidget(photo[index]),
+                                        // child: MoviePlayerWidget(photo[index]),
                                       );
                                     }
                                       )
