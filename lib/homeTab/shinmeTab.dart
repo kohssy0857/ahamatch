@@ -45,7 +45,8 @@ class _ShinmeResultState extends State<ShinmeResult> {
     then((QuerySnapshot snapshot) {
    snapshot.docs.forEach((doc) {
     if(doc["T05_Type"]==3){
-      toukouDocId.add(doc.id);
+      if(toukouDocId.contains(doc.id)==false){
+        toukouDocId.add(doc.id);
       bosyuList.add(doc["T05_Bosyu"]);
       unitNameList.add(doc["T05_UnitName"]);
       shinmeToukouList.add(doc["T05_Toukou"]);
@@ -54,6 +55,7 @@ class _ShinmeResultState extends State<ShinmeResult> {
       // print(doc["T05_ToukouId"]);
       // print(user!.uid);
       toukousyaId.add(doc["T05_ToukouId"]);
+      }
     }
    });
 });
@@ -87,9 +89,8 @@ class _ShinmeResultState extends State<ShinmeResult> {
                                           ElevatedButton(
                                               onPressed: () async {
                                                 final result = await DialogUtils.showEditingDialog(context, shinmeToukouList[index],toukouDocId[index]);
-                                                setState(() {
-                                                  shinmeToukouList[index] = result ?? shinmeToukouList[index];
-                                                });
+                                                // setState(() {
+                                                // });
                                               },
                                               child: Card(
                                           child: ListTile(
@@ -166,6 +167,7 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
   final user = FirebaseAuth.instance.currentUser;
   final controller = TextEditingController();
   final focusNode = FocusNode();
+  final formKey = GlobalKey<FormState>();
   @override
   void dispose() {
     controller.dispose();
@@ -205,21 +207,39 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: TextFormField(
-        autofocus: true, // ダイアログが開いたときに自動でフォーカスを当てる
-        focusNode: focusNode,
-        controller: controller,
-        onFieldSubmitted: (_) {
-          // エンターを押したときに実行される
-          Navigator.of(context).pop(controller.text);
-        },
-        
-      ),
+      content: 
+      Form(
+            key: formKey,
+            child: 
+                TextFormField(
+                  autofocus: true, // ダイアログが開いたときに自動でフォーカスを当てる
+                  focusNode: focusNode,
+                  controller: controller,
+                  onFieldSubmitted: (_) {
+                    // エンターを押したときに実行される
+                    Navigator.of(context).pop(controller.text);
+                  },
+                  validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '入力されていません';
+                        }
+                        return null;
+                      },
+                ),
+            ),
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(controller.text);
-            ShinmeToukou(controller.text,widget.id);
+            Navigator.pop(context);
+          },
+          child: const Text('キャンセル'),
+        ),
+        TextButton(
+          onPressed: () {
+            if (formKey.currentState!.validate()){
+                Navigator.of(context).pop(controller.text);
+                ShinmeToukou(controller.text,widget.id);
+            }
           },
           child: const Text('完了'),
         )

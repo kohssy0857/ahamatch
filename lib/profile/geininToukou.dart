@@ -24,77 +24,76 @@ import 'dart:ui' as ui;
 
 
 
-class mylist extends StatefulWidget {
-  mylist({Key? key}) : super(key: key);
+class geininToukou extends StatefulWidget {
+  geininToukou({Key? key}) : super(key: key);
   // Home(){
   // }
   @override
-  _mylistState createState() => _mylistState();
+  _geininToukouState createState() => _geininToukouState();
 }
 
-class _mylistState extends State<mylist> {
+class _geininToukouState extends State<geininToukou> {
   User? user = FirebaseAuth.instance.currentUser;
   List<String> videoThumbnails = [];
   List<String> videoUrls = [];
   List<String> videoId = [];
-  List<String> videoTitle = [];
   // ドキュメント情報を入れる箱を用意
   String documentId = "";
-  int count = 0;
+  List<String> videoTitle = [];
 
   @override
   // void initState() {
-  //     setState(() {
-  //       getVideo();
-  //     });
-  //     super.initState();
+  //   // getVideo();
+  //   setState(() {});
+  //   // super.initState();
   // }
 
+
   Stream<List> getVideo() async* {
-    await FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid).collection("mylist").get()
-    .then(
+    final gid = FirebaseFirestore.instance
+        .collection("T01_Person")
+        .doc(user!.uid);
+      await FirebaseFirestore.instance
+        .collection('T02_Geinin').where('T02_GeininId', isEqualTo: gid).get().then(
       (QuerySnapshot querySnapshot) => {
-        if(querySnapshot.docs.isNotEmpty){
           querySnapshot.docs.forEach(
-            (doc) async {
-              // リアルタイムでfirebaseFirestoreからデータをもってくる
-              //  print("あいだーーーーーーーーーーーーーーー11111111");
-              FirebaseFirestore.instance.collection('T05_Toukou').doc(doc["movieId"]).snapshots().listen((DocumentSnapshot snapshot) {
-              // print("あいだーーーーーーーーーーーーーーー2222");
-              if(videoThumbnails.contains(snapshot.get('T05_Thumbnail'))==false){
-                videoThumbnails.add(snapshot.get('T05_Thumbnail'));
-                videoTitle.add(snapshot.get('T05_Title'));
-                videoId.add(snapshot.id);
-                print("サムネどこーーーーーーーーーーー");
-                print(videoThumbnails);
-              }
-              });
+            (doc) {
+              documentId=doc.id;
             },
           ),
-        }
         });
-        // print("サムネどこーーーーーーーーーーー");
-        // print(videoThumbnails);
-        
-        print("カウントーーーーーーーーーーーーー");
-        print(count);
-          if(videoThumbnails.length==0 && count<5){
-          setState(() {
-            count+=1;
-          });
-        }print("カウントーーーーーーーーーーーーー222222");
-        print(videoId);
-    yield videoThumbnails;
-}
 
-// @override
-//   void initState() {
-//     data = getVideo();
-//     super.initState();
-//   }
+    final geininId = await FirebaseFirestore.instance
+        .collection("T02_Geinin")
+        .doc(documentId);
+
+      await FirebaseFirestore.instance.collection('T05_Toukou').where("T05_Geinin", isEqualTo: geininId).get().
+          then((QuerySnapshot snapshot) {
+        snapshot.docs.forEach((doc) {
+          if(doc["T05_Type"]==1){
+            if(videoThumbnails.contains(doc["T05_Thumbnail"])==false){
+            videoThumbnails.add(doc["T05_Thumbnail"]);
+            // print("サムネどこーーーーーーーーーーー");
+            // print(videoThumbnails);
+            videoUrls.add(doc["T05_VideoUrl"]);
+            videoId.add(doc.id);
+            videoTitle.add(doc["T05_Title"]);
+            }
+          }
+        });
+      });
+    //   print("サムネイルーーーーーーーーーーーー");
+    //   print(videoUrls);
+      //     final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc("NVtS0y9o3JB0zjUwLPvv").get();
+      //     videoUrls.add(ref.data()!["T05_Thumbnail"]);
+      print("サムネイルーーーーーーーーーーーー");
+      print(videoUrls);
+          yield videoThumbnails;
+}
 
   @override
   Widget build(BuildContext context) {
+    // initState();
         return 
           StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting){
@@ -146,7 +145,8 @@ class _mylistState extends State<mylist> {
                     } else {
                       return Column(
                         children: [
-                          Text("ネタ動画をマイリストに追加してください"),
+                          Text("ログイン情報:${user!.displayName}"),
+                          Text("芸人をフォローしてください"),
                         ],
                       );
                       // return const Text("not photo");

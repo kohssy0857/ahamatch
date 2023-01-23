@@ -95,12 +95,6 @@ class _GeininInput extends State<GeininInput> {
                   onChanged: (value) {
                     production = value;
                   },
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "必須です";
-                    }
-                    return null;
-                  },
                 )),
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
@@ -205,12 +199,14 @@ class _GeininInput extends State<GeininInput> {
                 )),
             ElevatedButton(
               onPressed: () async {
-                tags.addAll([tag1, tag2, tag3, tag4, tag5]);
-                _upload(name, tags, describe, production, isOn);
-                try {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => App()));
-                } catch (e) {}
+                if(_formKey.currentState!.validate()){
+                  tags.addAll([tag1, tag2, tag3, tag4, tag5]);
+                  _upload(name, tags, describe, production, isOn);
+                  try {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => App()));
+                  } catch (e) {}
+                }
               },
               child: const Text('登録'),
             ),
