@@ -4,9 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../home/SearchResult.dart';
 import 'Notification.dart';
+
+import 'Search.dart';
+
 import 'Billing.dart';
+
 
 class Header extends StatefulWidget with PreferredSizeWidget {
   const Header({
@@ -35,6 +38,7 @@ class _Header extends State<Header> {
 
   String _coin = "";
   int i = 0;
+  final _editController = TextEditingController();
   // final docs = FirebaseFirestore.instance.collection('T01_Person').doc(FirebaseAuth.instance.currentUser!.uid).get();
   //final coin = fetchCoin();
 
@@ -59,19 +63,18 @@ class _Header extends State<Header> {
         actions: !_searchBoolean
             ? [
                 IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SearchResultMane()));
-                  },
-                  // onPressed: () {
-                  //   setState(() {
-                  //     _searchBoolean = true;
-                  //   });
-                  // }
-                ),
+
+                    icon: const Icon(Icons.search),
+                  //   onPressed: () async {
+                  // Navigator.push(
+                  //     context, MaterialPageRoute(builder: (context) => SearchResultMane()));},
+                    onPressed: () {
+                      setState(() {
+                        _searchBoolean = true;
+                      });
+                    }
+                    ),
+
                 TextButton.icon(
                   icon: const Icon(Icons.monetization_on),
                   label: Text(_coin),
@@ -122,15 +125,23 @@ class _Header extends State<Header> {
 
   Widget searchTextField() {
     //検索バーの見た目
-    return const TextField(
+    return TextField(
       autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
       cursorColor: Colors.white, //カーソルの色
+      controller: _editController,
       style: TextStyle(
         //テキストのスタイル
         color: Colors.white,
         fontSize: 20,
       ),
       textInputAction: TextInputAction.search, //キーボードのアクションボタンを指定
+      onSubmitted: ((value) {
+        Navigator.push(context,
+          MaterialPageRoute(builder: (context) => 
+          // SearchResult(_editController.text)
+          SearchResult(_editController.text)
+          ,));
+      }),
       decoration: InputDecoration(
         //TextFiledのスタイル
         enabledBorder: UnderlineInputBorder(

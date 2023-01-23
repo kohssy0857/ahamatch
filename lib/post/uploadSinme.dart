@@ -114,7 +114,7 @@ class _sendSinmeState extends State<sendSinme> {
                     }
                 
               },
-              child: const Text('登録'),
+              child: const Text('投稿'),
             ),
         ],
       ),

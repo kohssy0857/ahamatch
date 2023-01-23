@@ -145,7 +145,7 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
                     
                   },
 
-                  child: Text('アハプチ動画を選択'),
+                  child: Text('アハプッチ動画を選択'),
 
                 ),
             ),
@@ -200,11 +200,17 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => App()));
                 } catch (e) {}
-                    }
+                } else if (imageFile == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('アハプッチ動画を選択してください'),
+                  ),
+                );
+              }
                 
 
               },
-              child: const Text('登録'),
+              child: const Text('投稿'),
             ),
         ],
       ),

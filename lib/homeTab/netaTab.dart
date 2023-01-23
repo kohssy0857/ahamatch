@@ -64,7 +64,16 @@ class _netaResultState extends State<netaResult> {
 //       yield videoUrls;
 //       }
 
-    // -------------------------------------------------
+      // 取得した動画URLのリストを
+          // var url = await ref.getDownloadURL();
+          // videoUrls.add(ref.toString());
+          
+          final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc("NVtS0y9o3JB0zjUwLPvv").get();
+          // print(ref.data()!["T05_VideoUrl"]);
+          videoUrls.add(ref.data()!["T05_VideoUrl"]);
+          yield videoUrls;
+}
+
 
     // 取得した動画URLのリストを
     // var url = await ref.getDownloadURL();
@@ -81,58 +90,64 @@ class _netaResultState extends State<netaResult> {
 
   @override
   Widget build(BuildContext context) {
-    return
-        // Text("Left"),
-        StreamBuilder(
-      stream: getVideo(),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("ネタないよ");
-        } else if (snapshot.hasData) {
-          List photo = snapshot.data!;
-          return Column(
-            children: [
-              Text("ログイン情報:${user!.displayName}"),
-              Expanded(
-                  child: SizedBox(
-                      height: 250,
-                      width: 250,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          // padding: EdgeInsets.all(250),
-                          itemCount: videoUrls.length,
-                          itemBuilder: (context, index) {
-                            return SizedBox(
-                                height: 500,
-                                width: 250,
-                                child: MoviePlayerWidget(
-                                    photo[index], "NVtS0y9o3JB0zjUwLPvv")
-                                // ElevatedButton(
-                                //   onPressed: () async {
-                                //     try {
-                                //       await Navigator.of(context).pushReplacement(
-                                //           MaterialPageRoute(builder: (context) {
-                                //             return FullscreenVideo();
-                                //           }),
-                                //         );
-                                //     } catch (e) {}
-                                //   }, child: Text("遷移"),
-                                // ),
-                                );
-                          }))),
-            ],
-          );
-        } else {
-          return Column(
-            children: [
-              Text("ログイン情報:${user!.displayName}"),
-              Text("芸人をフォローしてください"),
-            ],
-          );
-          // return const Text("not photo");
-        }
-      },
-    );
-    // bottomNavigationBar: Footer(),
+
+        return 
+          // Text("Left"),
+          StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    if(snapshot.connectionState == ConnectionState.waiting){
+                      return const Text("ネタないよ");
+                    }else if (snapshot.hasData){
+                      List photo = snapshot.data!;
+          print(snapshot);
+                          return Column(
+                            children: [
+                              Text("ログイン情報:${user!.displayName}"),
+                              Expanded(
+                                  child:SizedBox(
+                                      height: 250,
+                                        width: 250,
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                      // padding: EdgeInsets.all(250),
+                                    itemCount: videoUrls.length,
+                                    itemBuilder: (context, index){
+                                      return SizedBox(
+                                        height: 500,
+                                        width: 250,
+                                        child: 
+                                        MoviePlayerWidget(photo[index],"NVtS0y9o3JB0zjUwLPvv")
+                                        // ElevatedButton(
+                                        //   onPressed: () async {
+                                        //     try {
+                                        //       await Navigator.of(context).pushReplacement(
+                                        //           MaterialPageRoute(builder: (context) {
+                                        //             return FullscreenVideo();
+                                        //           }),
+                                        //         );
+                                        //     } catch (e) {}
+                                        //   }, child: Text("遷移"),
+                                        // ),
+                                      );
+                                    }
+                                      )
+                                  )
+                          ),
+                            ],
+                          );
+                    } else {
+                      return Column(
+                        children: [
+                          Text("ログイン情報:${user!.displayName}"),
+                          Text("芸人をフォローしてください"),
+                        ],
+                      );
+                      // return const Text("not photo");
+                    }
+                    },
+                );
+          // bottomNavigationBar: Footer(),
+        
+    }
+
   }
 }
