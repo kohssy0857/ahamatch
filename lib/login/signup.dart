@@ -24,7 +24,6 @@ class _RegisterState extends State<Register> {
         appBar: AppBar(
           title: const Text('新規登録'),
         ),
-        key: _formKey,
         body: Form(
           key: _formKey,
           child: Column(
