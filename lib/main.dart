@@ -171,7 +171,6 @@ class App extends StatelessWidget {
               // );
               // ユーザーの詳細情報が入力されていないなら
               if (user!.photoURL == null) {
-                print(2);
                 // ユーザー情報入力ページへ
                 return const UserInput();
                 // ないなら
