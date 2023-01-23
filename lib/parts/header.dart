@@ -22,15 +22,15 @@ class Header extends StatefulWidget with PreferredSizeWidget {
 class _Header extends State<Header> {
   bool _searchBoolean = false;
   final User? user = FirebaseAuth.instance.currentUser;
-  Future<String> fetchCoin() async {
-    final docs = await FirebaseFirestore.instance
-        .collection('T01_Person')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-    final data = docs.exists ? docs.data() : null;
-    print('out = ' + data!['T01_AhaCoin'].toString());
-    return data['T01_AhaCoin'].toString();
-  }
+  // Future<String> fetchCoin() async {
+  //   final docs = await FirebaseFirestore.instance
+  //       .collection('T01_Person')
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .get();
+  //   final data = docs.exists ? docs.data() : null;
+  //   print('out = ' + data!['T01_AhaCoin'].toString());
+  //   return data['T01_AhaCoin'].toString();
+  // }
 
   String _coin = "";
   int i = 0;
@@ -41,18 +41,18 @@ class _Header extends State<Header> {
   Widget build(BuildContext context) {
     // final docSnapshot = FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).get();
 
-    fetchCoin().then(
-      (value) {
-        print(value);
-        // _coin = value.toString();
-        if (i == 0) {
-          setState(() {
-            _coin = value.toString();
-            i++;
-          });
-        }
-      },
-    );
+    // fetchCoin().then(
+    //   (value) {
+    //     print(value);
+    //     // _coin = value.toString();
+    //     if (i == 0) {
+    //       setState(() {
+    //         _coin = value.toString();
+    //         i++;
+    //       });
+    //     }
+    //   },
+    // );
     return 
     AppBar(
         title: !_searchBoolean ? const Text('アハマッチ!') : searchTextField(),

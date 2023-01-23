@@ -18,6 +18,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../homeTab/shinmeTab.dart';
 import '../homeTab/netaTab.dart';
 import '../homeTab/announceTab.dart';
+import '../homeTab/ahapuchiTab.dart';
 // void senddNeta() {}
 
 class Home extends StatefulWidget {
@@ -43,7 +44,7 @@ class _HomeState extends State<Home> {
           appBar: const Header(),
           body: SafeArea(
                 child: DefaultTabController(
-                    length: 3,
+                    length: 4,
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children:  [
@@ -53,12 +54,13 @@ class _HomeState extends State<Home> {
                           TabBar(
                               labelColor: Colors.blue,
                               unselectedLabelColor: Colors.black12,
-                              tabs: [Tab(text: "ネタ"), Tab(text: "新芽"),Tab(text: "告知")]),
+                              tabs: [Tab(text: "ネタ"),Tab(text: "アハプチ"), Tab(text: "新芽"),Tab(text: "告知")]),
                           Expanded(
                               child: TabBarView(
                                   physics: NeverScrollableScrollPhysics(),
                                   children: <Widget>[
                                 netaResult(),
+                                ahapuchiResult(),
                                 ShinmeResult(),
                                 AnnounceResult(),
                                 // Center(child: Text("RIGHT"))
@@ -82,7 +84,7 @@ class _HomeState extends State<Home> {
           body: 
           SafeArea(
                 child: DefaultTabController(
-                    length: 3,
+                    length: 4,
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children:  [
@@ -92,17 +94,21 @@ class _HomeState extends State<Home> {
                           TabBar(
                               labelColor: Colors.blue,
                               unselectedLabelColor: Colors.black12,
-                              tabs: [Tab(text: "ネタ"), Tab(text: "新芽"),Tab(text: "告知")]),
+                              tabs: [Tab(text: "ネタ"),Tab(text: "アハプチ"), Tab(text: "新芽"),Tab(text: "告知")]),
                           Expanded(
                               child: TabBarView(
                                   physics: NeverScrollableScrollPhysics(),
                                   children: <Widget>[
                                 netaResult(),
+                                ahapuchiResult(),
                                 ShinmeResult(),
                                 AnnounceResult(),
                                 // Center(child: Text("RIGHT"))
                               ]))
-                        ]))),
+                        ]
+                        )
+                        )
+                        ),
           // ユーザー情報を表示
           // Center(child: Text('ログイン情報：${user!.displayName}====2'),),
           // StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

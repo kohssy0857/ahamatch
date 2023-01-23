@@ -131,7 +131,32 @@ class _Footer extends State {
   // var user_Q = FirebaseFirestore.instance
   //     .collection('T01_Person')
   //     .where('T01_AuthId', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
+  User? user = FirebaseAuth.instance.currentUser;
   var _selectIndex = 0;
+  String shoukai = "";
+  String documentId = "";
+
+  void aikataEdit() async{
+    final userGid =await FirebaseFirestore.instance
+        .collection("T01_Person")
+        .doc(user!.uid).get();
+
+    final gid = FirebaseFirestore.instance
+        .collection("T01_Person")
+        .doc(user!.uid);
+    // T02_Geininの自分のdocumentIdを取得
+    await FirebaseFirestore.instance
+        .collection('T02_Geinin').where('T02_GeininId', isEqualTo: gid).get().then(
+      (QuerySnapshot querySnapshot) => {
+          querySnapshot.docs.forEach(
+            (doc) {
+              documentId=doc.id;
+            },
+          ),
+        });
+    final ref = await FirebaseFirestore.instance.collection('T02_Geinin').doc(documentId).get();
+    shoukai = ref.data()!["T02_describe"];
+  }
 
   // BottomNavigationBarで画面遷移先の一覧
   @override
@@ -179,10 +204,11 @@ class _Footer extends State {
 
         break;
       case 1:
+      aikataEdit();
         var _pages = <Widget>[
           Home(),
 
-          geininProfile(),
+          geininProfile(shoukai),
           Events(),
           ChatMane(),
 
