@@ -14,7 +14,7 @@ import '../functions.dart';
 import '../parts/MoviePlayerWidget .dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-// 
+//
 import '../homeTab/shinmeTab.dart';
 import '../parts/FullscreenVideo.dart';
 // void senddNeta() {}
@@ -35,7 +35,6 @@ class _netaResultState extends State<netaResult> {
   List toukouList = [];
 
   Stream<List> getVideo() async* {
-
     // ---------------------------------------------------------------
 //       final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
 //       // 自身がフォローしている相手のidを取得
@@ -46,7 +45,7 @@ class _netaResultState extends State<netaResult> {
 //      documentList.add(doc.get('T05_GeininId'));
 //    });
 //   }
-   
+
 // });
 
 //       if(documentList.isNotEmpty==true){
@@ -62,11 +61,8 @@ class _netaResultState extends State<netaResult> {
 
 //       final all = await  FirebaseStorage.instance.ref().child('post/neta/').listAll();
 
-      
 //       yield videoUrls;
 //       }
-      
-      // -------------------------------------------------
 
       // 取得した動画URLのリストを
           // var url = await ref.getDownloadURL();
@@ -79,9 +75,22 @@ class _netaResultState extends State<netaResult> {
 }
 
 
+    // 取得した動画URLのリストを
+    // var url = await ref.getDownloadURL();
+    // videoUrls.add(ref.toString());
+
+    final ref = await FirebaseFirestore.instance
+        .collection('T05_Toukou')
+        .doc("NVtS0y9o3JB0zjUwLPvv")
+        .get();
+    // print(ref.data()!["T05_VideoUrl"]);
+    videoUrls.add(ref.data()!["T05_VideoUrl"]);
+    yield videoUrls;
+  }
 
   @override
   Widget build(BuildContext context) {
+
         return 
           // Text("Left"),
           StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -139,5 +148,6 @@ class _netaResultState extends State<netaResult> {
           // bottomNavigationBar: Footer(),
         
     }
-  }
 
+  }
+}

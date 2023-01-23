@@ -5,7 +5,11 @@ import '../firebase_options.dart';
 import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Notification.dart';
+
 import 'Search.dart';
+
+import 'Billing.dart';
+
 
 class Header extends StatefulWidget with PreferredSizeWidget {
   const Header({
@@ -27,7 +31,7 @@ class _Header extends State<Header> {
         .collection('T01_Person')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
-    final data = docs.exists ? docs.data() : null;
+    var data = docs.exists ? docs.data() : null;
     print('out = ' + data!['T01_AhaCoin'].toString());
     return data['T01_AhaCoin'].toString();
   }
@@ -54,12 +58,12 @@ class _Header extends State<Header> {
         }
       },
     );
-    return 
-    AppBar(
+    return AppBar(
         title: !_searchBoolean ? const Text('アハマッチ!') : searchTextField(),
         actions: !_searchBoolean
             ? [
                 IconButton(
+
                     icon: const Icon(Icons.search),
                   //   onPressed: () async {
                   // Navigator.push(
@@ -70,13 +74,19 @@ class _Header extends State<Header> {
                       });
                     }
                     ),
+
                 TextButton.icon(
                   icon: const Icon(Icons.monetization_on),
                   label: Text(_coin),
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                                        Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Billing()));
+                  },
                 ),
                 IconButton(
                     icon: const Icon(Icons.notifications),

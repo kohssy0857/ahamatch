@@ -36,6 +36,7 @@ class _searchNetaState extends State<searchNeta> {
   List documentList = [];
   List toukouList = [];
 
+
   Stream<List> getVideo(String word) async* {
     // final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
     // if (documentList.isNotEmpty == true) {
@@ -72,12 +73,14 @@ class _searchNetaState extends State<searchNeta> {
       });
     }
     yield videoUrls;
+
     // 取得した動画URLのリストを
     // var url = await ref.getDownloadURL();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return StreamBuilder(
       stream: getVideo(widget.word),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -117,5 +120,6 @@ class _searchNetaState extends State<searchNeta> {
         }
       },
     );
+
   }
 }
