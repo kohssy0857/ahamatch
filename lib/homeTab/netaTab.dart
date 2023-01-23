@@ -72,7 +72,7 @@ class _netaResultState extends State<netaResult> {
           // var url = await ref.getDownloadURL();
           // videoUrls.add(ref.toString());
           
-          final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc("SAn4RI422fPe3ocD2o07").get();
+          final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc("NVtS0y9o3JB0zjUwLPvv").get();
           // print(ref.data()!["T05_VideoUrl"]);
           videoUrls.add(ref.data()!["T05_VideoUrl"]);
           yield videoUrls;
@@ -89,6 +89,7 @@ class _netaResultState extends State<netaResult> {
                       return const Text("ネタないよ");
                     }else if (snapshot.hasData){
                       List photo = snapshot.data!;
+          print(snapshot);
                           return Column(
                             children: [
                               Text("ログイン情報:${user!.displayName}"),
@@ -105,7 +106,7 @@ class _netaResultState extends State<netaResult> {
                                         height: 500,
                                         width: 250,
                                         child: 
-                                        MoviePlayerWidget(photo[index],"SAn4RI422fPe3ocD2o07")
+                                        MoviePlayerWidget(photo[index],"NVtS0y9o3JB0zjUwLPvv")
                                         // ElevatedButton(
                                         //   onPressed: () async {
                                         //     try {

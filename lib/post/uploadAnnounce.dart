@@ -109,7 +109,7 @@ class _sendAnnounceState extends State<sendAnnounce> {
                     }
                 
               },
-              child: const Text('登録'),
+              child: const Text('投稿'),
             ),
         ],
       ),
