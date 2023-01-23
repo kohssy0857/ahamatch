@@ -10,6 +10,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 import '../parts/MoviePlayerWidget .dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:path_provider/path_provider.dart';
 
 class sendNeta extends StatefulWidget {
   @override
@@ -34,9 +36,15 @@ class _sendNetaState extends State<sendNeta> {
   // 画像アップロードに必要な物
   final picker = ImagePicker();
   File? imageFile;
+
+  String? _uint8list;
+
+  // 画像の選択
+  Future pickImage() async{
+
   int i = 0;
 
-  Future pickImage() async {
+
     final pickerFile =
         await ImagePicker().getVideo(source: ImageSource.gallery);
     if (pickerFile != null) {
@@ -71,9 +79,14 @@ class _sendNetaState extends State<sendNeta> {
 
   // title,,
   void _upload(String title, String shoukai) async {
-    String? video;
+
+
+    String video="";
+
     String? documentId;
     String? unitName;
+    String thumbnail = "";
+    
 
     final doc = FirebaseFirestore.instance.collection('T05_Toukou').doc();
 
@@ -108,7 +121,22 @@ class _sendNetaState extends State<sendNeta> {
           .ref("post/neta/${doc.id}.mp4")
           .putFile(imageFile!);
       video = await task.ref.getDownloadURL();
+      final _uint8list = await VideoThumbnail.thumbnailFile(
+      video: video,
+      imageFormat: ImageFormat.JPEG,
+      maxWidth: 128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+      quality: 25,
+    );
+    final task2=await FirebaseStorage.instance
+        .ref("post/thumbnail/${doc.id}")
+        .putFile(File(_uint8list!));
+      thumbnail =await task2.ref.getDownloadURL();
     }
+
+    
+    // final _image = Image.memory(uint8list!);
+    // print("画像ーーーーーーーーーーー");
+    // print(_image);
 
     // 紹介文、視聴回数は0
     await doc.set({
@@ -120,6 +148,7 @@ class _sendNetaState extends State<sendNeta> {
       "T05_Shoukai": shoukai,
       "T05_ShityouKaisu": 0,
       "T05_UnitName": unitName,
+      "T05_Thumbnail":thumbnail,
     });
     print("登録できました");
   }
@@ -217,6 +246,7 @@ class _sendNetaState extends State<sendNeta> {
           ),
 
           ElevatedButton(
+
             onPressed: () async {
               // _tachikame();
               if (_formKey.currentState!.validate() && imageFile != null) {
@@ -238,6 +268,7 @@ class _sendNetaState extends State<sendNeta> {
             },
             child: const Text('投稿'),
           ),
+
         ],
       ),
     );

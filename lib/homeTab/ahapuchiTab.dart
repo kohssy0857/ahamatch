@@ -14,32 +14,32 @@ import '../functions.dart';
 import '../parts/MoviePlayerWidget .dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-//
+// 
 import '../homeTab/shinmeTab.dart';
 import '../parts/FullscreenVideo.dart';
 // void senddNeta() {}
 
-class netaResult extends StatefulWidget {
-  netaResult({Key? key}) : super(key: key);
+class ahapuchiResult extends StatefulWidget {
+  ahapuchiResult({Key? key}) : super(key: key);
   // Home(){
   // }
   @override
-  _netaResultState createState() => _netaResultState();
+  _ahapuchiResultState createState() => _ahapuchiResultState();
 }
 
-class _netaResultState extends State<netaResult> {
+class _ahapuchiResultState extends State<ahapuchiResult> {
   User? user = FirebaseAuth.instance.currentUser;
   List<String> videoThumbnails = [];
-  List<String> videoShoukai=[];
+  // List<String> videoUrls = [];
   List<String> videoId = [];
   // ドキュメント情報を入れる箱を用意
   List documentList = [];
   List<String> videoTitle = [];
+  List<String> videoShoukai=[];
 
   Stream<List> getVideo() async* {
-    // ---------------------------------------------------------------
 
-      final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
+    // ---------------------------------------------------------------
       // 自身がフォローしている相手のidを取得
       await FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).collection("Follow").get().
     then((QuerySnapshot snapshot) async  {
@@ -51,62 +51,41 @@ class _netaResultState extends State<netaResult> {
    
 });
 
-
       if(documentList.isNotEmpty==true){
         // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
       await FirebaseFirestore.instance.collection('T05_Toukou').where("T05_Geinin", whereIn: documentList).get().
     then((QuerySnapshot snapshot) {
    snapshot.docs.forEach((doc) {
-    if(doc["T05_Type"]==1){
+    if(doc["T05_Type"]==2){
       if(videoThumbnails.contains(doc["T05_Thumbnail"])==false){
       videoThumbnails.add(doc["T05_Thumbnail"]);
-      videoShoukai.add(doc["T05_Shoukai"]);
+      // videoUrls.add(doc["T05_VideoUrl"]);
       videoId.add(doc.id);
       videoTitle.add(doc["T05_Title"]);
+      videoShoukai.add(doc["T05_Shoukai"]);
     }
     }
    });
 });
-
-      final all = await  FirebaseStorage.instance.ref().child('post/neta/').listAll();
-
-
-      
       yield videoThumbnails;
       }
       
       // -------------------------------------------------
 
-
       // 取得した動画URLのリストを
           // var url = await ref.getDownloadURL();
           // videoUrls.add(ref.toString());
           
-
           // final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc("7NOSPf1J3DAQvEvwimAE").get();
           // // print(ref.data()!["T05_VideoUrl"]);
           // videoUrls.add(ref.data()!["T05_VideoUrl"]);
           yield videoThumbnails;
-
 }
 
 
-    // 取得した動画URLのリストを
-    // var url = await ref.getDownloadURL();
-    // videoUrls.add(ref.toString());
-
-    final ref = await FirebaseFirestore.instance
-        .collection('T05_Toukou')
-        .doc("NVtS0y9o3JB0zjUwLPvv")
-        .get();
-    // print(ref.data()!["T05_VideoUrl"]);
-    videoUrls.add(ref.data()!["T05_VideoUrl"]);
-    yield videoUrls;
-  }
 
   @override
   Widget build(BuildContext context) {
-
         return 
           // Text("Left"),
           StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -114,18 +93,18 @@ class _netaResultState extends State<netaResult> {
                       return const Text("ネタないよ");
                     }else if (snapshot.hasData){
                       List photo = snapshot.data!;
-          print(snapshot);
                           return Column(
                             children: [
                               Text("ログイン情報:${user!.displayName}"),
                               Expanded(
                                   child:SizedBox(
+                                      height: 250,
+                                        width: 400,
                                       child: ListView.builder(
                                         shrinkWrap: true,
                                       // padding: EdgeInsets.all(250),
                                     itemCount: videoThumbnails.length,
                                     itemBuilder: (context, index){
-
                                       return Column(
                                         children: [
                                           Text("タイトル："+"${videoTitle[index]}"),
@@ -133,21 +112,19 @@ class _netaResultState extends State<netaResult> {
                                               photo[index],
                                               width: 500,
                                               height: 250,),
-                                            
+                                            Text("概要："+"${videoShoukai[index]}"),
                                             // MoviePlayerWidget(photo[index],videoId[index])
                                             // MoviePlayerWidget(photo[index],"7NOSPf1J3DAQvEvwimAE")
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
                                                 Container(
-                                                  width: 500,
                                                   decoration: BoxDecoration(
                                                     border: Border.all(color: Colors.blue),
                                                   ),
-                                                  child: 
-                                                      Text("概要："+"${videoShoukai[index]}"),
-                                                ),
-                                                 IconButton(
+                                                  child: Row(
+                                                    children: [
+                                                      IconButton(
                                                           onPressed: () async {
                                                             final result = await DialogUtils.showEditingDialog(context,videoId[index]);
                                                             // setState(() {
@@ -167,9 +144,11 @@ class _netaResultState extends State<netaResult> {
                                                           },
                                                           icon: Icon(Icons.fullscreen),
                                                         ),
+                                                    ],
+                                                  )
+                                                ),
                                             ],)
                                         ],
-
                                       );
                                     }
                                       )
@@ -191,8 +170,7 @@ class _netaResultState extends State<netaResult> {
           // bottomNavigationBar: Footer(),
         
     }
-
-
+  }
 
 class DialogUtils {
   DialogUtils._();
@@ -320,6 +298,5 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
         ),
       ],
     );
-
   }
 }

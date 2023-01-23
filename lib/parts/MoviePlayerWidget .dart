@@ -58,25 +58,13 @@ class _MoviePlayerWidgetState extends State<MoviePlayerWidget> {
   Widget build(BuildContext context) {
     if (_controller == null) return Container();
     final size = _controller.value.size;
-    final width = size.width;
-    final height = size.height;
+    final movieWidth = size.width;
+    final movieHeight = size.height;
     if (_controller.value.isInitialized) {
       return Scaffold(
   body: Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      // FittedBox(
-      //   fit: BoxFit.cover,
-      //   child: AspectRatio(
-      //   aspectRatio: _controller.value.aspectRatio,
-      //   // 動画を表示
-      //   child: SizedBox(
-      //     width: width,
-      //     height: height,
-      //     child: VideoPlayer(_controller),
-      //   ),
-      // ),
-      // ),
       AspectRatio(
         aspectRatio: _controller.value.aspectRatio,
         // 動画を表示
@@ -110,14 +98,8 @@ class _MoviePlayerWidgetState extends State<MoviePlayerWidget> {
           ),
           IconButton(
             onPressed: () async{
-              // 動画をフルスクリーン
-              // await Navigator.of(context).pushReplacement(
-              //         MaterialPageRoute(builder: (context) {
-              //           return FullscreenVideo();
-              //         }),
-              //       );
               Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => FullscreenVideo(widget.movieId)))
+                      context, MaterialPageRoute(builder: (context) => FullscreenVideo(widget.movieId,movieHeight,movieWidth)))
                       .then((value) {
                 // 再描画
                 setState(() {});

@@ -26,6 +26,7 @@ class Header extends StatefulWidget with PreferredSizeWidget {
 class _Header extends State<Header> {
   bool _searchBoolean = false;
   final User? user = FirebaseAuth.instance.currentUser;
+
   Future<String> fetchCoin() async {
     final docs = await FirebaseFirestore.instance
         .collection('T01_Person')
@@ -36,6 +37,7 @@ class _Header extends State<Header> {
     return data['T01_AhaCoin'].toString();
   }
 
+
   String _coin = "";
   int i = 0;
   final _editController = TextEditingController();
@@ -45,6 +47,7 @@ class _Header extends State<Header> {
   @override
   Widget build(BuildContext context) {
     // final docSnapshot = FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).get();
+
 
     fetchCoin().then(
       (value) {
@@ -59,6 +62,7 @@ class _Header extends State<Header> {
       },
     );
     return AppBar(
+
         title: !_searchBoolean ? const Text('アハマッチ!') : searchTextField(),
         actions: !_searchBoolean
             ? [
