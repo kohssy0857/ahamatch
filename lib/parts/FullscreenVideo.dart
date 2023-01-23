@@ -13,8 +13,10 @@ import 'FullMoviePlayerWidget.dart';
 
 class FullscreenVideo extends StatefulWidget {
   String movieId;
+  double movieHeight;
+  double movieWidth;
   // FullscreenVideo({Key? key,required this.movieId}) : super(key: key);
-  FullscreenVideo(this.movieId) : super();
+  FullscreenVideo(this.movieId,this.movieHeight,this.movieWidth) : super();
   @override
   _FullscreenVideoState createState() => _FullscreenVideoState();
 }
@@ -37,6 +39,11 @@ class _FullscreenVideoState extends State<FullscreenVideo> {
 }
 
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+    print("画面のサイズーーーーー");
+    print(size.height);
+    print(size.width);
+
     return Scaffold(
           appBar: const Header(),
           body: 
@@ -48,18 +55,30 @@ class _FullscreenVideoState extends State<FullscreenVideo> {
                       return const Text("ネタないよ");
                     }else if (snapshot.hasData){
                       List photo = snapshot.data!;
-                          return Column(
-                            children: [
-                              Text("ログイン情報:${user!.displayName}"),
-                              Expanded(
-                                  child:SizedBox(
-                                      height: 300,
-                                        width: 300,
-                                        child: FullMoviePlayerWidget(photo[0]),
-                                  )
-                          ),
-                            ],
-                          );
+                      // if(widget.movieHeight>widget.movieWidth){
+                      //     return Column(
+                      //         children: [
+                      //           Text("ログイン情報:${user!.displayName}"),
+                      //           Expanded(
+                      //               child:SizedBox(
+                      //                   height: size.height/2,
+                      //                     width: size.width/2,
+                      //                     child: FullMoviePlayerWidget(photo[0],widget.movieId),
+                      //               )
+                      //           ),
+                      //             ],
+                      //           );
+                      // }else{
+                        return Column(
+                              children: [
+                                Text("ログイン情報:${user!.displayName}"),
+                                Expanded(
+                                  child:FullMoviePlayerWidget(photo[0],widget.movieId)
+                            ),
+                              ],
+                            );
+                      // };
+                          
                     } else {
                       return Column(
                         children: [

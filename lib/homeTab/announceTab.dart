@@ -52,12 +52,14 @@ class _AnnounceResultState extends State<AnnounceResult> {
       final all = await  FirebaseStorage.instance.ref().child('post/neta/').listAll();
       yield announceList;
       }
-      
-
-      // 取得した動画URLのリストを
-          // var url = await ref.getDownloadURL();
-          
 }
+
+// Stream<List> getVideo() async* {
+//       final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc("QJfjBtKrHvULzzDfikvz").get();
+//           // print(ref.data()!["T05_VideoUrl"]);
+//           announceList.add(ref.data()!["T05_Thumbnail"]);
+//           yield announceList;
+// }
 
   Widget build(BuildContext context) {
     return 
@@ -68,6 +70,8 @@ class _AnnounceResultState extends State<AnnounceResult> {
                       List photo = snapshot.data!;
                           return Column(
                             children: [
+                              // Image.file(File(announceList[0])),
+                              // Text(announceList[0])
                               ListView.builder(
                                         shrinkWrap: true,
                                       // padding: EdgeInsets.all(250),
