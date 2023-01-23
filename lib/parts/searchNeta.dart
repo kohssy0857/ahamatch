@@ -30,43 +30,49 @@ class _searchNetaState extends State<searchNeta> {
   List toukouList = [];
 
   Stream<List> getVideo() async* {
-      // final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
-      // 自身がフォローしている相手のidを取得
-      await FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).collection("Follow").get().
-    then((QuerySnapshot snapshot) async  {
-      if(snapshot.docs.isNotEmpty){
+    // final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
+    // 自身がフォローしている相手のidを取得
+    await FirebaseFirestore.instance
+        .collection('T01_Person')
+        .doc(user!.uid)
+        .collection("Follow")
+        .get()
+        .then((QuerySnapshot snapshot) async {
+      if (snapshot.docs.isNotEmpty) {
         snapshot.docs.forEach((doc) {
-     documentList.add(doc.get('T05_GeininId'));
-   });
-  }
-   
-});
-
-      if(documentList.isNotEmpty==true){
-        // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
-      await FirebaseFirestore.instance.collection('T05_Toukou').where("T05_Geinin", whereIn: documentList).get().
-    then((QuerySnapshot snapshot) {
-   snapshot.docs.forEach((doc) {
-    if(doc["T05_Type"]==1){
-      videoUrls.add(doc["T05_VideoUrl"]);
-    }
-   });
-});
-      final all = await  FirebaseStorage.instance.ref().child('post/neta/').listAll();
-      yield videoUrls;
+          documentList.add(doc.get('T05_GeininId'));
+        });
       }
-      
+    });
 
-      // 取得した動画URLのリストを
-          // var url = await ref.getDownloadURL();
-          
-}
+    if (documentList.isNotEmpty == true) {
+      // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
+      await FirebaseFirestore.instance
+          .collection('T05_Toukou')
+          .where("T05_Geinin", whereIn: documentList)
+          .get()
+          .then((QuerySnapshot snapshot) {
+        snapshot.docs.forEach((doc) {
+          if (doc["T05_Type"] == 1) {
+            videoUrls.add(doc["T05_VideoUrl"]);
+          }
+        });
+      });
+      final all =
+          await FirebaseStorage.instance.ref().child('post/neta/').listAll();
+      yield videoUrls;
+    }
+
+    // 取得した動画URLのリストを
+    // var url = await ref.getDownloadURL();
+  }
 
   @override
   Widget build(BuildContext context) {
-        return Scaffold(
-          body: 
+    return Scaffold(
+      body:
           // Text("Left"),
+
           StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting){
                       return const Text("ネタないよ");
@@ -117,5 +123,6 @@ class _searchNetaState extends State<searchNeta> {
           // bottomNavigationBar: Footer(),
         );
     }
-  }
 
+  }
+}
