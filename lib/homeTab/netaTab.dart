@@ -14,7 +14,7 @@ import '../functions.dart';
 import '../parts/MoviePlayerWidget .dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-// 
+//
 import '../homeTab/shinmeTab.dart';
 import '../parts/FullscreenVideo.dart';
 // void senddNeta() {}
@@ -37,8 +37,8 @@ class _netaResultState extends State<netaResult> {
   List<String> videoTitle = [];
 
   Stream<List> getVideo() async* {
-
     // ---------------------------------------------------------------
+
       final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
       // 自身がフォローしている相手のidを取得
       await FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).collection("Follow").get().
@@ -50,6 +50,7 @@ class _netaResultState extends State<netaResult> {
   }
    
 });
+
 
       if(documentList.isNotEmpty==true){
         // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
@@ -69,26 +70,43 @@ class _netaResultState extends State<netaResult> {
 
       final all = await  FirebaseStorage.instance.ref().child('post/neta/').listAll();
 
+
       
       yield videoThumbnails;
       }
       
       // -------------------------------------------------
 
+
       // 取得した動画URLのリストを
           // var url = await ref.getDownloadURL();
           // videoUrls.add(ref.toString());
           
+
           // final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc("7NOSPf1J3DAQvEvwimAE").get();
           // // print(ref.data()!["T05_VideoUrl"]);
           // videoUrls.add(ref.data()!["T05_VideoUrl"]);
           yield videoThumbnails;
+
 }
 
 
+    // 取得した動画URLのリストを
+    // var url = await ref.getDownloadURL();
+    // videoUrls.add(ref.toString());
+
+    final ref = await FirebaseFirestore.instance
+        .collection('T05_Toukou')
+        .doc("NVtS0y9o3JB0zjUwLPvv")
+        .get();
+    // print(ref.data()!["T05_VideoUrl"]);
+    videoUrls.add(ref.data()!["T05_VideoUrl"]);
+    yield videoUrls;
+  }
 
   @override
   Widget build(BuildContext context) {
+
         return 
           // Text("Left"),
           StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -96,6 +114,7 @@ class _netaResultState extends State<netaResult> {
                       return const Text("ネタないよ");
                     }else if (snapshot.hasData){
                       List photo = snapshot.data!;
+          print(snapshot);
                           return Column(
                             children: [
                               Text("ログイン情報:${user!.displayName}"),
@@ -106,6 +125,7 @@ class _netaResultState extends State<netaResult> {
                                       // padding: EdgeInsets.all(250),
                                     itemCount: videoThumbnails.length,
                                     itemBuilder: (context, index){
+
                                       return Column(
                                         children: [
                                           Text("タイトル："+"${videoTitle[index]}"),
@@ -149,6 +169,7 @@ class _netaResultState extends State<netaResult> {
                                                         ),
                                             ],)
                                         ],
+
                                       );
                                     }
                                       )
@@ -170,7 +191,7 @@ class _netaResultState extends State<netaResult> {
           // bottomNavigationBar: Footer(),
         
     }
-  }
+
 
 
 class DialogUtils {
@@ -299,5 +320,6 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
         ),
       ],
     );
+
   }
 }

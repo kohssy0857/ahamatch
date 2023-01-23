@@ -11,11 +11,15 @@ import 'header.dart';
 
 import '../functions.dart';
 import '../parts/MoviePlayerWidget .dart';
-import '../parts/SearchResult.dart';
+import 'Search.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class searchNeta extends StatefulWidget {
-  searchNeta({Key? key}) : super(key: key);
+  final String word;
+  searchNeta({
+    Key? key,
+    required this.word,
+  }) : super(key: key);
   // Home(){
   // }
   @override
@@ -24,46 +28,59 @@ class searchNeta extends StatefulWidget {
 
 class _searchNetaState extends State<searchNeta> {
   User? user = FirebaseAuth.instance.currentUser;
+
+  List<String> videoTitle = [];
   List<String> videoUrls = [];
+  List<String> searchedNames = [];
   // ドキュメント情報を入れる箱を用意
   List documentList = [];
   List toukouList = [];
 
-  Stream<List> getVideo() async* {
-      // final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
-      // 自身がフォローしている相手のidを取得
-      await FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).collection("Follow").get().
-    then((QuerySnapshot snapshot) async  {
-      if(snapshot.docs.isNotEmpty){
-        snapshot.docs.forEach((doc) {
-     documentList.add(doc.get('T05_GeininId'));
-   });
-  }
-   
-});
 
-      if(documentList.isNotEmpty==true){
-        // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
-      await FirebaseFirestore.instance.collection('T05_Toukou').where("T05_Geinin", whereIn: documentList).get().
-    then((QuerySnapshot snapshot) {
-   snapshot.docs.forEach((doc) {
-    if(doc["T05_Type"]==1){
-      videoUrls.add(doc["T05_VideoUrl"]);
+  Stream<List> getVideo(String word) async* {
+    // final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
+    // if (documentList.isNotEmpty == true) {
+    // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
+    await FirebaseFirestore.instance
+        .collection('T05_Toukou')
+        .where("T05_Type", isEqualTo: 1)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        // if (doc["T05_Type"] == 1) {
+        videoTitle.add(doc["T05_Title"]);
+      });
+    });
+    if (widget.word.trim().isEmpty) {
+      searchedNames = [];
+    } else {
+      searchedNames =
+          videoTitle.where((element) => element.contains(word)).toList();
     }
-   });
-});
-      final all = await  FirebaseStorage.instance.ref().child('post/neta/').listAll();
-      yield videoUrls;
-      }
-      
+    // }
+    if (searchedNames.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('T05_Toukou')
+          .where("T05_Title", whereIn: searchedNames)
+          .where("T05_Type", isEqualTo: 1)
+          .get()
+          .then((QuerySnapshot snapshot) {
+        snapshot.docs.forEach((doc) {
+          // if (doc["T05_Type"] == 1) {
+          videoUrls.add(doc["T05_VideoUrl"]);
+          toukouList.add(doc.reference.id);
+        });
+      });
+    }
+    yield videoUrls;
 
-      // 取得した動画URLのリストを
-          // var url = await ref.getDownloadURL();
-          
-}
+    // 取得した動画URLのリストを
+    // var url = await ref.getDownloadURL();
+  }
 
   @override
   Widget build(BuildContext context) {
+
         return Scaffold(
           body: 
           // Text("Left"),
@@ -119,3 +136,46 @@ class _searchNetaState extends State<searchNeta> {
     }
   }
 
+
+    return StreamBuilder(
+      stream: getVideo(widget.word),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text("ネタないよ");
+        } else if (snapshot.hasData && toukouList.isNotEmpty) {
+          List photo = snapshot.data!;
+          print(toukouList);
+          return Column(
+            children: [
+              Text("ログイン情報:${user!.displayName}"),
+              Expanded(
+                  child: SizedBox(
+                      height: 250,
+                      width: 250,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          // padding: EdgeInsets.all(250),
+                          itemCount: videoUrls.length,
+                          itemBuilder: (context, index) {
+                            return SizedBox(
+                              height: 500,
+                              width: 250,
+                              child: MoviePlayerWidget(
+                                  photo[index], toukouList[index]),
+                            );
+                          }))),
+            ],
+          );
+        } else {
+          return Column(
+            children: [
+              Text("ログイン情報:${user!.displayName}"),
+              Text("芸人をフォローしてください"),
+            ],
+          );
+          // return const Text("not photo");
+        }
+      },
+    );
+
+  }
+}

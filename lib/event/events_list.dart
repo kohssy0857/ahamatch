@@ -29,11 +29,28 @@ class MainModel extends ChangeNotifier {
         .collection('T04_Event')
         .doc("cvabc8IsVAGQjYwPv0fR")
         .collection('T02_Convention')
+        .where('T07_flag', isEqualTo: 1)
         .get();
-    // getter docs: docs(List<QueryDocumentSnapshot<T>>型)のドキュメント全てをリストにして取り出す。
-    // map(): Listの各要素をBookに変換
-    // toList(): Map()から返ってきたIterable→Listに変換する。
     final events = event.docs.map((doc) => Convention(doc)).toList();
+
+    DateTime now = DateTime.now();
+      for (int i = 0; i < events.length; i++) {
+        DateTime schedule = events[i].schedule.toDate();
+        if (schedule.isBefore(now)) {
+          final doc = FirebaseFirestore.instance
+            .collection('T04_Event')
+            .doc("cvabc8IsVAGQjYwPv0fR")
+            .collection('T02_Convention')
+            .doc(events[i].docid);
+          
+          await doc.update({
+            "T07_flag": 0,
+          });
+
+          events.removeAt(i);
+        }
+      }
+
     this.events = events;
     print('len = ' + events.length.toString());
     notifyListeners();
@@ -42,7 +59,7 @@ class MainModel extends ChangeNotifier {
 
 class Events extends StatelessWidget {
   const Events({Key? key}) : super(key: key);
-
+  
 
   Stream<Image> getAvatarUrlForProfile(
       List<Convention> events, int index) async* {
@@ -63,6 +80,7 @@ class Events extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool flag = true;
     return DefaultTabController(
       initialIndex: 0, // 最初に表示するタブ
       length: 2, // タブの数
@@ -87,67 +105,72 @@ class Events extends StatelessWidget {
                   body: Consumer<MainModel>(
                     builder: (context, model, child) {
                       final events = model.events;
-                      return Container(
-                        // height: 500,
-                        padding: EdgeInsets.all(2),
-                        // 各アイテムの間にスペースなどを挟みたい場合
-                        child: ListView.separated(
-                          itemCount: events.length,
-                          itemBuilder: (context, index) {
-                            return Row(
-                              children: <Widget>[
-                                StreamBuilder(
-                                  stream: getAvatarUrlForProfile(events, index),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<dynamic> snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Text("wait");
-                                    } else if (snapshot.hasData) {
-                                      Image photo = snapshot.data!;
-                                      return photo;
-                                    } else {
-                                      return const Text("not photo");
-                                    }
-                                  },
-                                ),
-                                SizedBox(
-                                  width: 75.0,
-                                ),
-                                Container(
-                                  height: 50,
-                                  // color: books[index]['color'],
-                                  child: Text(
-                                    events[index].name,
-                                    // style: TextStyle(fontSize: ),
+                      
+                      if (events.isEmpty) {
+                        return const Text("大会は現在開催されていません。");
+                      } else {
+                        return Container(
+                          // height: 500,
+                          padding: EdgeInsets.all(2),
+                          // 各アイテムの間にスペースなどを挟みたい場合
+                          child: ListView.separated(
+                            itemCount: events.length,
+                            itemBuilder: (context, index) {
+                              return Row(
+                                children: <Widget>[
+                                  StreamBuilder(
+                                    stream: getAvatarUrlForProfile(events, index),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<dynamic> snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Text("wait");
+                                      } else if (snapshot.hasData) {
+                                        Image photo = snapshot.data!;
+                                        return photo;
+                                      } else {
+                                        return const Text("not photo");
+                                      }
+                                    },
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 75.0,
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.info),
-                                  onPressed: () {
-                                    print('model = ${model}');
-                                    print('events = ${events}');
-                                    Navigator.push(
-                                        // ボタン押下でオーディション編集画面に遷移する
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ConOverview(events, index)));
-                                    // AlertDialog(
-                                    //   title: Text('大会名：${}'),);
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return Divider();
-                          },
-                        ),
-                      );
+                                  SizedBox(
+                                    width: 75.0,
+                                  ),
+                                  Container(
+                                    height: 50,
+                                    // color: books[index]['color'],
+                                    child: Text(
+                                      events[index].name,
+                                      // style: TextStyle(fontSize: ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 75.0,
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.info),
+                                    onPressed: () {
+                                      print('model = ${model}');
+                                      print('events = ${events}');
+                                      Navigator.push(
+                                          // ボタン押下でオーディション編集画面に遷移する
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ConOverview(events, index)));
+                                      // AlertDialog(
+                                      //   title: Text('大会名：${}'),);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              return Divider();
+                            },
+                          ),
+                        );
+                      }
                     },
                   ),
                 ),

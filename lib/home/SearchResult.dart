@@ -39,31 +39,62 @@ class SearchResult {
 class MainModel extends ChangeNotifier {
   // ListView.builderで使うためのT01_AuditionのList booksを用意しておく。　
   List<SearchResult> T02_Geinin = [];
+  
 
-  Future<void> fetchConvention() async {
+  Future<void> fetchConvention(String word) async {
     // Firestoreからコレクション'T04_Event'、ドキュメントID''、コレクション'T01_Audition'(QuerySnapshot)を取得してdocsに代入。
-    final docs = await FirebaseFirestore.instance.collection("T02_Geinin").get();
 
-    // getter docs: docs(List<QueryDocumentSnapshot<T>>型)のドキュメント全てをリストにして取り出す。
-    // map(): Listの各要素をT01_Auditionに変換
-    // toList(): Map()から返ってきたIterable→Listに変換する。
-    final T02Geinin  = docs.docs
-        .map((doc) => SearchResult(doc)) 
-        .toList();
-    this.T02_Geinin = T02Geinin; 
+    List<String> UnitName = [];
+    List<String> videoUrls = [];
+    List<String> searchedNames = [];
+    // ドキュメント情報を入れる箱を用意
+    List documentList = [];
+    List toukouList = [];
+
+    // Stream<List> getVideo() async* {
+
+      // if (documentList.isNotEmpty == true) {
+        // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
+        await FirebaseFirestore.instance
+            .collection('T02_Geinin')
+            .get()
+            .then((QuerySnapshot snapshot) {
+          snapshot.docs.forEach((doc) {
+            // if (doc["T05_Type"] == 1) {
+              UnitName.add(doc["T02_UnitName"]);
+          });
+        });
+        if (word.trim().isEmpty) {
+          searchedNames = [];
+        } else {
+          searchedNames = UnitName.where((element) => element.contains(word)).toList();
+        }
+      // }
+      // ignore: unrelated_type_equality_checks
+      if (searchedNames.isNotEmpty) {
+        final docs = await FirebaseFirestore.instance.collection("T02_Geinin").where("T02_UnitName", whereIn: searchedNames).get();
+        final T02Geinin  = docs.docs
+            .map((doc) => SearchResult(doc)) 
+            .toList();
+        this.T02_Geinin = T02Geinin; 
+      }
     notifyListeners(); 
   }
 }
 
 class SearchResultMane extends StatelessWidget {
+    final String word;
+  SearchResultMane({Key? key, required this.word,}) : super(key: key);
   final user = FirebaseAuth.instance.currentUser;
+
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ChangeNotifierProvider<MainModel>(
         // createでfetchBooks()も呼び出すようにしておく。
-        create: (_) => MainModel()..fetchConvention(),
+        create: (_) => MainModel()..fetchConvention(word),
         child: Scaffold(
           appBar: AppBar(
             title: Text('検索結果一覧'),
@@ -72,31 +103,40 @@ class SearchResultMane extends StatelessWidget {
             builder: (context, model, child) {
               // FirestoreのドキュメントのList booksを取り出す。
               final T02Geinin = model.T02_Geinin; 
-              return ListView.builder(
-                // Listの長さを先ほど取り出したbooksの長さにする。
-                itemCount: T02Geinin.length,
-                // indexにはListのindexが入る。
-                itemBuilder: (context, index) {
-                  if(user!.uid==T02Geinin[index].T02_GeininId.path.replaceFirst("T01_Person/", "")){
-                    return Card();
-                  } else {return Card(
-                    margin: const EdgeInsets.all(10),
-                    child: ListTile(
-                      // leading: Image.network(T02_Convention[index].T06_image),
-                      title: Text(T02Geinin[index].T02_UnitName),
-                      subtitle: Text(T02Geinin[index].ID), // 商品名
-                      onTap: () async {
-                                  Navigator.push(
-                                    // ボタン押下でオーディション編集画面に遷移する
-                                      context, MaterialPageRoute(builder: (context) => geininFollowProfile(model,index,T02Geinin[index].T02_GeininId)));
-                                  /* --- 省略 --- */
-                                } ,
-                      // subtitle: Text(T01_Audition['price'].toString()), // 価格
-                    ),
-                  );
-                  }
-                },
-              );
+              if (T02Geinin.isNotEmpty == true) {
+                return ListView.builder(
+                  // Listの長さを先ほど取り出したbooksの長さにする。
+                  itemCount: T02Geinin.length,
+                  // indexにはListのindexが入る。
+                  itemBuilder: (context, index) {
+                    if(user!.uid==T02Geinin[index].T02_GeininId.path.replaceFirst("T01_Person/", "")){
+                      return Card();
+                    } else {return Card(
+                      margin: const EdgeInsets.all(10),
+                      child: ListTile(
+                        // leading: Image.network(T02_Convention[index].T06_image),
+                        title: Text(T02Geinin[index].T02_UnitName),
+                        subtitle: Text(T02Geinin[index].ID), // 商品名
+                        onTap: () async {
+                                    Navigator.push(
+                                      // ボタン押下でオーディション編集画面に遷移する
+                                        context, MaterialPageRoute(builder: (context) => geininFollowProfile(model,index,T02Geinin[index].T02_GeininId)));
+                                    /* --- 省略 --- */
+                                  } ,
+                        // subtitle: Text(T01_Audition['price'].toString()), // 価格
+                      ),
+                    );
+                    }
+                  },
+                );
+              } else {
+                return Column(
+                        children: [
+                          Text("ログイン情報:${user!.displayName}"),
+                          Text("芸人をフォローしてください"),
+                        ],
+                      );
+              }
             },
           ),
         ),
