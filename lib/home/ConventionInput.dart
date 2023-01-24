@@ -67,6 +67,8 @@ class _ConventionInput extends State<ConventionInput> {
       "T04_Create": Timestamp.fromDate(DateTime.now()),
       "T05_Name": ConventionName,
       "T06_image": T06_image,
+      "T07_flag": 1,
+      "T0_DocumentId": doc.id,
     });
     print("登録できました");
   }
@@ -190,11 +192,13 @@ final textEditingController = TextEditingController();
             ),
             ElevatedButton(
               onPressed: () async {
-                _upload(conditions, schedule, prize,ConventionName);
-                try {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => SysHome()));
-                } catch (e) {}
+                if(_formKey.currentState!.validate()){
+                  _upload(conditions, schedule, prize,ConventionName);
+                  try {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => SysHome()));
+                  } catch (e) {}
+                }
               },
               child: const Text('登録'),
             ), 

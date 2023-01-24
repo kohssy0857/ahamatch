@@ -185,11 +185,13 @@ class _AuditionInput extends State<AuditionInput> {
             ),
             ElevatedButton(
               onPressed: () async {
-                _upload(item, schedule, company, AuditionName);
-                try {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SysHome()));
-                } catch (e) {}
+                if(_formKey.currentState!.validate()){
+                  _upload(item, schedule, company, AuditionName);
+                  try {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SysHome()));
+                  } catch (e) {}
+                }
               },
               child: const Text('登録'),
             ),
