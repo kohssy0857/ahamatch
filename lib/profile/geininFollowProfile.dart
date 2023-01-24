@@ -125,17 +125,10 @@ class _geininFollowProfile extends State<geininFollowProfile> {
             },
           ),
         });
-
-      
-
-      
       // 今表示している芸人のid=/T02_Geinin/documentIdのリファレンスを確保
       final id = await FirebaseFirestore.instance
         .collection("T02_Geinin")
         .doc(documentId);
-
-       
-
       // 自分のフォローコレクションの中に、今表示している芸人が存在するかどうかの確認
       final followcheck = FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid).collection("Follow").where('T05_GeininId', isEqualTo: id);
       followcheck.get()

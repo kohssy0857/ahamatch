@@ -12,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'GeininInput.dart';
 import '../login/login.dart';
 import 'loginFollow.dart';
+import '../home/SysHome.dart';
 
 class UserInput extends StatefulWidget {
   const UserInput({Key? key}) : super(key: key);
@@ -133,16 +134,25 @@ class _UserInput extends State<UserInput> {
             ),
             ElevatedButton(
               onPressed: () async {
-                await _upload(isSelectedItem!, name, id);
-                try {
-                  if (isSelectedItem == 1) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => loginFollowMane()));
-                  } else {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => loginFollowMane()));
-                  }
-                } catch (e) {}
+                if (_formKey.currentState!.validate()) {
+                  await _upload(isSelectedItem!, name, id);
+                  try {
+                    if (isSelectedItem == 1) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => loginFollowMane()));
+                    } else if (isSelectedItem == 0) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SysHome()));
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => loginFollowMane()));
+                    }
+                  } catch (e) {}
+                }
               },
               child: const Text('送信'),
             ),

@@ -71,6 +71,8 @@ class _GeininInput extends State<GeininInput> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          child:Form(
+            key: _formKey,
             child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -94,12 +96,6 @@ class _GeininInput extends State<GeininInput> {
                   decoration: const InputDecoration(labelText: "所属事務所"),
                   onChanged: (value) {
                     production = value;
-                  },
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "必須です";
-                    }
-                    return null;
                   },
                 )),
             Padding(
@@ -205,19 +201,21 @@ class _GeininInput extends State<GeininInput> {
                 )),
             ElevatedButton(
               onPressed: () async {
-                tags.addAll([tag1, tag2, tag3, tag4, tag5]);
-                _upload(name, tags, describe, production, isOn);
-                try {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => App()));
-                } catch (e) {}
+                if(_formKey.currentState!.validate()){
+                  tags.addAll([tag1, tag2, tag3, tag4, tag5]);
+                  _upload(name, tags, describe, production, isOn);
+                  try {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => App()));
+                  } catch (e) {}
+                }
               },
               child: const Text('登録'),
             ),
           ],
         )),
       ),
-    );
+    ));
   }
 }
 
