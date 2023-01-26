@@ -16,7 +16,7 @@ class FullscreenVideo extends StatefulWidget {
   double movieHeight;
   double movieWidth;
   // FullscreenVideo({Key? key,required this.movieId}) : super(key: key);
-  FullscreenVideo(this.movieId,this.movieHeight,this.movieWidth) : super();
+  FullscreenVideo(this.movieId, this.movieHeight, this.movieWidth) : super();
   @override
   _FullscreenVideoState createState() => _FullscreenVideoState();
 }
@@ -29,14 +29,17 @@ class _FullscreenVideoState extends State<FullscreenVideo> {
   List toukouDocId = [];
   List videoUrls = [];
 
-    Stream<List> getVideo() async* {
-      // print("wwwwwwwwwwwwwwwwwwwwwww");
-      // print(widget.movieId);
-      final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc(widget.movieId).get();
-          // print(ref.data()!["T05_VideoUrl"]);
-          videoUrls.add(ref.data()!["T05_VideoUrl"]);
-          yield videoUrls;
-}
+  Stream<List> getVideo() async* {
+    // print("wwwwwwwwwwwwwwwwwwwwwww");
+    // print(widget.movieId);
+    final ref = await FirebaseFirestore.instance
+        .collection('T05_Toukou')
+        .doc(widget.movieId)
+        .get();
+    // print(ref.data()!["T05_VideoUrl"]);
+    videoUrls.add(ref.data()!["T05_VideoUrl"]);
+    yield videoUrls;
+  }
 
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -45,52 +48,52 @@ class _FullscreenVideoState extends State<FullscreenVideo> {
     print(size.width);
 
     return Scaffold(
-          appBar: const Header(),
-          body: 
+      appBar: const Header(),
+      body:
           // Center(
           //   child: Text("あいうえお"),
           //   )
-          StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.waiting){
-                      return const Text("ネタないよ");
-                    }else if (snapshot.hasData){
-                      List photo = snapshot.data!;
-                      // if(widget.movieHeight>widget.movieWidth){
-                      //     return Column(
-                      //         children: [
-                      //           Text("ログイン情報:${user!.displayName}"),
-                      //           Expanded(
-                      //               child:SizedBox(
-                      //                   height: size.height/2,
-                      //                     width: size.width/2,
-                      //                     child: FullMoviePlayerWidget(photo[0],widget.movieId),
-                      //               )
-                      //           ),
-                      //             ],
-                      //           );
-                      // }else{
-                        return Column(
-                              children: [
-                                Text("ログイン情報:${user!.displayName}"),
-                                Expanded(
-                                  child:FullMoviePlayerWidget(photo[0],widget.movieId)
-                            ),
-                              ],
-                            );
-                      // };
-                          
-                    } else {
-                      return Column(
-                        children: [
-                          Text("ログイン情報:${user!.displayName}"),
-                          Text("芸人をフォローしてください"),
-                        ],
-                      );
-                      // return const Text("not photo");
-                    }
-                    },
-                ),
-          );
+          StreamBuilder(
+        stream: getVideo(),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text("ネタないよ");
+          } else if (snapshot.hasData) {
+            List photo = snapshot.data!;
+            // if(widget.movieHeight>widget.movieWidth){
+            //     return Column(
+            //         children: [
+            //           Text("ログイン情報:${user!.displayName}"),
+            //           Expanded(
+            //               child:SizedBox(
+            //                   height: size.height/2,
+            //                     width: size.width/2,
+            //                     child: FullMoviePlayerWidget(photo[0],widget.movieId),
+            //               )
+            //           ),
+            //             ],
+            //           );
+            // }else{
+            return Column(
+              children: [
+                Text("ログイン情報:${user!.displayName}"),
+                Expanded(
+                    child: FullMoviePlayerWidget(photo[0], widget.movieId)),
+              ],
+            );
+            // };
+
+          } else {
+            return Column(
+              children: [
+                Text("ログイン情報:${user!.displayName}"),
+                Text("芸人をフォローしてください"),
+              ],
+            );
+            // return const Text("not photo");
+          }
+        },
+      ),
+    );
   }
 }
-

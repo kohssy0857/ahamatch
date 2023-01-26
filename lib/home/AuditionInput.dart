@@ -191,7 +191,13 @@ class _AuditionInput extends State<AuditionInput> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => SysHome()));
                   } catch (e) {}
-                }
+                }else if (imageFile == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('画像を選択してください'),
+                  ),
+                );
+              }
               },
               child: const Text('登録'),
             ),

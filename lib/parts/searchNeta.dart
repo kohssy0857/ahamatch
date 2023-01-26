@@ -59,18 +59,20 @@ class _searchNetaState extends State<searchNeta> {
     }
     // }
     if (searchedNames.isNotEmpty) {
-      await FirebaseFirestore.instance
-          .collection('T05_Toukou')
-          .where("T05_Title", whereIn: searchedNames)
-          .where("T05_Type", isEqualTo: 1)
-          .get()
-          .then((QuerySnapshot snapshot) {
-        snapshot.docs.forEach((doc) {
-          // if (doc["T05_Type"] == 1) {
-          videoUrls.add(doc["T05_VideoUrl"]);
-          toukouList.add(doc.reference.id);
-        });
-      });
+      for(int i = 0;i<searchedNames.length; i++){
+          await FirebaseFirestore.instance
+              .collection('T05_Toukou')
+              .where("T05_Title", isEqualTo: searchedNames[i])
+              .where("T05_Type", isEqualTo: 1)
+              .get()
+              .then((QuerySnapshot snapshot) {
+            snapshot.docs.forEach((doc) {
+              // if (doc["T05_Type"] == 1) {
+              videoUrls.add(doc["T05_VideoUrl"]);
+              toukouList.add(doc.reference.id);
+            });
+          });
+        }
     }
     yield videoUrls;
 
@@ -80,61 +82,6 @@ class _searchNetaState extends State<searchNeta> {
 
   @override
   Widget build(BuildContext context) {
-
-        // return Scaffold(
-        //   body: 
-          // Text("Left"),
-  //         StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-  //                   if(snapshot.connectionState == ConnectionState.waiting){
-  //                     return const Text("ネタないよ");
-  //                   }else if (snapshot.hasData){
-  //                     List photo = snapshot.data!;
-  //                         return Column(
-  //                           children: [
-  //                             Text("ログイン情報:${user!.displayName}"),
-  //                             Expanded(
-  //                                 child:SizedBox(
-  //                                     height: 250,
-  //                                       width: 250,
-  //                                     child: ListView.builder(
-  //                                       shrinkWrap: true,
-  //                                     // padding: EdgeInsets.all(250),
-  //                                   itemCount: videoUrls.length,
-  //                                   itemBuilder: (context, index){
-  //                                     return SizedBox(
-  //                                       height: 500,
-  //                                       width: 250,
-  //                                       // child: MoviePlayerWidget(photo[index]),
-  //                                     );
-  //                                   }
-  //                                     )
-  //                                 )
-  //                         ),
-  //                           ],
-  //                         );
-  //                   } else {
-  //                     return Column(
-  //                       children: [
-  //                         Text("ログイン情報:${user!.displayName}"),
-  //                         Text("芸人をフォローしてください"),
-  //                       ],
-  //                     );
-  //                     // return const Text("not photo");
-  //                   }
-  //                   },),
-  //           floatingActionButton: FloatingActionButton(
-  //           child: const Icon(Icons.add),
-  //           onPressed: () async {
-  //             // await FirebaseAuth.instance.signOut();
-  //             Navigator.push(context,
-  //                 MaterialPageRoute(builder: (context) => const uploadPost()));
-  //             /* --- 省略 --- */
-  //           },
-  //         ),
-  //         // bottomNavigationBar: Footer(),
-  //       );
-  //   }
-  // }
 
 
     return StreamBuilder(
