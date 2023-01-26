@@ -48,7 +48,7 @@ class _RankingState extends State<Ranking> {
                       ),
                       Expanded(
                           child: TabBarView(
-                              physics: NeverScrollableScrollPhysics(),
+                              // physics: NeverScrollableScrollPhysics(),
                               children: <Widget>[
                             HitTab(),
                             AhaPointTab(),

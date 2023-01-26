@@ -42,10 +42,6 @@ class _sendNetaState extends State<sendNeta> {
 
   // 画像の選択
   Future pickImage() async{
-
-
-
-
     final pickerFile =
         await ImagePicker().getVideo(source: ImageSource.gallery);
     if (pickerFile != null) {
@@ -79,20 +75,17 @@ class _sendNetaState extends State<sendNeta> {
   }
 
   // title,,
-  void _upload(String title, String shoukai) async {
-
-
+  void _upload(String title, String shoukai, String value) async {
     String video="";
-
     String? documentId;
     String? unitName;
     String thumbnail = "";
+    String conid = "";
     
-
     final doc = FirebaseFirestore.instance.collection('T05_Toukou').doc();
-
     final gid =
         FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid);
+    final con = FirebaseFirestore.instance.collection('T07_Convention').doc();
     // print("gidってなにーー？？");
     // print(gid);
     // print(gid.runtimeType);
@@ -109,6 +102,19 @@ class _sendNetaState extends State<sendNeta> {
                 },
               ),
             });
+    
+    await FirebaseFirestore.instance
+        .collection('T04_Event')
+        .doc('cvabc8IsVAGQjYwPv0fR')
+        .collection('T02_Convention')
+        .where("T07_flag", isEqualTo: 1)
+        .where("T05_Name", isEqualTo: value)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        conid = doc["T08_DocumentId"];
+      });
+    });
     // print("idは本当に入っているのか？？");
     // print(documentId);
 
@@ -133,8 +139,6 @@ class _sendNetaState extends State<sendNeta> {
         .putFile(File(_uint8list!));
       thumbnail =await task2.ref.getDownloadURL();
     }
-
-    
     // final _image = Image.memory(uint8list!);
     // print("画像ーーーーーーーーーーー");
     // print(_image);
@@ -151,6 +155,18 @@ class _sendNetaState extends State<sendNeta> {
       "T05_UnitName": unitName,
       "T05_Thumbnail":thumbnail,
     });
+
+    if (value == '大会選択なし') {
+      print('ok');
+    } else {
+      await con.set({
+        'T07_Geinin': id,
+        'T07_VideoUrl': video,
+        'T07_votes': 0,
+        'T07_Create': Timestamp.fromDate(DateTime.now()),
+        'T07_Convention': conid,
+      });
+    }
     print("登録できました");
   }
 
@@ -252,7 +268,7 @@ class _sendNetaState extends State<sendNeta> {
               // _tachikame();
               if (_formKey.currentState!.validate() && imageFile != null) {
                 print("登録完了");
-                _upload(title, shoukai);
+                _upload(title, shoukai, dropdownValue);
                 try {
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => App()));
