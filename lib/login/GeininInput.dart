@@ -71,8 +71,10 @@ class _GeininInput extends State<GeininInput> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+
           child:Form(
             key: _formKey,
+
             child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -213,7 +215,7 @@ class _GeininInput extends State<GeininInput> {
               child: const Text('登録'),
             ),
           ],
-        )),
+        ))),
       ),
     ));
   }

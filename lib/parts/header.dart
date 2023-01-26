@@ -10,7 +10,6 @@ import 'Search.dart';
 
 import 'Billing.dart';
 
-
 class Header extends StatefulWidget with PreferredSizeWidget {
   const Header({
     Key? key,
@@ -37,7 +36,6 @@ class _Header extends State<Header> {
     return data['T01_AhaCoin'].toString();
   }
 
-
   String _coin = "";
   int i = 0;
   final _editController = TextEditingController();
@@ -47,7 +45,6 @@ class _Header extends State<Header> {
   @override
   Widget build(BuildContext context) {
     // final docSnapshot = FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).get();
-
 
     fetchCoin().then(
       (value) {
@@ -62,23 +59,19 @@ class _Header extends State<Header> {
       },
     );
     return AppBar(
-
         title: !_searchBoolean ? const Text('アハマッチ!') : searchTextField(),
         actions: !_searchBoolean
             ? [
                 IconButton(
-
                     icon: const Icon(Icons.search),
-                  //   onPressed: () async {
-                  // Navigator.push(
-                  //     context, MaterialPageRoute(builder: (context) => SearchResultMane()));},
+                    //   onPressed: () async {
+                    // Navigator.push(
+                    //     context, MaterialPageRoute(builder: (context) => SearchResultMane()));},
                     onPressed: () {
                       setState(() {
                         _searchBoolean = true;
                       });
-                    }
-                    ),
-
+                    }),
                 TextButton.icon(
                   icon: const Icon(Icons.monetization_on),
                   label: Text(_coin),
@@ -86,10 +79,8 @@ class _Header extends State<Header> {
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () {
-                                        Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Billing()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Billing()));
                   },
                 ),
                 IconButton(
@@ -140,11 +131,13 @@ class _Header extends State<Header> {
       ),
       textInputAction: TextInputAction.search, //キーボードのアクションボタンを指定
       onSubmitted: ((value) {
-        Navigator.push(context,
-          MaterialPageRoute(builder: (context) => 
-          // SearchResult(_editController.text)
-          SearchResult(_editController.text)
-          ,));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  // SearchResult(_editController.text)
+                  SearchResult(_editController.text),
+            ));
       }),
       decoration: InputDecoration(
         //TextFiledのスタイル
