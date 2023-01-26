@@ -84,59 +84,6 @@ class _searchNetaState extends State<searchNeta> {
   Widget build(BuildContext context) {
 
 
-  //         StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-  //                   if(snapshot.connectionState == ConnectionState.waiting){
-  //                     return const Text("ネタないよ");
-  //                   }else if (snapshot.hasData){
-  //                     List photo = snapshot.data!;
-  //                         return Column(
-  //                           children: [
-  //                             Text("ログイン情報:${user!.displayName}"),
-  //                             Expanded(
-  //                                 child:SizedBox(
-  //                                     height: 250,
-  //                                       width: 250,
-  //                                     child: ListView.builder(
-  //                                       shrinkWrap: true,
-  //                                     // padding: EdgeInsets.all(250),
-  //                                   itemCount: videoUrls.length,
-  //                                   itemBuilder: (context, index){
-  //                                     return SizedBox(
-  //                                       height: 500,
-  //                                       width: 250,
-  //                                       // child: MoviePlayerWidget(photo[index]),
-  //                                     );
-  //                                   }
-  //                                     )
-  //                                 )
-  //                         ),
-  //                           ],
-  //                         );
-  //                   } else {
-  //                     return Column(
-  //                       children: [
-  //                         Text("ログイン情報:${user!.displayName}"),
-  //                         Text("芸人をフォローしてください"),
-  //                       ],
-  //                     );
-  //                     // return const Text("not photo");
-  //                   }
-  //                   },),
-  //           floatingActionButton: FloatingActionButton(
-  //           child: const Icon(Icons.add),
-  //           onPressed: () async {
-  //             // await FirebaseAuth.instance.signOut();
-  //             Navigator.push(context,
-  //                 MaterialPageRoute(builder: (context) => const uploadPost()));
-  //             /* --- 省略 --- */
-  //           },
-  //         ),
-  //         // bottomNavigationBar: Footer(),
-  //       );
-  //   }
-  // }
-
-
     return StreamBuilder(
       stream: getVideo(widget.word),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

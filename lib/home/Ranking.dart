@@ -50,11 +50,13 @@ class _RankingState extends State<Ranking> {
                         unselectedLabelColor: Colors.black12,
                       ),
                       Expanded(
+
                           child: TabBarView(children: <Widget>[
                         HitTab(),
                         AhaPointTab(),
                         CommentTab(),
                       ]))
+
                     ]))));
   }
 }
