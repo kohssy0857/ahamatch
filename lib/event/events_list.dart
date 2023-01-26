@@ -18,6 +18,8 @@ import 'audition_overview.dart';
 import 'audition_list.dart';
 
 
+  // List geininId = [];
+  // List list = [];
 class MainModel extends ChangeNotifier {
   // ListView.builderで使うためのBookのList booksを用意しておく。
   List<Convention> events = [];
@@ -50,8 +52,29 @@ class MainModel extends ChangeNotifier {
           events.removeAt(i);
         }
       }
-
+      
     this.events = events;
+    for(int i = 0; i < events.length; i++) {
+      await FirebaseFirestore.instance
+          .collection("T07_Convention")
+          .where("T07_Convention", isEqualTo: events[i].docid)
+          .get()
+          .then((QuerySnapshot snapshot) {
+        snapshot.docs.forEach((doc) {
+          geininId.add(doc["T07_Geinin"]);
+        });
+      });
+    }
+    await FirebaseFirestore.instance
+        .collection("T02_Geinin")
+        .where("T02_GininId", whereIn: geininId)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        list.add(doc["T02_UnitName"]);
+      });
+    });
+
     print('len = ' + events.length.toString());
     notifyListeners();
   }
@@ -105,7 +128,6 @@ class Events extends StatelessWidget {
                   body: Consumer<MainModel>(
                     builder: (context, model, child) {
                       final events = model.events;
-                      
                       if (events.isEmpty) {
                         return const Text("大会は現在開催されていません。");
                       } else {
@@ -150,14 +172,12 @@ class Events extends StatelessWidget {
                                   IconButton(
                                     icon: Icon(Icons.info),
                                     onPressed: () {
-                                      print('model = ${model}');
-                                      print('events = ${events}');
                                       Navigator.push(
                                           // ボタン押下でオーディション編集画面に遷移する
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ConOverview(events, index)));
+                                                  ConOverview(model: events, index: index)));
                                       // AlertDialog(
                                       //   title: Text('大会名：${}'),);
                                     },

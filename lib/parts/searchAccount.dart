@@ -92,12 +92,14 @@ class MainModel extends ChangeNotifier {
     // }
     // ignore: unrelated_type_equality_checks
     if (searchedNames.isNotEmpty) {
-      final docs = await FirebaseFirestore.instance
-          .collection("T02_Geinin")
-          .where("T02_UnitName", whereIn: searchedNames)
-          .get();
-      final T02Geinin = docs.docs.map((doc) => searchAccount(doc)).toList();
-      this.T02_Geinin = T02Geinin;
+      for(int i = 0;i<searchedNames.length; i++){
+          final docs = await FirebaseFirestore.instance
+              .collection("T02_Geinin")
+              .where("T02_UnitName", isEqualTo: searchedNames[i])
+              .get();
+          final T02Geinin = docs.docs.map((doc) => searchAccount(doc)).toList();
+          this.T02_Geinin = T02Geinin;
+      }
     }
 
     notifyListeners();
