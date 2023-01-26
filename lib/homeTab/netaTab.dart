@@ -54,6 +54,7 @@ class _netaResultState extends State<netaResult> {
     });
 
     if (documentList.isNotEmpty == true) {
+      documentList = documentList.toSet().toList();
       // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
       await FirebaseFirestore.instance
           .collection('T05_Toukou')
