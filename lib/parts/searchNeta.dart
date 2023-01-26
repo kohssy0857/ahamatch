@@ -83,9 +83,7 @@ class _searchNetaState extends State<searchNeta> {
   @override
   Widget build(BuildContext context) {
 
-  //       return Scaffold(
-  //         body: 
-  //         // Text("Left"),
+
   //         StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
   //                   if(snapshot.connectionState == ConnectionState.waiting){
   //                     return const Text("ネタないよ");

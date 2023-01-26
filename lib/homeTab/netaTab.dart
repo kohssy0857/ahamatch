@@ -40,6 +40,7 @@ class _netaResultState extends State<netaResult> {
 
   Stream<List> getVideo() async* {
     // ---------------------------------------------------------------
+
     // final ref = FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
     final task = await FirebaseStorage.instance.ref("profile/${user!.uid}.jpg");
     // print("画像のURL");
@@ -50,6 +51,7 @@ class _netaResultState extends State<netaResult> {
     // final gid =
     //     FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid);
     //         });
+
     // 自身がフォローしている相手のidを取得
     await FirebaseFirestore.instance
         .collection('T01_Person')
@@ -60,6 +62,7 @@ class _netaResultState extends State<netaResult> {
       if (snapshot.docs.isNotEmpty) {
         snapshot.docs.forEach((doc) {
           documentList.add(doc.get('T05_GeininId'));
+
           // geininIdList.add(doc.get('T05_GeininId').path.replaceFirst("T02_Geinin/", ""));
 
           FirebaseFirestore.instance
@@ -109,6 +112,7 @@ class _netaResultState extends State<netaResult> {
         .doc(documentId)
         .update({"T05_ShityouKaisu": FieldValue.increment(1.0)});
     print("視聴回数＋１");
+
   }
 
   @override
@@ -119,6 +123,7 @@ class _netaResultState extends State<netaResult> {
       stream: getVideo(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
+
           return const Text("ロード中");
         } else if (snapshot.hasData) {
           List photo = snapshot.data!;
@@ -204,6 +209,7 @@ class _netaResultState extends State<netaResult> {
                       ],
                     );
                   });
+
         } else {
           return Column(
             children: [
@@ -278,17 +284,21 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
     final mylistcheck = FirebaseFirestore.instance
         .collection("T05_Toukou")
         .doc(id)
+
         .collection("Comment");
+
     mylistcheck.get().then((docSnapshot) async => {
           // 存在しない場合、フォローを行う
           await FirebaseFirestore.instance
               .collection('T05_Toukou')
               .doc(id)
+
               .collection("Comment")
               .doc()
               .set({
             "User": user!.displayName,
             "Comment": toukou,
+
             "Create": Timestamp.fromDate(DateTime.now()),
           }),
           print("登録できました"),
@@ -316,6 +326,7 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
           },
         ),
       ),
+
       actions: [
         TextButton(
           onPressed: () {

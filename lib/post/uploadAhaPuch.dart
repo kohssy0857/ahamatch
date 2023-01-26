@@ -115,6 +115,7 @@ class _sendAhaPuchState extends State<sendAhaPuch> {
       "T05_VideoUrl": video,
       "T05_Type": 2,
       "T05_Shoukai": shoukai,
+
       "T05_UnitName": unitName,
       "T05_Thumbnail":thumbnail,
     });
