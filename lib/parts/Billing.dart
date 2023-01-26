@@ -30,11 +30,11 @@ class _BillingState extends State<Billing> {
                   "アハコイン購入",
                   textAlign: TextAlign.center,
                 ),
-                billingContainer(120, 100),
-                billingContainer(120, 100),
-                billingContainer(120, 100),
-                billingContainer(120, 100),
-                billingContainer(120, 100)
+                billingContainer(140, 120),
+                billingContainer(650, 650),
+                billingContainer(1300, 1400),
+                billingContainer(5000, 5400),
+                billingContainer(15000, 17000)
               ]),
         ));
   }
@@ -71,8 +71,8 @@ class _BillingState extends State<Billing> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Dialog!"),
-        content: const Text("Text of Something"),
+        title: const Text("購入"),
+        content:  Text("$price円で$amountコインを購入しますか？"),
         actions: [
           TextButton(
             onPressed: () {
