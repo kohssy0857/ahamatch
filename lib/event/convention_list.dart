@@ -15,6 +15,9 @@ import 'package:provider/provider.dart';
 import 'convention_overview.dart';
 import 'events_list.dart';
 
+
+  List geininId = [];
+  List<String> list = [];
 class MainModel extends ChangeNotifier {
   // ListView.builderで使うためのBookのList booksを用意しておく。
   List<Convention> events = [];
@@ -50,6 +53,29 @@ class MainModel extends ChangeNotifier {
       }
 
     this.events = events;
+
+for(int i = 0; i < events.length; i++) {
+      await FirebaseFirestore.instance
+          .collection("T07_Convention")
+          .where("T07_Convention", isEqualTo: events[i].docid)
+          .get()
+          .then((QuerySnapshot snapshot) {
+        snapshot.docs.forEach((doc) {
+          geininId.add(doc["T07_Geinin"]);
+        });
+      });
+    }
+    await FirebaseFirestore.instance
+        .collection("T02_Geinin")
+        .where("T02_GininId", whereIn: geininId)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        list.add(doc["T02_UnitName"]);
+      });
+    });
+
+
     print('len = ' + events.length.toString());
     notifyListeners();
   }
@@ -146,7 +172,7 @@ class Conventions extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            ConOverview(events, index)));
+                                            ConOverview(model: events, index: index)));
                                 // AlertDialog(
                                 //   title: Text('大会名：${}'),);
                               },
