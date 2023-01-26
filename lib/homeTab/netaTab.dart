@@ -7,16 +7,14 @@ import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "../post/uploadPost.dart";
 import '../parts/footer.dart';
-
 import '../parts/header.dart';
-
 import '../functions.dart';
 import '../parts/MoviePlayerWidget .dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
 //
 import '../homeTab/shinmeTab.dart';
 import '../parts/FullscreenVideo.dart';
+import '../parts/searchAccount.dart';
 // void senddNeta() {}
 
 class netaResult extends StatefulWidget {
@@ -32,13 +30,28 @@ class _netaResultState extends State<netaResult> {
   List<String> videoThumbnails = [];
   List<String> videoShoukai = [];
   List<String> videoId = [];
+  List<String> userImageList = [];
   // ドキュメント情報を入れる箱を用意
   List documentList = [];
+  List geininIdList = [];
+  Map<String, String>  geininUnitNameList = {};
   List<String> videoTitle = [];
+  List userImage = [];
 
   Stream<List> getVideo() async* {
     // ---------------------------------------------------------------
-    final ref = FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
+
+    // final ref = FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
+    final task = await FirebaseStorage.instance.ref("profile/${user!.uid}.jpg");
+    // print("画像のURL");
+    // print("${task.fullPath}");
+    userImage.add(task.getDownloadURL());
+    // print("画像のURL");
+    // print("${userImage}");
+    // final gid =
+    //     FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid);
+    //         });
+
     // 自身がフォローしている相手のidを取得
     await FirebaseFirestore.instance
         .collection('T01_Person')
@@ -49,20 +62,34 @@ class _netaResultState extends State<netaResult> {
       if (snapshot.docs.isNotEmpty) {
         snapshot.docs.forEach((doc) {
           documentList.add(doc.get('T05_GeininId'));
+
+          // geininIdList.add(doc.get('T05_GeininId').path.replaceFirst("T02_Geinin/", ""));
+
+          FirebaseFirestore.instance
+          .collection('T02_Geinin')
+          .doc("${doc.get('T05_GeininId').path.replaceFirst("T02_Geinin/", "")}")
+          .get().then((DocumentSnapshot snapshot) {
+            // geininUnitNameList.add(snapshot.get('T02_UnitName'));
+            geininUnitNameList[doc.get('T05_GeininId').path.replaceFirst("T02_Geinin/", "")]=snapshot.get('T02_UnitName');
+          });
         });
       }
     });
+    // print(geininUnitNameList);
 
     if (documentList.isNotEmpty == true) {
       // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
-      await FirebaseFirestore.instance
+      for(int i = 0;i<documentList.length; i++){
+        await FirebaseFirestore.instance
           .collection('T05_Toukou')
-          .where("T05_Geinin", whereIn: documentList)
+          .where("T05_Geinin", isEqualTo: documentList[i])
           .get()
           .then((QuerySnapshot snapshot) {
         snapshot.docs.forEach((doc) {
           if (doc["T05_Type"] == 1) {
             if (videoThumbnails.contains(doc["T05_Thumbnail"]) == false) {
+              
+              geininIdList.add(doc["T05_Geinin"].path.replaceFirst("T02_Geinin/", ""));
               videoThumbnails.add(doc["T05_Thumbnail"]);
               videoShoukai.add(doc["T05_Shoukai"]);
               videoId.add(doc.id);
@@ -71,23 +98,21 @@ class _netaResultState extends State<netaResult> {
           }
         });
       });
-
-      final all =
-          await FirebaseStorage.instance.ref().child('post/neta/').listAll();
-
+      }
+      
       yield videoThumbnails;
     }
+    // yield videoThumbnails;
+  }
 
-    // -------------------------------------------------
+  // 視聴回数を増やす関数
+  void addShityoukaisu(String documentId) {
+    FirebaseFirestore.instance
+        .collection('T05_Toukou')
+        .doc(documentId)
+        .update({"T05_ShityouKaisu": FieldValue.increment(1.0)});
+    print("視聴回数＋１");
 
-    // 取得した動画URLのリストを
-    // var url = await ref.getDownloadURL();
-    // videoUrls.add(ref.toString());
-
-    // final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc("7NOSPf1J3DAQvEvwimAE").get();
-    // // print(ref.data()!["T05_VideoUrl"]);
-    // videoUrls.add(ref.data()!["T05_VideoUrl"]);
-    yield videoThumbnails;
   }
 
   @override
@@ -98,76 +123,93 @@ class _netaResultState extends State<netaResult> {
       stream: getVideo(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("ネタないよ");
+
+          return const Text("ロード中");
         } else if (snapshot.hasData) {
           List photo = snapshot.data!;
-          return Column(
-            children: [
-              Text("ログイン情報:${user!.displayName}"),
-              Expanded(
-                  child: SizedBox(
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          // padding: EdgeInsets.all(250),
-                          itemCount: videoThumbnails.length,
-                          itemBuilder: (context, index) {
-                            return Column(
+          return
+              // Column(
+              //   children: [
+              //     Text("ログイン情報:${user!.displayName}"),
+              //     Expanded(
+              //         child: SizedBox(
+              //             child:
+              ListView.builder(
+                  shrinkWrap: true,
+                  // padding: EdgeInsets.all(250),
+                  itemCount: videoThumbnails.length,
+                  itemBuilder: (context, index) {
+                    return Row(
+                      children: [
+                        // Text("${geininUnitNameList[geininIdList[index]]}"),
+                        ElevatedButton(
+                          onPressed: () async {
+                            try {
+                                Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SearchResultMane(word: "${geininUnitNameList[geininIdList[index]]}"))
+                                                    );
+                            } catch (e) {}
+                          },
+                          child: SizedBox(width: 100,
+                                    child: Text('${geininUnitNameList[geininIdList[index]]}'),)
+                        ),
+                        Column(
+                          children: [
+                            Text("タイトル：" + "${videoTitle[index]}"),
+                            SizedBox(
+                              width: 300,
+                              height: 300,
+                              child: Image.network(photo[index],
+                                  height: 150, fit: BoxFit.fill),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("タイトル：" + "${videoTitle[index]}"),
-                                Image.network(
-                                  photo[index],
+                                Container(
                                   width: 500,
-                                  height: 250,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.blue),
+                                  ),
+                                  child: Text("概要：" + "${videoShoukai[index]}"),
                                 ),
-
-                                // MoviePlayerWidget(photo[index],videoId[index])
-                                // MoviePlayerWidget(photo[index],"7NOSPf1J3DAQvEvwimAE")
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 500,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.blue),
-                                      ),
-                                      child: Text(
-                                          "概要：" + "${videoShoukai[index]}"),
-                                    ),
-                                    IconButton(
-                                      onPressed: () async {
-                                        final result =
-                                            await DialogUtils.showEditingDialog(
-                                                context, videoId[index]);
-                                        // setState(() {
-                                        //   // shinmeToukouList[index] = result ?? shinmeToukouList[index];
-                                        // });
-                                      },
-                                      icon: Icon(Icons.textsms),
-                                    ),
-                                    IconButton(
-                                      onPressed: () async {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    FullscreenVideo(
-                                                        videoId[index],
-                                                        100,
-                                                        99))).then((value) {
-                                          // 再描画
-                                          setState(() {});
-                                        });
-                                        ;
-                                      },
-                                      icon: Icon(Icons.fullscreen),
-                                    ),
-                                  ],
-                                )
+                                IconButton(
+                                  onPressed: () async {
+                                    final result =
+                                        await DialogUtils.showEditingDialog(
+                                            context, videoId[index]);
+                                    // setState(() {
+                                    //   // shinmeToukouList[index] = result ?? shinmeToukouList[index];
+                                    // });
+                                  },
+                                  icon: Icon(Icons.textsms),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    addShityoukaisu(videoId[index]);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FullscreenVideo(videoId[index],
+                                                    100, 99))).then((value) {
+                                      // 再描画
+                                      setState(() {});
+                                    });
+                                    ;
+                                  },
+                                  icon: Icon(Icons.fullscreen),
+                                ),
                               ],
-                            );
-                          }))),
-            ],
-          );
+                            )
+                          ],
+                        ),
+                      ],
+                    );
+                  });
+
         } else {
           return Column(
             children: [
@@ -222,7 +264,6 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
 
   @override
   void initState() {
-    super.initState();
     // TextFormFieldに初期値を代入する
     controller.text = widget.text ?? '';
     // id = widget.id ?? '';
@@ -235,6 +276,7 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
         }
       },
     );
+    super.initState();
   }
 
   // FirebaseFirestoreに対して削除を促している関数
@@ -242,17 +284,21 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
     final mylistcheck = FirebaseFirestore.instance
         .collection("T05_Toukou")
         .doc(id)
-        .collection("coments");
+
+        .collection("Comment");
+
     mylistcheck.get().then((docSnapshot) async => {
           // 存在しない場合、フォローを行う
           await FirebaseFirestore.instance
               .collection('T05_Toukou')
               .doc(id)
-              .collection("coments")
+
+              .collection("Comment")
               .doc()
               .set({
             "User": user!.displayName,
-            "Coment": toukou,
+            "Comment": toukou,
+
             "Create": Timestamp.fromDate(DateTime.now()),
           }),
           print("登録できました"),
@@ -280,21 +326,7 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
           },
         ),
       ),
-      // TextFormField(
-      //   autofocus: true, // ダイアログが開いたときに自動でフォーカスを当てる
-      //   focusNode: focusNode,
-      //   controller: controller,
-      //   onFieldSubmitted: (_) {
-      //     // エンターを押したときに実行される
-      //     Navigator.of(context).pop(controller.text);
-      //   },
-      //   validator: (value) {
-      //         if (value == null || value.isEmpty) {
-      //           return '入力されていません';
-      //         }
-      //         return null;
-      //       },
-      // ),
+
       actions: [
         TextButton(
           onPressed: () {

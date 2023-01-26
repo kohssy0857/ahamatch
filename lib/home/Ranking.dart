@@ -30,14 +30,17 @@ class _RankingState extends State<Ranking> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: const Header(),
+        // ヘッダー呼び出し
         body: SafeArea(
             child: DefaultTabController(
+                // タブコントローラー呼び出し
                 length: 3,
+                // 各ランキングをタブに入れて呼び出し
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Center(child: Text("ランキング！")),
-                      TabBar(
+                      const Center(child: Text("ランキング！")),
+                      const TabBar(
                         tabs: [
                           Tab(text: "視聴回数"),
                           Tab(text: "アハポ数"),
@@ -47,13 +50,13 @@ class _RankingState extends State<Ranking> {
                         unselectedLabelColor: Colors.black12,
                       ),
                       Expanded(
-                          child: TabBarView(
-                              // physics: NeverScrollableScrollPhysics(),
-                              children: <Widget>[
-                            HitTab(),
-                            AhaPointTab(),
-                            CommentTab(),
-                          ]))
+
+                          child: TabBarView(children: <Widget>[
+                        HitTab(),
+                        AhaPointTab(),
+                        CommentTab(),
+                      ]))
+
                     ]))));
   }
 }

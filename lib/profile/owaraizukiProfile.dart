@@ -133,7 +133,11 @@ void owaraizukiEdit() async{
                                         return const Text("no photo");
                                       }else if (snapshot.hasData){
                                         Image photo = snapshot.data!;
-                                        return  photo;
+                                        return  SizedBox(
+                                          width: 200,
+                                          height: 200,
+                                          child: photo,
+                                        );
                                       } else {
                                         return const Text("not photo");
                                       }

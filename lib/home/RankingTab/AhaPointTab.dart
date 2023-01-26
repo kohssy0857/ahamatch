@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 import 'dart:collection';
+import "../../parts/FullscreenVideo.dart";
 
 class AhaPointTab extends StatefulWidget {
   AhaPointTab({Key? key}) : super(key: key);
@@ -20,11 +21,13 @@ class _AhaPointTabState extends State<AhaPointTab> {
   final user = FirebaseAuth.instance.currentUser;
   List netaList = [];
   List netaIdList = [];
-  List result = [];
-  Map AhaMap = {};
-  int setstint = 0;
+  var AhaMap = SplayTreeMap();
+  double point = 0;
   late DocumentSnapshot<Map<String, dynamic>> netaSnap;
-  var netaHit = "";
+  int i = 0;
+  int k = 0;
+  int r = 0;
+  List docList = ["","","","","","","","","","",];
   Stream<List> getNetaList() async* {
     await FirebaseFirestore.instance
         .collection("T05_Toukou")
@@ -33,7 +36,6 @@ class _AhaPointTabState extends State<AhaPointTab> {
         .then((QuerySnapshot snapshot) async {
       snapshot.docs.forEach((doc) {
         netaIdList.add(doc.id);
-        // print(doc.get("AhaPoint"));
       });
       netaIdList.forEach((element) async {
         await FirebaseFirestore.instance
@@ -48,23 +50,37 @@ class _AhaPointTabState extends State<AhaPointTab> {
                 .doc(element)
                 .get()
                 .then((neta) => netaSnap = neta);
-            AhaMap.addAll({netaSnap.data(): points.size});
-            SplayTreeMap.from(
-                AhaMap, (a, b) => AhaMap[a]!.compareTo(AhaMap[b]!));
-            netaList.addAll(AhaMap.keys);
-            netaList.forEach((neta) {
-              if (!result.contains(neta)) {
-                result.add(neta);
+            point = points.size.toDouble();
+            if (netaList.length < 10) {
+              while (true) {
+                if (AhaMap.containsKey(point)) {
+                  point += 0.1;
+                } else {
+                  AhaMap.addAll({point: netaSnap.data()});
+                  break;
+                }
               }
-            });
-            netaList = result.reversed.toList();
-            print(netaList.length);
-            if (netaList.length == 10) {
-              netaList.forEach((element) {
-              });
-              setState(() {});
             }
-            // print(netaList[0]);
+
+            netaList = AhaMap.values.toList();
+            netaList = netaList.reversed.toList();
+
+            if (netaList.length == 10 && k == 0) {
+              k++;
+              netaList.asMap().forEach((int index, netadata) async {
+                await FirebaseFirestore.instance
+                    .collection("T05_Toukou")
+                    .where("T05_Title", isEqualTo: netadata["T05_Title"])
+                    .get()
+                    .then((value) {
+                  docList[index] = value.docs.first.id;
+                });
+              });
+              if (i == 0) {
+                setState(() {});
+                i++;
+              }
+            }
           }
         });
       });
@@ -79,18 +95,49 @@ class _AhaPointTabState extends State<AhaPointTab> {
             children: [
               ListView.builder(
                   shrinkWrap: true,
-                  itemCount: 10,
+                  itemCount: netaList.length,
                   itemBuilder: (context, index) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Text("読み込み中");
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      return SizedBox(
-                          child: ListTile(
-                              title: Text(netaList.length.toString())));
-                    } else {
-                      return Text("ddddddddddddddddddddddd");
-                    }
+                    return SizedBox(
+                        height: 100,
+                        child: ListTile(
+                          minVerticalPadding: 0,
+                          minLeadingWidth: 100,
+                          title: Text(netaList[index]["T05_Title"]),
+                          leading: Image.network(
+                            netaList[index]["T05_Thumbnail"],
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.fill,
+                          ),
+                          subtitle: Text(netaList[index]["T05_UnitName"]),
+                          trailing: Container(
+                            height: 60,
+                            width: 60,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.red,
+                            ),
+                            child: Text(
+                              "${index + 1}位",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  fontSize: 24),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FullscreenVideo(
+                                            docList[index], 100, 99)))
+                                .then((value) {
+                              // 再描画
+                              setState(() {});
+                            });
+                          },
+                        ));
                   })
             ],
           );

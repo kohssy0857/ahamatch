@@ -38,8 +38,9 @@ class _AnnounceResultState extends State<AnnounceResult> {
 });
 
       if(documentList.isNotEmpty==true){
+        for(int i = 0;i<documentList.length; i++){
         // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
-      await FirebaseFirestore.instance.collection('T05_Toukou').where("T05_Geinin", whereIn: documentList).get().
+      await FirebaseFirestore.instance.collection('T05_Toukou').where("T05_Geinin", isEqualTo: documentList[i]).get().
     then((QuerySnapshot snapshot) {
    snapshot.docs.forEach((doc) {
     if(doc["T05_Type"]==4){
@@ -47,7 +48,7 @@ class _AnnounceResultState extends State<AnnounceResult> {
       unitNameList.add(doc["T05_UnitName"]);
     }
    });
-});
+});}
 
       final all = await  FirebaseStorage.instance.ref().child('post/neta/').listAll();
       yield announceList;
@@ -65,7 +66,7 @@ class _AnnounceResultState extends State<AnnounceResult> {
     return 
     StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting){
-                      return const Text("告知ないよ");
+                      return const Text("ロード中");
                     }else if (snapshot.hasData){
                       List photo = snapshot.data!;
                           return Column(

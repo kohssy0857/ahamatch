@@ -40,8 +40,9 @@ class _ShinmeResultState extends State<ShinmeResult> {
   }
 });
       if(documentList.isNotEmpty==true){
+        for(int i = 0;i<documentList.length; i++){
         // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
-      await FirebaseFirestore.instance.collection('T05_Toukou').where("T05_Geinin", whereIn: documentList).get().
+      await FirebaseFirestore.instance.collection('T05_Toukou').where("T05_Geinin", isEqualTo: documentList[i]).get().
     then((QuerySnapshot snapshot) {
    snapshot.docs.forEach((doc) {
     if(doc["T05_Type"]==3){
@@ -59,6 +60,7 @@ class _ShinmeResultState extends State<ShinmeResult> {
     }
    });
 });
+        }
 
       final all = await  FirebaseStorage.instance.ref().child('post/neta/').listAll();
       yield bosyuList;
@@ -69,7 +71,7 @@ class _ShinmeResultState extends State<ShinmeResult> {
     return 
     StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting){
-                      return const Text("新芽ないよ");
+                      return const Text("ロード中");
                     }else if (snapshot.hasData){
                       List photo = snapshot.data!;
                           return Column(
