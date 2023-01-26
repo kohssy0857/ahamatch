@@ -24,6 +24,7 @@ class _sendNetaState extends State<sendNeta> {
   String shoukai = "";
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
+  int i = 0;
   // 入力された内容を保持するコントローラ
 
   List<String> list = ["大会選択なし"];
@@ -42,7 +43,7 @@ class _sendNetaState extends State<sendNeta> {
   // 画像の選択
   Future pickImage() async{
 
-  int i = 0;
+  
 
 
     final pickerFile =

@@ -117,9 +117,12 @@ void aikataInfoSubmit(bool isOn, List tagList) async{
                       reTag0=value;
                   },
                   validator: (value) {
+                    if (value == null || value.isEmpty) {
+                    return "必須です";
+                  }
                     if(value==widget.tag[0]){
                       reTag0=widget.tag[0];
-                    }
+                    } 
                     return null;
                   },
                 )),
