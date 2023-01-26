@@ -15,39 +15,37 @@ import 'package:audioplayers/audioplayers.dart';
  * 動画ウィジェット
  */
 class FullMoviePlayerWidget extends StatefulWidget {
-
   String movieURL; // 動画URL
   String movieId;
-  FullMoviePlayerWidget(this.movieURL,this.movieId) : super();
+  FullMoviePlayerWidget(this.movieURL, this.movieId) : super();
 
   @override
   _FullMoviePlayerWidgetState createState() => _FullMoviePlayerWidgetState();
 }
-
 
 /*
  * ステート
  */
 
 class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
-
   // ~~~~~~~~~~
   List smileList = [];
   final user = FirebaseAuth.instance.currentUser;
 //   int _counter = 0;
 //  final _audio = AudioCache();
-Soundpool _pool = Soundpool(streamType: StreamType.notification);
-Stream<QuerySnapshot>? chats;
-String elementId = "";
-
+  Soundpool _pool = Soundpool(streamType: StreamType.notification);
+  Stream<QuerySnapshot>? chats;
+  String elementId = "";
+  bool laughTF = false;
 
 // コメントを獲得
-getChats() async {
+  getChats() async {
     return FirebaseFirestore.instance
-                  .collection('T05_Toukou')
-                  .doc(widget.movieId)
-                  .collection('coments').orderBy('Create', descending: true)
-                  .snapshots();
+        .collection('T05_Toukou')
+        .doc(widget.movieId)
+        .collection('Comment')
+        .orderBy('Create', descending: true)
+        .snapshots();
   }
 
   getChatandAdmin() {
@@ -67,7 +65,8 @@ getChats() async {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return Container(
-                    child: Text("${snapshot.data.docs[index]['User']}："+"${snapshot.data.docs[index]['Coment']}"),
+                    child: Text("${snapshot.data.docs[index]['User']}：" +
+                        "${snapshot.data.docs[index]['Comment']}"),
                     decoration: BoxDecoration(
                       border: const Border(
                         bottom: const BorderSide(
@@ -84,19 +83,20 @@ getChats() async {
     );
   }
 
-
- void _incrementCounter() async {
-  int soundId = await rootBundle.load("assets/se/sample-3s.mp3").then((ByteData soundData) {
-    return _pool.load(soundData);
+  void _incrementCounter() async {
+    int soundId = await rootBundle
+        .load("assets/se/sample-3s.mp3")
+        .then((ByteData soundData) {
+      return _pool.load(soundData);
     });
-  int streamId = await _pool.play(soundId);
- }
+    int streamId = await _pool.play(soundId);
+  }
   // ~~~~~~~~~~
 
   // コントローラー
   late VideoPlayerController _controller;
-  // 
-  VoidCallback _listener =() => {};
+  //
+  VoidCallback _listener = () => {};
   __ProgressTextState() {
     _listener = () {
       // 検知したタイミングで再描画する
@@ -106,72 +106,93 @@ getChats() async {
 
   // 読み込み時にアハポイントを取得する
   Future _takeAhapoint() async {
-    final smileCheck = FirebaseFirestore.instance.collection("T05_Toukou").doc(widget.movieId).collection("AhaPoint");
-    smileCheck.get()
-  .then((docSnapshot) async => {
-    if (docSnapshot.docs.isNotEmpty) {
-      // print("あるよ"),
-      await FirebaseFirestore.instance.collection('T05_Toukou').doc(widget.movieId).collection("AhaPoint").get().
-      then((QuerySnapshot snapshot) {
-        snapshot.docs.forEach((doc) {
-            smileList.add(doc["Point"]);
+    final smileCheck = FirebaseFirestore.instance
+        .collection("T05_Toukou")
+        .doc(widget.movieId)
+        .collection("AhaPoint");
+    smileCheck.get().then((docSnapshot) async => {
+          if (docSnapshot.docs.isNotEmpty)
+            {
+              // print("あるよ"),
+              await FirebaseFirestore.instance
+                  .collection('T05_Toukou')
+                  .doc(widget.movieId)
+                  .collection("AhaPoint")
+                  .get()
+                  .then((QuerySnapshot snapshot) {
+                snapshot.docs.forEach((doc) {
+                  smileList.add(doc["Point"]);
+                });
+              }),
+              // print(smileList),
+            }
+          else
+            {
+              // print("ないよ")
+            }
         });
-      }),
-      // print(smileList),
-    }else{
-      // print("ないよ")
-    }
-});
-}
+  }
 
 // 笑い声を再生
-void _laughVoice(Duration duration,List smileList) async{
-  for(int i = 0;i<smileList.length;i++){
-    if(duration.inSeconds.remainder(3600)==smileList[i]){
-      // print("OK~~~~~~~~~~~~~");
-      int soundId = await rootBundle.load("assets/se/sample-3s.mp3").then((ByteData soundData) {
-    return _pool.load(soundData);
-    });
-  int streamId = await _pool.play(soundId);
-    }else{
-      // print("No~~~~~~~~~~~~~~~~");
+  void _laughVoice(Duration duration, List smileList) async {
+    for (int i = 0; i < smileList.length; i++) {
+      if (duration.inSeconds.remainder(3600) == smileList[i]) {
+        // print("OK~~~~~~~~~~~~~");
+        int soundId = await rootBundle
+            .load("assets/se/sample-3s.mp3")
+            .then((ByteData soundData) {
+          return _pool.load(soundData);
+        });
+        int streamId = await _pool.play(soundId);
+      } else {
+        // print("No~~~~~~~~~~~~~~~~");
+      }
     }
   }
-}
 
 // マイリストに追加
-void addMylist(String videoUrl,String movieId) async{
-  final mylistcheck = FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid).collection("mylist");
-      mylistcheck.get()
-  .then((docSnapshot) async => {
-    // 存在しない場合、フォローを行う
-    await FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).collection("mylist").doc().set({
-      'videoUrl': videoUrl,
-      'movieId': movieId,
-      "Create": Timestamp.fromDate(DateTime.now()),
-    }),
-    print("登録できました"),
-
-});
-}
+  void addMylist(String videoUrl, String movieId) async {
+    final mylistcheck = FirebaseFirestore.instance
+        .collection("T01_Person")
+        .doc(user!.uid)
+        .collection("mylist");
+    mylistcheck.get().then((docSnapshot) async => {
+          // 存在しない場合、フォローを行う
+          await FirebaseFirestore.instance
+              .collection('T01_Person')
+              .doc(user!.uid)
+              .collection("mylist")
+              .doc()
+              .set({
+            'videoUrl': videoUrl,
+            'movieId': movieId,
+            "Create": Timestamp.fromDate(DateTime.now()),
+          }),
+          print("登録できました"),
+        });
+  }
 
 // アハポイント登録関数
   void smilePoint(Duration duration) async {
-    final ref = await FirebaseFirestore.instance.collection('T05_Toukou').doc(widget.movieId).collection("AhaPoint").doc();
+    final ref = await FirebaseFirestore.instance
+        .collection('T05_Toukou')
+        .doc(widget.movieId)
+        .collection("AhaPoint")
+        .doc();
     await ref.set({
       'Point': duration.inSeconds.remainder(3600),
     });
     print("登録できました");
   }
 
-  String _videoDuration(Duration duration){
-    String twoDigits(int n) => n.toString().padLeft(2,"0");
+  String _videoDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
 
     return [
-      if(duration.inHours>0) hours,
+      if (duration.inHours > 0) hours,
       minutes,
       seconds,
     ].join(":");
@@ -182,14 +203,14 @@ void addMylist(String videoUrl,String movieId) async{
     getChatandAdmin();
     // 動画プレーヤーの初期化
     _controller = VideoPlayerController.network(
-        widget.movieURL,
+      widget.movieURL,
     )..initialize().then((_) {
-      setState(() {});
-      // _controller.play();
-    });
+        setState(() {});
+        // _controller.play();
+      });
 
     super.initState();
-    // 
+    //
     _controller.addListener(_listener);
   }
 
@@ -198,7 +219,6 @@ void addMylist(String videoUrl,String movieId) async{
     _controller.removeListener(_listener);
     super.deactivate();
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -206,133 +226,151 @@ void addMylist(String videoUrl,String movieId) async{
     if (_controller.value.isInitialized) {
       _takeAhapoint();
       return Scaffold(
-          body: 
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [ 
-              SizedBox(
-                height: _controller.value.size.height/2,
-                width: _controller.value.size.width/2,
-                child:AspectRatio(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: _controller.value.size.height / 2,
+              width: _controller.value.size.width / 2,
+              child: AspectRatio(
                 aspectRatio: _controller.value.aspectRatio,
                 // 動画を表示
                 child: VideoPlayer(_controller),
               ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                  ValueListenableBuilder(
-                    valueListenable: _controller, 
-                    builder: 
-                            (context, VideoPlayerValue value, child) {
-                              if(smileList != null){
-                                print("スマイルリストはありますよ");
-                                print(value.position.inSeconds.remainder(3600));
-                                _laughVoice(value.position,smileList);
-                                return Text(
-                                _videoDuration(value.position),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20,
-                                ),
-                              );
-                              }else{
-                                print("スマイルリストはありませんよ");
-                                return Text(
-                                _videoDuration(value.position),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20,
-                                ),
-                              );
-                              }
-                              
-                            },
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      height: 20,
-                      child: VideoProgressIndicator(
-                        _controller,
-                        allowScrubbing: true,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 0,
-                          horizontal: 12
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                ValueListenableBuilder(
+                  valueListenable: _controller,
+                  builder: (context, VideoPlayerValue value, child) {
+                    if (smileList != null) {
+                      // print("スマイルリストはありますよ");
+                      // print(value.position.inSeconds.remainder(3600));
+                      if (laughTF == true) {
+                        _laughVoice(value.position, smileList);
+                      }
+                      return Text(
+                        _videoDuration(value.position),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
                         ),
-                      ),
-                      ),
+                      );
+                    } else {
+                      // print("スマイルリストはありませんよ");
+                      return Text(
+                        _videoDuration(value.position),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                        ),
+                      );
+                    }
+                  },
+                ),
+                Expanded(
+                  child: SizedBox(
+                    height: 20,
+                    child: VideoProgressIndicator(
+                      _controller,
+                      allowScrubbing: true,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 12),
                     ),
-                  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                  IconButton(
-                    onPressed: () {
-                      // 動画を最初から再生
-                      _controller
-                          .seekTo(Duration.zero)
-                          .then((_) => _controller.play());
-                    },
-                    icon: Icon(Icons.refresh),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      // 動画を再生
-                      _controller.play();
-                    },
-                    icon: Icon(Icons.play_arrow),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      // 動画を一時停止
-                      _controller.pause();
-                    },
-                    icon: Icon(Icons.pause),
-                  ),
-                ],
-              ),
-              // |||||||||||||||||||
-              Row(
-                children: [
-                  ElevatedButton(
+                ),
+                // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                IconButton(
+                  onPressed: () {
+                    // 動画を最初から再生
+                    _controller
+                        .seekTo(Duration.zero)
+                        .then((_) => _controller.play());
+                  },
+                  icon: Icon(Icons.refresh),
+                ),
+                IconButton(
+                  onPressed: () {
+                    // 動画を再生
+                    _controller.play();
+                  },
+                  icon: Icon(Icons.play_arrow),
+                ),
+                IconButton(
+                  onPressed: () {
+                    // 動画を一時停止
+                    _controller.pause();
+                  },
+                  icon: Icon(Icons.pause),
+                ),
+              ],
+            ),
+            // |||||||||||||||||||
+            Row(
+              children: [
+                ElevatedButton(
                   onPressed: () async {
                     try {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('笑い声をON'),
+                        ),
+                      );
+                      laughTF = true;
+                    } catch (e) {}
+                  },
+                  child: const Text('笑い声再生'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('アハポイントを追加しました'),
+                        ),
+                      );
                       smilePoint(_controller.value.position);
                     } catch (e) {}
                   },
                   child: const Text('アハポイント'),
                 ),
                 ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          addMylist(widget.movieURL,widget.movieId);
-                        } catch (e) {}
-                      },
-                      child: const Text('マイリスト'),
+                  onPressed: () async {
+                    try {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('マイリストに追加しました'),
+                        ),
+                      );
+                      addMylist(widget.movieURL, widget.movieId);
+                    } catch (e) {}
+                  },
+                  child: const Text('マイリスト'),
                 ),
                 ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          _myDialog();
-                        } catch (e) {}
-                      },
-                      child: const Text('コメント'),
+                  onPressed: () async {
+                    try {
+                      _myDialog();
+                    } catch (e) {}
+                  },
+                  child: const Text('コメント'),
                 ),
-                ],
-              )
+              ],
+            )
             // chatMessages(),
-              
-              // ||||||||||||||||||||
-            ],
-            
-          ),
-    //       floatingActionButton: FloatingActionButton(
-    //    onPressed: _incrementCounter,
-    //    tooltip: 'Increment',
-    //    child: Icon(Icons.add),
-    //  ),
-);
-    } else {
 
+            // ||||||||||||||||||||
+          ],
+        ),
+        //       floatingActionButton: FloatingActionButton(
+        //    onPressed: _incrementCounter,
+        //    tooltip: 'Increment',
+        //    child: Icon(Icons.add),
+        //  ),
+      );
+    } else {
       /*
        * インジケータを表示
        */
@@ -354,23 +392,22 @@ void addMylist(String videoUrl,String movieId) async{
   }
 
   _myDialog() {
-      showDialog(
-        context: context,
-        builder: (context) => 
-        AlertDialog(
-      title: Text('コメント'),
-      content: Container(
-        width: 500,
-        height: 800,
-        child: chatMessages(),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('Close'),
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('コメント'),
+        content: Container(
+          width: 500,
+          height: 800,
+          child: chatMessages(),
         ),
-      ],
-    ),
-      );
-}
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
 }
