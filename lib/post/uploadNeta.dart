@@ -81,6 +81,7 @@ class _sendNetaState extends State<sendNeta> {
     String? unitName;
     String thumbnail = "";
     String conid = "";
+    List idList = [];
     
     final doc = FirebaseFirestore.instance.collection('T05_Toukou').doc();
     final gid =
@@ -156,16 +157,49 @@ class _sendNetaState extends State<sendNeta> {
       "T05_Thumbnail":thumbnail,
     });
 
+    await FirebaseFirestore.instance
+      .collection("T04_Event")
+      .doc("cvabc8IsVAGQjYwPv0fR")
+      .collection("T02_Convention")
+      .doc(conid)
+      .collection("Vote_Name")
+      .where("PersonId", isEqualTo: user!.uid)
+      .get()
+      .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        idList.add(doc["PersonId"]);
+      });
+    });
+
     if (value == '大会選択なし') {
       print('ok');
+    } else if (idList.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('大会にネタを投稿できませんでした'),
+        ),
+      );
     } else {
       await con.set({
         'T07_Geinin': id,
         'T07_VideoUrl': video,
         'T07_votes': 0,
         'T07_Create': Timestamp.fromDate(DateTime.now()),
-        'T07_Convention': conid,
+        'T07_ConventionId': conid,
       });
+
+    final ref = await FirebaseFirestore.instance
+      .collection("T04_Event")
+      .doc("cvabc8IsVAGQjYwPv0fR")
+      .collection("T02_Convention")
+      .doc(conid)
+      .collection("Vote_Name")
+      .doc();
+
+      await ref.set({
+        "PersonId": FirebaseAuth.instance.currentUser!.uid,
+      });
+
     }
     print("登録できました");
   }

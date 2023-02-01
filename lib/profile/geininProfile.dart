@@ -301,6 +301,10 @@ class geininProfile extends StatelessWidget {
               height: 30,
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+              primary: Colors.red, // background
+              onPrimary: Colors.white, // foreground
+            ),
                 onPressed: () async {
                   final String? selectedText = await showDialog<String>(
                       context: context,
