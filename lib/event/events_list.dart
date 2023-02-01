@@ -1,3 +1,4 @@
+import 'package:ahamatch/event/convention_movie.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,9 +18,9 @@ import 'convention_overview.dart';
 import 'audition_overview.dart';
 import 'audition_list.dart';
 
+List videourl = [];
+List list = [];
 
-  // List geininId = [];
-  // List list = [];
 class MainModel extends ChangeNotifier {
   // ListView.builderで使うためのBookのList booksを用意しておく。
   List<Convention> events = [];
@@ -36,44 +37,24 @@ class MainModel extends ChangeNotifier {
     final events = event.docs.map((doc) => Convention(doc)).toList();
 
     DateTime now = DateTime.now();
-      for (int i = 0; i < events.length; i++) {
-        DateTime schedule = events[i].schedule.toDate();
-        if (schedule.isBefore(now)) {
-          final doc = FirebaseFirestore.instance
+    for (int i = 0; i < events.length; i++) {
+      DateTime schedule = events[i].schedule.toDate();
+      if (schedule.isBefore(now)) {
+        final doc = FirebaseFirestore.instance
             .collection('T04_Event')
             .doc("cvabc8IsVAGQjYwPv0fR")
             .collection('T02_Convention')
             .doc(events[i].docid);
-          
-          await doc.update({
-            "T07_flag": 0,
-          });
 
-          events.removeAt(i);
-        }
-      }
-      
-    this.events = events;
-    for(int i = 0; i < events.length; i++) {
-      await FirebaseFirestore.instance
-          .collection("T07_Convention")
-          .where("T07_Convention", isEqualTo: events[i].docid)
-          .get()
-          .then((QuerySnapshot snapshot) {
-        snapshot.docs.forEach((doc) {
-          geininId.add(doc["T07_Geinin"]);
+        await doc.update({
+          "T07_flag": 0,
         });
-      });
+
+        events.removeAt(i);
+      }
     }
-    await FirebaseFirestore.instance
-        .collection("T02_Geinin")
-        .where("T02_GininId", whereIn: geininId)
-        .get()
-        .then((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((doc) {
-        list.add(doc["T02_UnitName"]);
-      });
-    });
+
+    this.events = events;
 
     print('len = ' + events.length.toString());
     notifyListeners();
@@ -82,124 +63,153 @@ class MainModel extends ChangeNotifier {
 
 class Events extends StatelessWidget {
   const Events({Key? key}) : super(key: key);
-  
 
-  Stream<Image> getAvatarUrlForProfile(
-      List<Convention> events, int index) async* {
-    // final ref =
-    //     FirebaseStorage.instance.ref().child('convention/${docs.id}.jpg');
-    // print('ref =${docs.id}');
-    // no need of the file extension, the name will do fine.
-    // var url = await ref.getDownloadURL();
-    var url = events[index].url;
-    print('url = ${events[index].url}');
+  Stream<List> getAvatarUrlForProfile(List<Convention> events) async* {
+    for (int i = 0; i < events.length; i++) {
+      await FirebaseFirestore.instance
+          .collection("T07_Convention")
+          .where("T07_ConventionId", isEqualTo: events[i].docid)
+          .get()
+          .then((QuerySnapshot snapshot) {
+        snapshot.docs.forEach((doc) {
+          videourl.add(doc["T07_VideoUrl"]);
+        });
+      });
+    }
+    yield videourl;
 
-    yield Image.network(
-      url,
-      height: 100,
-      width: 100,
-    );
+    // print('url = ${events[index].url}');
+
+    // yield Image.network(
+    //   url,
+    //   height: 100,
+    //   width: 100,
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
     bool flag = true;
-    return DefaultTabController(
-      initialIndex: 0, // 最初に表示するタブ
-      length: 2, // タブの数
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('イベント一覧'),
-          bottom: const TabBar(
-            isScrollable: true, // スクロールを有効化
-            tabs: <Widget>[
-              Tab(text: '大会'),
-              Tab(text: 'オーディション'),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: <Widget>[
-            MaterialApp(
-              home: ChangeNotifierProvider<MainModel>(
-                // createでfetchBooks()も呼び出すようにしておく。
-                create: (_) => MainModel()..fetchConventions(),
-                child: Scaffold(
-                  body: Consumer<MainModel>(
-                    builder: (context, model, child) {
-                      final events = model.events;
-                      if (events.isEmpty) {
-                        return const Text("大会は現在開催されていません。");
-                      } else {
-                        return Container(
-                          // height: 500,
-                          padding: EdgeInsets.all(2),
-                          // 各アイテムの間にスペースなどを挟みたい場合
-                          child: ListView.separated(
-                            itemCount: events.length,
-                            itemBuilder: (context, index) {
-                              return Row(
-                                children: <Widget>[
-                                  StreamBuilder(
-                                    stream: getAvatarUrlForProfile(events, index),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<dynamic> snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Text("wait");
-                                      } else if (snapshot.hasData) {
-                                        Image photo = snapshot.data!;
-                                        return photo;
+    return
+        // DefaultTabController(
+        //   initialIndex: 0, // 最初に表示するタブ
+        //   length: 2, // タブの数
+        //   child:
+        Scaffold(
+            appBar: const Header(),
+            body: SafeArea(
+                child: DefaultTabController(
+                    length: 2,
+                    child: Column(
+                      children: [
+                        const TabBar(
+                          tabs: <Widget>[
+                            Tab(text: '大会'),
+                            Tab(text: 'オーディション'),
+                          ],
+                          labelColor: Colors.blue,
+                          unselectedLabelColor: Colors.black12,
+                        ),
+                        Expanded(child: 
+                        TabBarView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: <Widget>[
+                            MaterialApp(
+                              home: ChangeNotifierProvider<MainModel>(
+                                // createでfetchBooks()も呼び出すようにしておく。
+                                create: (_) => MainModel()..fetchConventions(),
+                                child: Scaffold(
+                                  body: Consumer<MainModel>(
+                                    builder: (context, model, child) {
+                                      final events = model.events;
+                                      if (events.isEmpty) {
+                                        return const Text("大会は現在開催されていません。");
                                       } else {
-                                        return const Text("not photo");
+                                        return StreamBuilder(
+                                          stream:
+                                              getAvatarUrlForProfile(events),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<dynamic> snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Text("wait");
+                                            } else if (snapshot.hasData) {
+                                              // Image photo = snapshot.data!;
+                                              return Container(
+                                                // height: 500,
+                                                padding: EdgeInsets.all(2),
+                                                // 各アイテムの間にスペースなどを挟みたい場合
+                                                child: ListView.separated(
+                                                  itemCount: events.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return SizedBox(
+                                                        height: 100,
+                                                        child: ListTile(
+                                                          minVerticalPadding: 0,
+                                                          minLeadingWidth: 100,
+                                                          title: Text(
+                                                              events[index]
+                                                                  .name),
+                                                          leading:
+                                                              Image.network(
+                                                            events[index].url,
+                                                            width: 100,
+                                                            height: 100,
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                          trailing: IconButton(
+                                                            icon: Icon(
+                                                                Icons.info),
+                                                            onPressed: () {
+                                                              Navigator.push(
+                                                                  // ボタン押下でオーディション編集画面に遷移する
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => ConOverview(
+                                                                          model:
+                                                                              events,
+                                                                          index:
+                                                                              index)));
+                                                              // AlertDialog(
+                                                              //   title: Text('大会名：${}'),);
+                                                            },
+                                                          ),
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (context) => netaCon(
+                                                                    events:events,index:index)))
+                                                                    .then((value) {
+                                                              // 再描画
+                                                              // setState(() {});
+                                                            });
+                                                          },
+                                                        ));
+                                                  },
+                                                  separatorBuilder:
+                                                      (context, index) {
+                                                    return Divider();
+                                                  },
+                                                ),
+                                              );
+                                            } else {
+                                              return const Text("not photo");
+                                            }
+                                          },
+                                        );
                                       }
                                     },
                                   ),
-                                  SizedBox(
-                                    width: 75.0,
-                                  ),
-                                  Container(
-                                    height: 50,
-                                    // color: books[index]['color'],
-                                    child: Text(
-                                      events[index].name,
-                                      // style: TextStyle(fontSize: ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 75.0,
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.info),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          // ボタン押下でオーディション編集画面に遷移する
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ConOverview(model: events, index: index)));
-                                      // AlertDialog(
-                                      //   title: Text('大会名：${}'),);
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return Divider();
-                            },
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
-            Auditions(),
-          ],
-        ),
-      ),
-    );
+                                ),
+                              ),
+                            ),
+                            Auditions(),
+                          ],
+                        ),
+                        )
+                      ],
+                    ))));
   }
 }

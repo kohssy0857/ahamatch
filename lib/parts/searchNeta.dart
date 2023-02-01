@@ -115,8 +115,7 @@ class _searchNetaState extends State<searchNeta> {
         } else {
           return Column(
             children: [
-              Text("ログイン情報:${user!.displayName}"),
-              Text("芸人をフォローしてください"),
+              Text("該当するデータはありません"),
             ],
           );
           // return const Text("not photo");

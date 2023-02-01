@@ -19,6 +19,7 @@ import '../home/SearchResult.dart';
 import '../login/loginFollow.dart';
 import '../functions.dart';
 import 'geininToukou.dart';
+import 'package:flutter/services.dart';
 
 class geininFollowProfile extends StatefulWidget {
   // AuditionManagement画面にあるmodelを取得している
@@ -54,13 +55,10 @@ class _geininFollowProfile extends State<geininFollowProfile> {
   bool isFollwing = false;
   int count = 0;
   bool isOn = false;
-
+  int giftCoin = 0;
+  int userCoin = 0;
+  int flCoin = 0;
   Future _followKakunin() async {
-    // final ref = await FirebaseFirestore.instance
-    //     .collection('T02_Geinin')
-    //     .doc(documentId)
-    //     .get();
-    // isOn = ref.data()!["T02_PartnerRecruit"];
     final gid = FirebaseFirestore.instance
         .collection("T01_Person")
         .doc(widget.PersonId);
@@ -81,7 +79,8 @@ class _geininFollowProfile extends State<geininFollowProfile> {
         .doc(documentId);
     final idg = await FirebaseFirestore.instance
         .collection("T02_Geinin")
-        .doc(documentId).get();
+        .doc(documentId)
+        .get();
     isOn = idg.data()!["T02_PartnerRecruit"];
     // 自分のフォローコレクションの中に、今表示している芸人が存在するかどうかの確認
     final followcheck = FirebaseFirestore.instance
@@ -94,6 +93,12 @@ class _geininFollowProfile extends State<geininFollowProfile> {
           if (docSnapshot.docs.isEmpty)
             {
               // 存在する場合、フォローを行う
+              if (count == 0)
+                {
+                  setState(() {
+                    count++;
+                  }),
+                }
             }
           else
             {
@@ -201,7 +206,7 @@ class _geininFollowProfile extends State<geininFollowProfile> {
   Widget build(BuildContext context) {
     _followKakunin();
     return Scaffold(
-        appBar: Header(),
+        appBar: const Header(),
         body: SafeArea(
             child: DefaultTabController(
           length: 1,
@@ -228,24 +233,143 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                 tileColor: Colors.yellow,
                 title: const Text('相方募集中'),
                 value: isOn,
-                onChanged: (bool? value) {
-                },
-            ),
+                onChanged: (bool? value) {},
+              ),
               ElevatedButton(
                 onPressed: () async {
                   try {
                     _Follow();
                   } catch (e) {}
                 },
-                child: isFollwing == false ? Text('フォロー') : Text('フォローー解除'),
+                child: isFollwing == false
+                    ? const Text('フォロー')
+                    : const Text('フォローー解除'),
               ),
-              TabBar(
+              ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                              title: const Text("ギフトを送る"),
+                              content: TextField(
+                                  onChanged: (value) {
+                                    giftCoin = int.parse(value);
+                                  },
+                                  maxLength: 7,
+                                  decoration: const InputDecoration(
+                                    hintText: "送るアハコインを入力",
+                                    icon: Icon(Icons.copyright_rounded),
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ]),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text(
+                                    "キャンセル",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text(
+                                    "送る",
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                  onPressed: () async {
+                                    final docs = await FirebaseFirestore
+                                        .instance
+                                        .collection('T01_Person')
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser!.uid)
+                                        .get();
+                                    var data = docs.exists ? docs.data() : null;
+                                    userCoin = data!["T01_AhaCoin"];
+
+                                    if (giftCoin <= 0) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                                content:
+                                                    const Text("0より大きい数値を入力してください"),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text("戻る"))
+                                                ],
+                                              ));
+                                    } else if (userCoin < giftCoin) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                                content: const Text("所持コインが足りません"),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text("戻る"))
+                                                ],
+                                              ));
+                                    } else {
+                                      await FirebaseFirestore.instance
+                                          .collection("T02_Geinin")
+                                          .doc(documentId)
+                                          .get()
+                                          .then((value) async {
+                                        var perRef =
+                                            await value.data()!["T02_GeininId"];
+
+                                        await perRef.get().then((ref) async {
+                                          flCoin = ref.data()!["T01_AhaCoin"];
+                                          await perRef.update({
+                                            "T01_AhaCoin": flCoin + giftCoin
+                                          });
+                                        });
+                                      });
+
+                                      await FirebaseFirestore.instance
+                                          .collection('T01_Person')
+                                          .doc(FirebaseAuth
+                                              .instance.currentUser!.uid)
+                                          .update({
+                                        "T01_AhaCoin": userCoin - giftCoin
+                                      });
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              content: Text("$giftCoinポイントをギフトしました"),
+                                              actions: [TextButton(onPressed: (){
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+
+                                              }, child: const Text("確認"))],
+
+                                            );
+                                          });
+                                    }
+                                  },
+                                ),
+                              ]);
+                        });
+                    // async{try{
+                    // }catch(e){}
+                  },
+                  child: const Text("ギフトを送る")),
+              const TabBar(
                   labelColor: Colors.blue,
                   unselectedLabelColor: Colors.black12,
                   tabs: [Tab(text: "投稿")]),
               Expanded(
                   child: TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       children: <Widget>[
                     geininFollwToukou(
                       geininFollowId: '${documentId}',

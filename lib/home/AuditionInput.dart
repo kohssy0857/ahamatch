@@ -185,13 +185,13 @@ class _AuditionInput extends State<AuditionInput> {
             ),
             ElevatedButton(
               onPressed: () async {
-                if(_formKey.currentState!.validate()){
+                if(_formKey.currentState!.validate() && imageFile != null){
                   _upload(item, schedule, company, AuditionName);
                   try {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => SysHome()));
                   } catch (e) {}
-                }else if (imageFile == null) {
+                }else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('画像を選択してください'),
