@@ -217,7 +217,7 @@ class _GeininInput extends State<GeininInput> {
           ],
         ))),
       ),
-    ));
+    );
   }
 }
 

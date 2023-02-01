@@ -35,7 +35,7 @@ class _ConOverview extends State<ConOverview> {
     for (i = 0; i < widget.model.length; i++) {
       await FirebaseFirestore.instance
           .collection('T07_Convention')
-          .where("T07_Convention", isEqualTo: widget.model[widget.index].docid)
+          .where("T07_ConventionId", isEqualTo: widget.model[widget.index].docid)
           .get()
           .then((QuerySnapshot snapshot) {
         snapshot.docs.forEach((element) {
@@ -126,10 +126,7 @@ class _ConOverview extends State<ConOverview> {
                 '賞品：${widget.model[widget.index].prize}'),
           ),
           const Divider(),
-          Container(
-            child: Text('出場者一覧'),
-          ),
-          contestant(),
+
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               primary: Colors.white, // background

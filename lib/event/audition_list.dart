@@ -77,40 +77,43 @@ class Auditions extends StatelessWidget {
                   // primary: false,
                   itemCount: auditions.length,
                   itemBuilder: (context, index) {
-                    return Row(
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        AudiOverview(auditions, index)));
-                          },
-                          child: Container(
-                            height: 50,
-                            // color: books[index]['color'],
-                            child: Text(
-                              auditions[index].name,
-                              // style: TextStyle(fontSize: ),
-                            ),
-                          ),
-                          // ListTile(
+                    return SizedBox(
+                      height: 80,
+                    // Row(
+                    //   children: <Widget>[
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //             builder: (context) =>
+                        //                 AudiOverview(auditions, index)));
+                        //   },
+                          child: 
+                          // Container(
+                          //   height: 50,
                           //   // color: books[index]['color'],
-                          //   title: Text(
+                          //   child: Text(
                           //     auditions[index].name,
                           //     // style: TextStyle(fontSize: ),
                           //   ),
-                          //   onTap: () {
-                          //     Navigator.push(
-                          //         context,
-                          //         MaterialPageRoute(
-                          //             builder: (context) => AudiOverview(
-                          //                 auditions, index)));
-                          //   },
                           // ),
-                        ),
-                      ],
+                          ListTile(
+                            // color: books[index]['color'],
+                            title: Text(
+                              auditions[index].name,
+                              // style: TextStyle(fontSize: ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AudiOverview(
+                                          auditions, index)));
+                            },
+                          ),
+                      //   ),
+                      // ],
                     );
                   },
                   separatorBuilder: (context, index) {
