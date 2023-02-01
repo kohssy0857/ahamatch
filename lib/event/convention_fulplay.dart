@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:video_player/video_player.dart';
-import 'FullscreenVideo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,14 +9,18 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:flutter/services.dart'; // use rootBundle
 import 'package:audioplayers/audioplayers.dart';
+import 'convention_fulscr.dart';
 
 /*
  * 動画ウィジェット
  */
-class FullMoviePlayerWidget extends StatefulWidget {
+class ConFullMoviePlayer extends StatefulWidget {
   String movieURL; // 動画URL
   String movieId;
-  FullMoviePlayerWidget(this.movieURL, this.movieId) : super();
+  List events;
+  int index;
+  
+  ConFullMoviePlayer(this.movieURL, this.movieId, this.events, this.index) : super();
 
   @override
   _FullMoviePlayerWidgetState createState() => _FullMoviePlayerWidgetState();
@@ -27,9 +30,10 @@ class FullMoviePlayerWidget extends StatefulWidget {
  * ステート
  */
 
-class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
+class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
   // ~~~~~~~~~~
-  List smileList = [];
+  List list = [];
+  List id = [];
   final user = FirebaseAuth.instance.currentUser;
 //   int _counter = 0;
 //  final _audio = AudioCache();
@@ -105,58 +109,33 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
   }
 
   // 読み込み時にアハポイントを取得する
-  Future _takeAhapoint() async {
-    final smileCheck = FirebaseFirestore.instance
-        .collection("T05_Toukou")
-        .doc(widget.movieId)
-        .collection("AhaPoint");
-    smileCheck.get().then((docSnapshot) async => {
-          if (docSnapshot.docs.isNotEmpty)
-            {
-              // print("あるよ"),
-              await FirebaseFirestore.instance
-                  .collection('T05_Toukou')
-                  .doc(widget.movieId)
-                  .collection("AhaPoint")
-                  .get()
-                  .then((QuerySnapshot snapshot) {
-                snapshot.docs.forEach((doc) {
-                  smileList.add(doc["Point"]);
-                });
-              }),
-              // print(smileList),
-            }
-          else
-            {
-              // print("ないよ")
-            }
-        });
-  }
+  Future _takevotepoint() async {
+    final doc = await FirebaseFirestore.instance
+        .collection("T04_Event")
+        .doc("cvabc8IsVAGQjYwPv0fR")
+        .collection("T02_Convention")
+        .doc(widget.events[widget.index].docid)
+        .collection("Vote_Name");
+    doc.where("PersonId", isEqualTo: user!.uid)
+      .get()
+      .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        // if (doc["T05_Type"] == 1) {
+        list.add(doc["PersonId"]);
+      });
+    });
 
-// 視聴回数を＋１
-  void addShityoukaisu() {
-    FirebaseFirestore.instance
-        .collection('T05_Toukou')
-        .doc(widget.movieId)
-        .update({"T05_ShityouKaisu": FieldValue.increment(1.0)});
-    print("視聴回数＋１");
-  }
-
-// 笑い声を再生
-  void _laughVoice(Duration duration, List smileList) async {
-    for (int i = 0; i < smileList.length; i++) {
-      if (duration.inSeconds.remainder(3600) == smileList[i]) {
-        // print("OK~~~~~~~~~~~~~");
-        int soundId = await rootBundle
-            .load("assets/se/sample-3s.mp3")
-            .then((ByteData soundData) {
-          return _pool.load(soundData);
+    await FirebaseFirestore.instance
+      .collection("T07_Convention")
+      .where("T07_VideoUrl", isEqualTo: widget.movieURL)
+      .get()
+      .then((QuerySnapshot snapshot) {
+        snapshot.docs.forEach((doc) {
+          id.add(doc.id);
         });
-        int streamId = await _pool.play(soundId);
-      } else {
-        // print("No~~~~~~~~~~~~~~~~");
-      }
-    }
+      });
+
+
   }
 
 // マイリストに追加
@@ -210,7 +189,6 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
   @override
   void initState() {
     getChatandAdmin();
-    addShityoukaisu();
     // 動画プレーヤーの初期化
     _controller = VideoPlayerController.network(
       widget.movieURL,
@@ -234,13 +212,13 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
   Widget build(BuildContext context) {
     if (_controller == null) return Container();
     if (_controller.value.isInitialized) {
-      _takeAhapoint();
+      _takevotepoint();
       return Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: _controller.value.size.height / 2,
+              height: _controller.value.size.height / 2.3,
               width: _controller.value.size.width / 2,
               child: AspectRatio(
                 aspectRatio: _controller.value.aspectRatio,
@@ -255,12 +233,16 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
                 ValueListenableBuilder(
                   valueListenable: _controller,
                   builder: (context, VideoPlayerValue value, child) {
-                    if (smileList != null) {
-                      // print("スマイルリストはありますよ");
-                      // print(value.position.inSeconds.remainder(3600));
-                      if (laughTF == true) {
-                        _laughVoice(value.position, smileList);
-                      }
+                    // if (smileList != null) {
+                    //   return Text(
+                    //     _videoDuration(value.position),
+                    //     style: const TextStyle(
+                    //       color: Colors.black,
+                    //       fontSize: 20,
+                    //     ),
+                    //   );
+                    // } else {
+                    //   // print("スマイルリストはありませんよ");
                       return Text(
                         _videoDuration(value.position),
                         style: const TextStyle(
@@ -268,16 +250,7 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
                           fontSize: 20,
                         ),
                       );
-                    } else {
-                      // print("スマイルリストはありませんよ");
-                      return Text(
-                        _videoDuration(value.position),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                        ),
-                      );
-                    }
+                    // }
                   },
                 ),
                 Expanded(
@@ -325,49 +298,6 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
                     try {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('笑い声をON'),
-                        ),
-                      );
-                      laughTF = true;
-                    } catch (e) {}
-                  },
-                  child: const Text('笑い声再生'),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.red, // background
-                  ),
-                  onPressed: () async {
-                    try {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('笑い声をOFF'),
-                        ),
-                      );
-                      laughTF = false;
-                    } catch (e) {}
-                  },
-                  child: const Text('笑い声停止'),
-                ),
-                SizedBox(width: 150),
-                ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('アハポイントを追加しました'),
-                        ),
-                      );
-                      smilePoint(_controller.value.position);
-                    } catch (e) {}
-                  },
-                  child: const Text('アハポイント'),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
                           content: Text('マイリストに追加しました'),
                         ),
                       );
@@ -384,18 +314,35 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
                   },
                   child: const Text('コメント'),
                 ),
+                
               ],
-            )
-            // chatMessages(),
+              
+            ),
+            ButtonBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.white, // background
+                  onPrimary: Colors.black, // foreground
+                ),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('戻る'),
+              ),
+            ],
+          ),
 
             // ||||||||||||||||||||
           ],
         ),
-        //       floatingActionButton: FloatingActionButton(
-        //    onPressed: _incrementCounter,
-        //    tooltip: 'Increment',
-        //    child: Icon(Icons.add),
-        //  ),
+        floatingActionButton: FloatingActionButton(
+              child: const Icon(Icons.how_to_vote),
+              onPressed: () async {
+                _vote();
+              },
+            ),
       );
     } else {
       /*
@@ -436,5 +383,57 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
         ],
       ),
     );
+  }
+
+  _vote() async {
+    if (list.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("一度投票すると再度投票することはできません"),
+            content: const Text("このネタに投票しますか？"),
+            actions: [
+              TextButton(
+                child: Text("Cancel"),
+                onPressed: () => Navigator.pop(context),
+              ),
+              TextButton(
+                child: Text("OK"),
+                onPressed: () {
+                  _countVote().then({
+                    setState(() {})
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('すでに投票しています'),
+                  ),
+      );
+    }
+  }
+
+  _countVote() async {
+    final doc = await FirebaseFirestore.instance
+        .collection("T04_Event")
+        .doc("cvabc8IsVAGQjYwPv0fR")
+        .collection("T02_Convention")
+        .doc(widget.events[widget.index].docid)
+        .collection("Vote_Name");
+      final ref = doc.doc();
+
+      await ref.set({
+        "PersonId": FirebaseAuth.instance.currentUser!.uid,
+      });
+
+    FirebaseFirestore.instance
+      .collection("T07_Convention")
+      .doc(id[0])
+      .update({"T07_votes" : FieldValue.increment(1)});
+    print("投票数＋1");
   }
 }
