@@ -34,7 +34,6 @@ class _sendNetaState extends State<sendNeta> {
   VideoPlayerController? MovieController = null;
   File? movie = null;
   dynamic movie_file;
-    int i = 0;
   // 画像アップロードに必要な物
   final picker = ImagePicker();
   File? imageFile;

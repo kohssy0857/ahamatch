@@ -56,11 +56,6 @@ class _geininFollowProfile extends State<geininFollowProfile> {
   bool isOn = false;
 
   Future _followKakunin() async {
-    // final ref = await FirebaseFirestore.instance
-    //     .collection('T02_Geinin')
-    //     .doc(documentId)
-    //     .get();
-    // isOn = ref.data()!["T02_PartnerRecruit"];
     final gid = FirebaseFirestore.instance
         .collection("T01_Person")
         .doc(widget.PersonId);
@@ -94,6 +89,12 @@ class _geininFollowProfile extends State<geininFollowProfile> {
           if (docSnapshot.docs.isEmpty)
             {
               // 存在する場合、フォローを行う
+              if (count == 0)
+                {
+                  setState(() {
+                    count++;
+                  }),
+                }
             }
           else
             {
