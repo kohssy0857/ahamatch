@@ -48,9 +48,7 @@ class _HomeState extends State<Home> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children:  [
-                          Center(
-                            child: Text("芸人ログイン情報:${user!.displayName}")
-                          ),
+
                           TabBar(
                               labelColor: Colors.blue,
                               unselectedLabelColor: Colors.black12,
@@ -88,9 +86,6 @@ class _HomeState extends State<Home> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children:  [
-                          Center(
-                            child: Text("ログイン情報:${user!.displayName}")
-                          ),
                           TabBar(
                               labelColor: Colors.blue,
                               unselectedLabelColor: Colors.black12,

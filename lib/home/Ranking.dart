@@ -38,8 +38,9 @@ class _RankingState extends State<Ranking> {
                 // 各ランキングをタブに入れて呼び出し
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    
                     children: [
-                      const Center(child: Text("ランキング！")),
+
                       const TabBar(
                         tabs: [
                           Tab(text: "視聴回数"),
@@ -48,6 +49,7 @@ class _RankingState extends State<Ranking> {
                         ],
                         labelColor: Colors.blue,
                         unselectedLabelColor: Colors.black12,
+                        indicatorWeight: 10 ,
                       ),
                       Expanded(
 
