@@ -43,8 +43,7 @@ class _HitTabState extends State<HitTab> {
     return StreamBuilder(
         stream: getNetaList(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          return Column(
-            children: [
+          return
               ListView.builder(
                   shrinkWrap: true,
                   itemCount: netaList.length,
@@ -54,17 +53,18 @@ class _HitTabState extends State<HitTab> {
                         child: ListTile(
                           minVerticalPadding: 0,
                           minLeadingWidth: 100,
-                          title: Text(netaList[index]["T05_Title"]),
-                          leading: Image.network(
+                          title: Text("${netaList[index]["T05_Title"].padRight(40)}${netaList[index]["T05_ShityouKaisu"].round()}回"),
+                          trailing: Image.network(
                             netaList[index]["T05_Thumbnail"],
                             width: 100,
                             height: 100,
                             fit: BoxFit.fill,
                           ),
                           subtitle: Text(netaList[index]["T05_UnitName"]),
-                          trailing: Container(
-                            height: 60,
-                            width: 60,
+                          leading:
+                           Container(
+                            height: 100,
+                            width: 100,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.blue,
@@ -81,8 +81,8 @@ class _HitTabState extends State<HitTab> {
                             });
                           },
                         ));
-                  })
-            ],
+                  }
+
           );
         });
   }

@@ -38,45 +38,47 @@ class _ConOverview extends State<ConOverview> {
           .where("T07_ConventionId", isEqualTo: widget.model[widget.index].docid)
           .get()
           .then((QuerySnapshot snapshot) {
-        snapshot.docs.forEach((element) {
-          list.add(element["T07_Geinin"]);
+        snapshot.docs.forEach((element) async {
+          // list.add(element["T07_Geinin"]);
+          var ref = element["T07_Geinin"];
+          var docSnap = await ref.get();
+          var data = docSnap.data();
+          print(data);
         });
       });
     }
     print(list);
     // for (i = 0; i < list.length; i++) {
-     return FirebaseFirestore.instance
-      .collection("T02_Geinin")
-      // .where("T02_Geinin", isEqualTo: list[i])
-      .where("T02_Geinin", whereIn: list)
-      .snapshots();
-      // .get()
-      // .then((QuerySnapshot snapshot) {
-      // snapshot.docs.forEach((doc) {
-      //   unitname.add(doc["T02_UnitName"]);
-      // });
-      // });
-    // }
-    // return unitname;
+    // return FirebaseFirestore.instance
+    //     .collection("T02_Geinin")
+    //     // .where("T02_Geinin", isEqualTo: list[i])
+    //     .where("T02_Geinin", whereIn: list)
+    //     .snapshots();
+    // // .get()
+    // // .then((QuerySnapshot snapshot) {
+    // // snapshot.docs.forEach((doc) {
+    // //   unitname.add(doc["T02_UnitName"]);
+    // // });
+    // // });
+    // // }
+    // // return unitname;
   }
 
   getChatandAdmin() {
-    getChats().then((val) {
+    getChats().then(() {
       setState(() {
-        print(val);
-        chats = val;
+        // print(val);
+  
       });
     });
   }
 
   contestant() {
-    return 
-    StreamBuilder(
+    return StreamBuilder(
         stream: chats,
         builder: (context, AsyncSnapshot snapshot) {
           return snapshot.hasData
-              ? 
-              ListView.builder(
+              ? ListView.builder(
                   itemCount: snapshot.data.docs.length,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
