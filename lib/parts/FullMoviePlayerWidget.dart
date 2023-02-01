@@ -133,6 +133,15 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
         });
   }
 
+// 視聴回数を＋１
+  void addShityoukaisu() {
+    FirebaseFirestore.instance
+        .collection('T05_Toukou')
+        .doc(widget.movieId)
+        .update({"T05_ShityouKaisu": FieldValue.increment(1.0)});
+    print("視聴回数＋１");
+  }
+
 // 笑い声を再生
   void _laughVoice(Duration duration, List smileList) async {
     for (int i = 0; i < smileList.length; i++) {
@@ -201,6 +210,7 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
   @override
   void initState() {
     getChatandAdmin();
+    addShityoukaisu();
     // 動画プレーヤーの初期化
     _controller = VideoPlayerController.network(
       widget.movieURL,
@@ -323,6 +333,23 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
                   },
                   child: const Text('笑い声再生'),
                 ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red, // background
+                  ),
+                  onPressed: () async {
+                    try {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('笑い声をOFF'),
+                        ),
+                      );
+                      laughTF = false;
+                    } catch (e) {}
+                  },
+                  child: const Text('笑い声停止'),
+                ),
+                SizedBox(width: 150),
                 ElevatedButton(
                   onPressed: () async {
                     try {

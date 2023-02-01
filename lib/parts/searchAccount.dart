@@ -92,34 +92,22 @@ class MainModel extends ChangeNotifier {
     }
     // }
     // ignore: unrelated_type_equality_checks
-    if (searchedNames.isNotEmpty) {
-      // for(int i = 0;i<searchedNames.length; i++){
+
           final docs = await FirebaseFirestore.instance
               .collection("T02_Geinin")
               .where("T02_UnitName", whereIn: searchedNames)
               .get();
-          T02_Geinin = docs.docs.map((doc) => searchAccount(doc)).toList();
-      
-      this.T02_Geinin = T02_Geinin;
-    }
-    // for(int i = 0; i< T02_Geinin.length;i++) {
-    //     await FirebaseFirestore.instance
-    //       .collection("T01_Person")
-    //       .where("T01_Person", isEqualTo: T02_Geinin[i].T02_GeininId..path.replaceFirst("T01_Person/", ""))
-    //       .get()
-    //       .then((QuerySnapshot snapshot) {
-    //     snapshot.docs.forEach((doc) {
-    //       userid.add(doc["T01_UserId"]);
-    //     });
-    //   });
-    //   }
-    //   print(userid);
-  
+
+          final T02Geinin = docs.docs.map((doc) => searchAccount(doc)).toList();
+          this.T02_Geinin = T02Geinin;
 
     notifyListeners();
   }
 }
 
+
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^
 class SearchResultMane extends StatelessWidget {
   final String word;
   SearchResultMane({

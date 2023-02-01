@@ -99,21 +99,11 @@ class _netaResultState extends State<netaResult> {
         });
       });
       }
-      
       yield videoThumbnails;
     }
     // yield videoThumbnails;
   }
 
-  // 視聴回数を増やす関数
-  void addShityoukaisu(String documentId) {
-    FirebaseFirestore.instance
-        .collection('T05_Toukou')
-        .doc(documentId)
-        .update({"T05_ShityouKaisu": FieldValue.increment(1.0)});
-    print("視聴回数＋１");
-
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +178,6 @@ class _netaResultState extends State<netaResult> {
                                 ),
                                 IconButton(
                                   onPressed: () async {
-                                    addShityoukaisu(videoId[index]);
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(

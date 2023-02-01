@@ -73,17 +73,11 @@ class _mylistState extends State<mylist> {
           ),
         }
         });
-        // print("サムネどこーーーーーーーーーーー");
-        // print(videoThumbnails);
-        
-        print("カウントーーーーーーーーーーーーー");
-        print(count);
           if(videoThumbnails.length==0 && count<5){
           setState(() {
             count+=1;
           });
-        }print("カウントーーーーーーーーーーーーー222222");
-        print(videoId);
+        }
     yield videoThumbnails;
 }
 
