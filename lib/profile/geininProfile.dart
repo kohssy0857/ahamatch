@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:ahamatch/home/AuditionInput.dart';
 import 'package:ahamatch/profile/mylist.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,13 +10,13 @@ import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../parts/footer.dart';
-
 import '../parts/header.dart';
 import 'mylist.dart';
 import 'aikataBosyu.dart';
 import 'geininInfoEdit.dart';
 import 'mylist.dart';
 import 'geininToukou.dart';
+import 'package:flutter/services.dart';
 
 class geininProfile extends StatelessWidget {
   String? documentId;
@@ -27,6 +26,9 @@ class geininProfile extends StatelessWidget {
   String url = "";
   String userName = "";
   String unitName = "";
+  int coin = 0;
+  int userCoin = 0;
+  int bill = 0;
 
   geininProfile(this.shoukai) {}
 
@@ -87,11 +89,11 @@ class geininProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     aikataEdit();
     return Scaffold(
-      appBar: Header(),
+      appBar: const Header(),
       drawer: Drawer(
         child: Column(
           children: [
-            ListTile(title: Text("")),
+            const ListTile(title: Text("")),
             ElevatedButton(
               onPressed: () async {
                 try {
@@ -104,7 +106,7 @@ class geininProfile extends StatelessWidget {
               },
               child: const Text('芸人情報編集'),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             ElevatedButton(
@@ -118,7 +120,167 @@ class geininProfile extends StatelessWidget {
               },
               child: const Text('相方募集設定'),
             ),
-            SizedBox(
+            const SizedBox(
+              height: 30,
+            ),
+            ElevatedButton(
+                onPressed: () async {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                            title: const Text("現金化"),
+                            content: TextField(
+                                onChanged: (value) {
+                                  coin = int.parse(value);
+                                },
+                                maxLength: 7,
+                                decoration: const InputDecoration(
+                                  hintText: "現金化するアハコインを入力",
+                                  icon: Icon(Icons.copyright_rounded),
+                                ),
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ]),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text(
+                                  "キャンセル",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              TextButton(
+                                  child: const Text(
+                                    "現金化",
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                  onPressed: () {
+                                    bill = coin ~/ 3;
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                              title: const Text("現金化"),
+                                              content: Text(
+                                                  "$coinアハコインを$bill円に現金化します"),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text(
+                                                    "戻る",
+                                                    style: TextStyle(
+                                                        color: Colors.red),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                TextButton(
+                                                    onPressed: () async {
+                                                      final docs =
+                                                          await FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'T01_Person')
+                                                              .doc(FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser!
+                                                                  .uid)
+                                                              .get();
+                                                      var data = docs.exists
+                                                          ? docs.data()
+                                                          : null;
+                                                      userCoin =
+                                                          data!["T01_AhaCoin"];
+
+                                                      if (coin <= 0) {
+                                                        showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (context) =>
+                                                                    AlertDialog(
+                                                                      content:
+                                                                          const Text(
+                                                                              "0より大きい数値を入力してください"),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.pop(context);
+                                                                            },
+                                                                            child:
+                                                                                const Text("戻る"))
+                                                                      ],
+                                                                    ));
+                                                      } else if (userCoin <
+                                                          coin) {
+                                                        showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (context) =>
+                                                                    AlertDialog(
+                                                                      content:
+                                                                          const Text(
+                                                                              "所持コインが足りません"),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.pop(context);
+                                                                            },
+                                                                            child:
+                                                                                const Text("戻る"))
+                                                                      ],
+                                                                    ));
+                                                      } else {
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'T01_Person')
+                                                            .doc(FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid)
+                                                            .update({
+                                                          "T01_AhaCoin":
+                                                              userCoin - coin
+                                                        });
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return AlertDialog(
+                                                                content: Text(
+                                                                    "$coinポイントを現金化しました"),
+                                                                actions: [
+                                                                  TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child: const Text(
+                                                                          "確認"))
+                                                                ],
+                                                              );
+                                                            });
+                                                      }
+                                                    },
+                                                    child: const Text("確認"))
+                                              ]);
+                                        });
+                                  }),
+                            ]);
+                      });
+                },
+                child: const Text('アハコイン現金化')),
+            const SizedBox(
               height: 30,
             ),
             ElevatedButton(
@@ -134,8 +296,8 @@ class geininProfile extends StatelessWidget {
                     }),
                   );
                 },
-                child: Text('ログアウト')),
-            SizedBox(
+                child: const Text('ログアウト')),
+            const SizedBox(
               height: 30,
             ),
             ElevatedButton(
@@ -153,7 +315,7 @@ class geininProfile extends StatelessWidget {
                   // Navigator.push(context,
                   //     MaterialPageRoute(builder: (context) => GroupInfoPage()));
                 },
-                child: Text('アカウント削除')),
+                child: const Text('アカウント削除')),
           ],
         ),
       ),
@@ -207,22 +369,18 @@ class geininProfile extends StatelessWidget {
                         ),
                       ],
                     ),
-                    TabBar(
+                    const TabBar(
                         labelColor: Colors.blue,
                         unselectedLabelColor: Colors.black12,
                         tabs: [Tab(text: "マイリスト"), Tab(text: "投稿")]),
                     Expanded(
                         child: TabBarView(
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             children: <Widget>[
                           mylist(),
                           geininToukou(),
-                        ]
-                        )
-                        )
-                  ]
-                  )
-                  )),
+                        ]))
+                  ]))),
     );
   }
 }
@@ -257,18 +415,18 @@ class _SimpleDialogSampleState extends State<SimpleDialogSample> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text('　　アカウント削除'),
+      title: const Text('　　アカウント削除'),
       children: [
-        Text("          本当にアカウントを削除しますか"),
+        const Text("          本当にアカウントを削除しますか"),
         SimpleDialogOption(
-          child: Text('削除'),
+          child: const Text('削除'),
           onPressed: () async {
             deleteUser();
             print('ユーザーを削除しました!');
           },
         ),
         SimpleDialogOption(
-          child: Text('キャンセル'),
+          child: const Text('キャンセル'),
           onPressed: () {
             Navigator.pop(context);
             // Navigator.push(context,

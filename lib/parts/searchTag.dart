@@ -132,8 +132,7 @@ class searchTag extends StatelessWidget {
               } else {
                 return Column(
                         children: [
-                          Text("ログイン情報:${user!.displayName}"),
-                          Text("芸人をフォローしてください"),
+                          Text("該当するデータはありません"),
                         ],
                       );
               }

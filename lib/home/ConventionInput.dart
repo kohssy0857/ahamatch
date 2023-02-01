@@ -31,6 +31,7 @@ class _ConventionInput extends State<ConventionInput> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
   dynamic value;
+  int flag = 1;
   // 画像アップロードに必要な物
   final picker = ImagePicker();
   File? imageFile;
@@ -60,6 +61,10 @@ class _ConventionInput extends State<ConventionInput> {
       T06_image = await task.ref.getDownloadURL();
     }
 
+    if (schedule.isBefore(DateTime.now())) {
+      flag = 0;
+    }
+
     await doc.set({
       'T01_Conditions': conditions,
       'T02_Schedule': schedule,
@@ -67,8 +72,8 @@ class _ConventionInput extends State<ConventionInput> {
       "T04_Create": Timestamp.fromDate(DateTime.now()),
       "T05_Name": ConventionName,
       "T06_image": T06_image,
-      "T07_flag": 1,
-      "T0_DocumentId": doc.id,
+      "T07_flag": flag,
+      "T08_DocumentId": doc.id,
     });
     print("登録できました");
   }
@@ -192,13 +197,13 @@ final textEditingController = TextEditingController();
             ),
             ElevatedButton(
               onPressed: () async {
-                if(_formKey.currentState!.validate()){
+                if(_formKey.currentState!.validate() && imageFile != null){
                   _upload(conditions, schedule, prize,ConventionName);
                   try {
                     Navigator.push(
                         context, MaterialPageRoute(builder: (context) => SysHome()));
                   } catch (e) {}
-                }else if (imageFile == null) {
+                }else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('画像を選択してください'),

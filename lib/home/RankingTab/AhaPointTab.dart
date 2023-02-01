@@ -27,7 +27,9 @@ class _AhaPointTabState extends State<AhaPointTab> {
   int i = 0;
   int k = 0;
   int r = 0;
-  List docList = ["","","","","","","","","","",];
+  int lenk = 0;
+  Map pointMap = {};
+  var docList = List.filled(100, "");
   Stream<List> getNetaList() async* {
     await FirebaseFirestore.instance
         .collection("T05_Toukou")
@@ -37,7 +39,9 @@ class _AhaPointTabState extends State<AhaPointTab> {
       snapshot.docs.forEach((doc) {
         netaIdList.add(doc.id);
       });
+      // print(lenk);
       netaIdList.forEach((element) async {
+        
         await FirebaseFirestore.instance
             .collection("T05_Toukou")
             .doc(element)
@@ -49,7 +53,10 @@ class _AhaPointTabState extends State<AhaPointTab> {
                 .collection("T05_Toukou")
                 .doc(element)
                 .get()
-                .then((neta) => netaSnap = neta);
+                .then((neta) {
+              netaSnap = neta;
+              pointMap[neta.data()!["T05_Title"]] = points.size;
+            });
             point = points.size.toDouble();
             if (netaList.length < 10) {
               while (true) {
@@ -64,8 +71,10 @@ class _AhaPointTabState extends State<AhaPointTab> {
 
             netaList = AhaMap.values.toList();
             netaList = netaList.reversed.toList();
+            // print(lenk);
 
             if (netaList.length == 10 && k == 0) {
+              // print(pointMap);
               k++;
               netaList.asMap().forEach((int index, netadata) async {
                 await FirebaseFirestore.instance
@@ -77,6 +86,7 @@ class _AhaPointTabState extends State<AhaPointTab> {
                 });
               });
               if (i == 0) {
+                print(lenk);
                 setState(() {});
                 i++;
               }
@@ -91,56 +101,52 @@ class _AhaPointTabState extends State<AhaPointTab> {
     return StreamBuilder(
         stream: getNetaList(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          return Column(
-            children: [
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: netaList.length,
-                  itemBuilder: (context, index) {
-                    return SizedBox(
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: netaList.length,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                    height: 100,
+                    child: ListTile(
+                      minVerticalPadding: 0,
+                      minLeadingWidth: 100,
+                      title: Text(
+                          "${netaList[index]["T05_Title"].padRight(40)}${pointMap[netaList[index]["T05_Title"]].toString()}アハポイント"),
+                      leading: Container(
+                        height: 60,
+                        width: 60,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.red,
+                        ),
+                        child: Text(
+                          "${index + 1}位",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              fontSize: 24),
+                        ),
+                      ),
+                      subtitle: Text(netaList[index]["T05_UnitName"]),
+                      trailing: Image.network(
+                        netaList[index]["T05_Thumbnail"],
+                        width: 100,
                         height: 100,
-                        child: ListTile(
-                          minVerticalPadding: 0,
-                          minLeadingWidth: 100,
-                          title: Text(netaList[index]["T05_Title"]),
-                          leading: Image.network(
-                            netaList[index]["T05_Thumbnail"],
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.fill,
-                          ),
-                          subtitle: Text(netaList[index]["T05_UnitName"]),
-                          trailing: Container(
-                            height: 60,
-                            width: 60,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.red,
-                            ),
-                            child: Text(
-                              "${index + 1}位",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white,
-                                  fontSize: 24),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FullscreenVideo(
-                                            docList[index], 100, 99)))
-                                .then((value) {
-                              // 再描画
-                              setState(() {});
-                            });
-                          },
-                        ));
-                  })
-            ],
-          );
+                        fit: BoxFit.fill,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FullscreenVideo(
+                                    docList[index], 100, 99))).then((value) {
+                          // 再描画
+                          setState(() {});
+                        });
+                      },
+                    ));
+              });
         });
   }
 }

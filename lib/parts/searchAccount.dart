@@ -31,6 +31,7 @@ import 'header.dart';
 import '../profile/geininFollowProfile.dart';
 import 'Search.dart';
 
+List userid = [];
 class searchAccount {
   String ID = "";
   late DocumentReference<Map<String, dynamic>> T02_GeininId;
@@ -91,12 +92,15 @@ class MainModel extends ChangeNotifier {
     }
     // }
     // ignore: unrelated_type_equality_checks
+
           final docs = await FirebaseFirestore.instance
               .collection("T02_Geinin")
               .where("T02_UnitName", whereIn: searchedNames)
               .get();
+
           final T02Geinin = docs.docs.map((doc) => searchAccount(doc)).toList();
           this.T02_Geinin = T02Geinin;
+
     notifyListeners();
   }
 }
@@ -115,6 +119,7 @@ class SearchResultMane extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: ChangeNotifierProvider<MainModel>(
         // createでfetchBooks()も呼び出すようにしておく。
@@ -133,8 +138,7 @@ class SearchResultMane extends StatelessWidget {
                     if (user!.uid ==
                         T02Geinin[index]
                             .T02_GeininId
-                            .path
-                            .replaceFirst("T01_Person/", "")) {
+                            .path.replaceFirst("T01_Person/", "")) {
                       return Card();
                     } else {
                       return Card(
@@ -142,7 +146,7 @@ class SearchResultMane extends StatelessWidget {
                         child: ListTile(
                           // leading: Image.network(T02_Convention[index].T06_image),
                           title: Text(T02Geinin[index].T02_UnitName),
-                          subtitle: Text(T02Geinin[index].Userid), // 商品名
+                          // subtitle: Text(userid[index]), // 商品名
                           onTap: () async {
                             Navigator.push(
                                 // ボタン押下でオーディション編集画面に遷移する
@@ -163,8 +167,7 @@ class SearchResultMane extends StatelessWidget {
               } else {
                 return Column(
                   children: [
-                    Text("ログイン情報:${user!.displayName}"),
-                    Text("芸人をフォローしてください"),
+                    Text("該当するデータはありません"),
                   ],
                 );
               }
