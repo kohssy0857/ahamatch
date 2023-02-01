@@ -1,3 +1,4 @@
+import 'package:ahamatch/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -5,7 +6,7 @@ import '../firebase_options.dart';
 import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Notification.dart';
-
+import 'footer.dart';
 import 'Search.dart';
 
 import 'Billing.dart';
@@ -32,8 +33,7 @@ class _Header extends State<Header> {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
     var data = docs.exists ? docs.data() : null;
-    print('out = ' + data!['T01_AhaCoin'].toString());
-    return data['T01_AhaCoin'].toString();
+    return data!['T01_AhaCoin'].toString();
   }
 
   String _coin = "";
@@ -48,7 +48,6 @@ class _Header extends State<Header> {
 
     fetchCoin().then(
       (value) {
-        print(value);
         // _coin = value.toString();
         if (i == 0) {
           setState(() {
@@ -59,7 +58,15 @@ class _Header extends State<Header> {
       },
     );
     return AppBar(
-        title: !_searchBoolean ? const Text('アハマッチ!') : searchTextField(),
+        title: !_searchBoolean
+            ? GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Footer()));
+                },
+                child: const Text('アハマッチ!'),
+              )
+            : searchTextField(),
         actions: !_searchBoolean
             ? [
                 IconButton(
@@ -124,7 +131,7 @@ class _Header extends State<Header> {
       autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
       cursorColor: Colors.white, //カーソルの色
       controller: _editController,
-      style: TextStyle(
+      style: const TextStyle(
         //テキストのスタイル
         color: Colors.white,
         fontSize: 20,
@@ -139,7 +146,7 @@ class _Header extends State<Header> {
                   SearchResult(_editController.text),
             ));
       }),
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         //TextFiledのスタイル
         enabledBorder: UnderlineInputBorder(
             //デフォルトのTextFieldの枠線
