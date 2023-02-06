@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:get/get.dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
@@ -96,6 +97,7 @@ class Events extends StatelessWidget {
         //   length: 2, // タブの数
         //   child:
         Scaffold(
+            backgroundColor: Color.fromARGB(255, 255, 219, 153),
             appBar: const Header(),
             body: SafeArea(
                 child: DefaultTabController(
@@ -110,104 +112,114 @@ class Events extends StatelessWidget {
                           labelColor: Colors.blue,
                           unselectedLabelColor: Colors.black12,
                         ),
-                        Expanded(child: 
-                        TabBarView(
-                          physics: NeverScrollableScrollPhysics(),
-                          children: <Widget>[
-                            MaterialApp(
-                              home: ChangeNotifierProvider<MainModel>(
-                                // createでfetchBooks()も呼び出すようにしておく。
-                                create: (_) => MainModel()..fetchConventions(),
-                                child: Scaffold(
-                                  body: Consumer<MainModel>(
-                                    builder: (context, model, child) {
-                                      final events = model.events;
-                                      if (events.isEmpty) {
-                                        return const Text("大会は現在開催されていません。");
-                                      } else {
-                                        return StreamBuilder(
-                                          stream:
-                                              getAvatarUrlForProfile(events),
-                                          builder: (BuildContext context,
-                                              AsyncSnapshot<dynamic> snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return const Text("wait");
-                                            } else if (snapshot.hasData) {
-                                              // Image photo = snapshot.data!;
-                                              return Container(
-                                                // height: 500,
-                                                padding: EdgeInsets.all(2),
-                                                // 各アイテムの間にスペースなどを挟みたい場合
-                                                child: ListView.separated(
-                                                  itemCount: events.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return SizedBox(
-                                                        height: 100,
-                                                        child: ListTile(
-                                                          minVerticalPadding: 0,
-                                                          minLeadingWidth: 100,
-                                                          title: Text(
-                                                              events[index]
-                                                                  .name),
-                                                          leading:
-                                                              Image.network(
-                                                            events[index].url,
-                                                            width: 100,
-                                                            height: 100,
-                                                            fit: BoxFit.fill,
-                                                          ),
-                                                          trailing: IconButton(
-                                                            icon: Icon(
-                                                                Icons.info),
-                                                            onPressed: () {
+                        Expanded(
+                          child: TabBarView(
+                            physics: NeverScrollableScrollPhysics(),
+                            children: <Widget>[
+                              MaterialApp(
+                                home: ChangeNotifierProvider<MainModel>(
+                                  // createでfetchBooks()も呼び出すようにしておく。
+                                  create: (_) =>
+                                      MainModel()..fetchConventions(),
+                                  child: Scaffold(
+                                    backgroundColor:
+                                        Color.fromARGB(255, 255, 219, 153),
+                                    body: Consumer<MainModel>(
+                                      builder: (context, model, child) {
+                                        final events = model.events;
+                                        if (events.isEmpty) {
+                                          return const Text("大会は現在開催されていません。");
+                                        } else {
+                                          return StreamBuilder(
+                                            stream:
+                                                getAvatarUrlForProfile(events),
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<dynamic>
+                                                    snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Text("wait");
+                                              } else if (snapshot.hasData) {
+                                                // Image photo = snapshot.data!;
+                                                return Container(
+                                                  // height: 500,
+                                                  padding: EdgeInsets.all(2),
+                                                  // 各アイテムの間にスペースなどを挟みたい場合
+                                                  child: ListView.separated(
+                                                    itemCount: events.length,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      return SizedBox(
+                                                          height: 100,
+                                                          child: ListTile(
+                                                            minVerticalPadding:
+                                                                0,
+                                                            minLeadingWidth:
+                                                                100,
+                                                            title: Text(
+                                                                events[index]
+                                                                    .name),
+                                                            leading:
+                                                                Image.network(
+                                                              events[index].url,
+                                                              width: 100,
+                                                              height: 100,
+                                                              fit: BoxFit.fill,
+                                                            ),
+                                                            trailing:
+                                                                IconButton(
+                                                              icon: Icon(
+                                                                  Icons.info),
+                                                              onPressed: () {
+                                                                Navigator.push(
+                                                                    // ボタン押下でオーディション編集画面に遷移する
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => ConOverview(
+                                                                            model:
+                                                                                events,
+                                                                            index:
+                                                                                index)));
+                                                                // AlertDialog(
+                                                                //   title: Text('大会名：${}'),);
+                                                              },
+                                                            ),
+                                                            onTap: () {
                                                               Navigator.push(
-                                                                  // ボタン押下でオーディション編集画面に遷移する
                                                                   context,
                                                                   MaterialPageRoute(
-                                                                      builder: (context) => ConOverview(
-                                                                          model:
+                                                                      builder: (context) => netaCon(
+                                                                          events:
                                                                               events,
                                                                           index:
-                                                                              index)));
-                                                              // AlertDialog(
-                                                              //   title: Text('大会名：${}'),);
+                                                                              index))).then(
+                                                                  (value) {
+                                                                // 再描画
+                                                                // setState(() {});
+                                                              });
                                                             },
-                                                          ),
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (context) => netaCon(
-                                                                    events:events,index:index)))
-                                                                    .then((value) {
-                                                              // 再描画
-                                                              // setState(() {});
-                                                            });
-                                                          },
-                                                        ));
-                                                  },
-                                                  separatorBuilder:
-                                                      (context, index) {
-                                                    return Divider();
-                                                  },
-                                                ),
-                                              );
-                                            } else {
-                                              return const Text("not photo");
-                                            }
-                                          },
-                                        );
-                                      }
-                                    },
+                                                          ));
+                                                    },
+                                                    separatorBuilder:
+                                                        (context, index) {
+                                                      return Divider();
+                                                    },
+                                                  ),
+                                                );
+                                              } else {
+                                                return const Text("not photo");
+                                              }
+                                            },
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Auditions(),
-                          ],
-                        ),
+                              Auditions(),
+                            ],
+                          ),
                         )
                       ],
                     ))));

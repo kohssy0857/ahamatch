@@ -25,8 +25,10 @@ class _sendNetaState extends State<sendNeta> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
   int i = 0;
+  List allUserId=[];
   // 入力された内容を保持するコントローラ
 
+  // String nocon = "大会選択なし";
   List<String> list = ["大会選択なし"];
   String dropdownValue = "大会選択なし";
 
@@ -41,7 +43,7 @@ class _sendNetaState extends State<sendNeta> {
   String? _uint8list;
 
   // 画像の選択
-  Future pickImage() async{
+  Future pickImage() async {
     final pickerFile =
         await ImagePicker().getVideo(source: ImageSource.gallery);
     if (pickerFile != null) {
@@ -76,13 +78,13 @@ class _sendNetaState extends State<sendNeta> {
 
   // title,,
   void _upload(String title, String shoukai, String value) async {
-    String video="";
+    String video = "";
     String? documentId;
     String? unitName;
     String thumbnail = "";
     String conid = "";
     List idList = [];
-    
+
     final doc = FirebaseFirestore.instance.collection('T05_Toukou').doc();
     final gid =
         FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid);
@@ -103,7 +105,27 @@ class _sendNetaState extends State<sendNeta> {
                 },
               ),
             });
-    
+    await FirebaseFirestore.instance
+        .collection('T01_Person')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        /// usersコレクションのドキュメントIDを取得する
+        allUserId.add(doc.id);
+      });
+    });
+    for(int i=0;i<allUserId.length;i++){
+      await FirebaseFirestore.instance
+        .collection('T01_Person')
+        .doc(allUserId[i])
+        .collection("Notification")
+        .doc().set({
+      "Create": Timestamp.fromDate(DateTime.now()),
+      "Text": "${unitName}がネタを投稿しました",
+      "unread": true,
+});
+    }
+
     await FirebaseFirestore.instance
         .collection('T04_Event')
         .doc('cvabc8IsVAGQjYwPv0fR')
@@ -130,15 +152,16 @@ class _sendNetaState extends State<sendNeta> {
           .putFile(imageFile!);
       video = await task.ref.getDownloadURL();
       final _uint8list = await VideoThumbnail.thumbnailFile(
-      video: video,
-      imageFormat: ImageFormat.JPEG,
-      maxWidth: 128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
-      quality: 25,
-    );
-    final task2=await FirebaseStorage.instance
-        .ref("post/thumbnail/${doc.id}")
-        .putFile(File(_uint8list!));
-      thumbnail =await task2.ref.getDownloadURL();
+        video: video,
+        imageFormat: ImageFormat.JPEG,
+        maxWidth:
+            128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+        quality: 25,
+      );
+      final task2 = await FirebaseStorage.instance
+          .ref("post/thumbnail/${doc.id}")
+          .putFile(File(_uint8list!));
+      thumbnail = await task2.ref.getDownloadURL();
     }
     // final _image = Image.memory(uint8list!);
     // print("画像ーーーーーーーーーーー");
@@ -154,24 +177,12 @@ class _sendNetaState extends State<sendNeta> {
       "T05_Shoukai": shoukai,
       "T05_ShityouKaisu": 0,
       "T05_UnitName": unitName,
-      "T05_Thumbnail":thumbnail,
+      "T05_Thumbnail": thumbnail,
     });
 
-    await FirebaseFirestore.instance
-      .collection("T04_Event")
-      .doc("cvabc8IsVAGQjYwPv0fR")
-      .collection("T02_Convention")
-      .doc(conid)
-      .collection("Vote_Name")
-      .where("PersonId", isEqualTo: user!.uid)
-      .get()
-      .then((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((doc) {
-        idList.add(doc["PersonId"]);
-      });
-    });
 
-    if (value == '大会選択なし') {
+    if (value == "大会選択なし") {
+
       print('ok');
     } else if (idList.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -188,17 +199,32 @@ class _sendNetaState extends State<sendNeta> {
         'T07_ConventionId': conid,
       });
 
-    final ref = await FirebaseFirestore.instance
+      final ref = await FirebaseFirestore.instance
+          .collection("T04_Event")
+          .doc("cvabc8IsVAGQjYwPv0fR")
+          .collection("T02_Convention")
+          .doc(conid)
+          .collection("Vote_Name")
+          .doc();
+
+      await ref.set({
+        "PersonId": FirebaseAuth.instance.currentUser!.uid,
+      });
+
+
+      await FirebaseFirestore.instance
       .collection("T04_Event")
       .doc("cvabc8IsVAGQjYwPv0fR")
       .collection("T02_Convention")
       .doc(conid)
       .collection("Vote_Name")
-      .doc();
-
-      await ref.set({
-        "PersonId": FirebaseAuth.instance.currentUser!.uid,
+      .where("PersonId", isEqualTo: user!.uid)
+      .get()
+      .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        idList.add(doc["PersonId"]);
       });
+    });
 
     }
     print("登録できました");
@@ -297,7 +323,6 @@ class _sendNetaState extends State<sendNeta> {
           ),
 
           ElevatedButton(
-
             onPressed: () async {
               // _tachikame();
               if (_formKey.currentState!.validate() && imageFile != null) {
@@ -319,7 +344,6 @@ class _sendNetaState extends State<sendNeta> {
             },
             child: const Text('投稿'),
           ),
-
         ],
       ),
     );

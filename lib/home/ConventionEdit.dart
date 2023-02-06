@@ -143,7 +143,7 @@ class _ConventionEdit extends State<ConventionEdit> {
     Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-            title: Text('オーディション情報入力'),
+            title: Text('大会情報入力'),
           ),
       key: _scaffoldKey,
       body: Form(
@@ -160,13 +160,13 @@ class _ConventionEdit extends State<ConventionEdit> {
                   onPressed: () async {
                     await pickImage();
                   },
-                  child: Text('オーディション画像選択'),
+                  child: Text('大会画像選択'),
                 ),
             ),
             Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: TextFormField(
-                  decoration: const InputDecoration(labelText: "オーディション名"),
+                  decoration: const InputDecoration(labelText: "大会名"),
                   controller: widget.nameController,
                   onChanged: (value) {
                     widget.ConventionName = value;

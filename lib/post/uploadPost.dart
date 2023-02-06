@@ -1,6 +1,7 @@
 import 'package:ahamatch/home/home.dart';
 import 'package:ahamatch/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import '../parts/footer.dart';
 import '../parts/header.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class uploadPost extends StatelessWidget {
       length: 4, // タブの数
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Color.fromARGB(255, 255, 166, 077),
           title: const Text('投稿'),
           bottom: const TabBar(
             isScrollable: true, // スクロールを有効化

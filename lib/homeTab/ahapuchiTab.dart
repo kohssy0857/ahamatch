@@ -233,17 +233,17 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
     final mylistcheck = FirebaseFirestore.instance
         .collection("T05_Toukou")
         .doc(id)
-        .collection("coments");
+        .collection("Comment");
     mylistcheck.get().then((docSnapshot) async => {
           // 存在しない場合、フォローを行う
           await FirebaseFirestore.instance
               .collection('T05_Toukou')
               .doc(id)
-              .collection("coments")
+              .collection("Comment")
               .doc()
               .set({
             "User": user!.displayName,
-            "Coment": toukou,
+            "Comment": toukou,
             "Create": Timestamp.fromDate(DateTime.now()),
           }),
           print("登録できました"),

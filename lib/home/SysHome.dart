@@ -9,6 +9,7 @@ import '../parts/footer.dart';
 import 'ConventionManagement.dart';
 import '../parts/header.dart';
 import 'AuditionManagement.dart';
+import 'ConventionResult.dart';
 
 
 
@@ -53,10 +54,6 @@ class SysHome extends StatelessWidget {
                     context, MaterialPageRoute(builder: (context) => ConventionMane()));
                 /* --- 省略 --- */
               },
-            ),
-            ListTile(
-              leading: FlutterLogo(),
-              title: Text('結果'),
             ),
             ListTile(title: Text('ランキング')),
             Divider(),
