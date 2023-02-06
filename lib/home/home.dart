@@ -14,7 +14,7 @@ import '../functions.dart';
 import '../parts/MoviePlayerWidget .dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-// 
+//
 import '../homeTab/shinmeTab.dart';
 import '../homeTab/netaTab.dart';
 import '../homeTab/announceTab.dart';
@@ -42,17 +42,22 @@ class _HomeState extends State<Home> {
       case 1:
         return Scaffold(
           appBar: const Header(),
-          body: SafeArea(
+          body: Stack(children: <Widget>[
+            SafeArea(
                 child: DefaultTabController(
                     length: 4,
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children:  [
-
+                        children: [
                           TabBar(
                               labelColor: Colors.blue,
                               unselectedLabelColor: Colors.black12,
-                              tabs: [Tab(text: "ネタ"),Tab(text: "アハプチ"), Tab(text: "新芽"),Tab(text: "告知")]),
+                              tabs: [
+                                Tab(text: "ネタ"),
+                                Tab(text: "アハプチ"),
+                                Tab(text: "新芽"),
+                                Tab(text: "告知")
+                              ]),
                           Expanded(
                               child: TabBarView(
                                   physics: NeverScrollableScrollPhysics(),
@@ -62,11 +67,14 @@ class _HomeState extends State<Home> {
                                 ShinmeResult(),
                                 AnnounceResult(),
                                 // Center(child: Text("RIGHT"))
-                              ])
-                              )
+                              ]))
                         ]))),
-            floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.add),
+          ]),
+          floatingActionButton: FloatingActionButton(
+            child: const Icon(
+              Icons.add,
+            ),
+            backgroundColor: Colors.green,
             onPressed: () async {
               // await FirebaseAuth.instance.signOut();
               Navigator.push(context,
@@ -79,31 +87,32 @@ class _HomeState extends State<Home> {
       case 2:
         return Scaffold(
           appBar: const Header(),
-          body: 
-          SafeArea(
-                child: DefaultTabController(
-                    length: 4,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children:  [
-                          TabBar(
-                              labelColor: Colors.blue,
-                              unselectedLabelColor: Colors.black12,
-                              tabs: [Tab(text: "ネタ"),Tab(text: "アハプチ"), Tab(text: "新芽"),Tab(text: "告知")]),
-                          Expanded(
-                              child: TabBarView(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: <Widget>[
-                                netaResult(),
-                                ahapuchiResult(),
-                                ShinmeResult(),
-                                AnnounceResult(),
-                                // Center(child: Text("RIGHT"))
-                              ]))
-                        ]
-                        )
-                        )
-                        ),
+          body: SafeArea(
+              child: DefaultTabController(
+                  length: 4,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TabBar(
+                            labelColor: Colors.blue,
+                            unselectedLabelColor: Colors.black12,
+                            tabs: [
+                              Tab(text: "ネタ"),
+                              Tab(text: "アハプチ"),
+                              Tab(text: "新芽"),
+                              Tab(text: "告知")
+                            ]),
+                        Expanded(
+                            child: TabBarView(
+                                physics: NeverScrollableScrollPhysics(),
+                                children: <Widget>[
+                              netaResult(),
+                              ahapuchiResult(),
+                              ShinmeResult(),
+                              AnnounceResult(),
+                              // Center(child: Text("RIGHT"))
+                            ]))
+                      ]))),
           // ユーザー情報を表示
           // Center(child: Text('ログイン情報：${user!.displayName}====2'),),
           // StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

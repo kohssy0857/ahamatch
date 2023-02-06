@@ -64,13 +64,20 @@ class _Header extends State<Header> {
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => Footer()));
                 },
-                child: const Text('アハマッチ!'),
+                child: const Text(
+                  'アハマッチ!',
+                ),
               )
             : searchTextField(),
+        // ヘッダーカラー
+        backgroundColor: Color.fromARGB(255, 255, 166, 077),
         actions: !_searchBoolean
             ? [
                 IconButton(
-                    icon: const Icon(Icons.search),
+                    icon: const Icon(
+                      Icons.search,
+                      color: Colors.white,
+                    ),
                     //   onPressed: () async {
                     // Navigator.push(
                     //     context, MaterialPageRoute(builder: (context) => SearchResultMane()));},
@@ -83,7 +90,7 @@ class _Header extends State<Header> {
                   icon: const Icon(Icons.monetization_on),
                   label: Text(_coin),
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
+                    foregroundColor: Colors.brown,
                   ),
                   onPressed: () {
                     Navigator.push(context,
@@ -91,7 +98,10 @@ class _Header extends State<Header> {
                   },
                 ),
                 IconButton(
-                    icon: const Icon(Icons.notifications),
+                    icon: const Icon(
+                      Icons.notifications,
+                      color: Colors.brown,
+                    ),
                     onPressed: () async {
                       // await Navigator.push(
                       //               // ボタン押下でオーディション編集画面に遷移する
@@ -99,7 +109,10 @@ class _Header extends State<Header> {
                       // setState(() {});
                     }),
                 IconButton(
-                  icon: const Icon(Icons.logout),
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.brown,
+                  ),
                   onPressed: () async {
                     // ログアウト処理
                     // 内部で保持しているログイン情報等が初期化される

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'signup.dart';
 import "../home/home.dart";
 import '../main.dart';
@@ -23,6 +24,7 @@ class _UserLogin extends State<UserLogin> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('ログイン'),
+          backgroundColor: Color.fromARGB(255, 255, 166, 077),
         ),
         body: Form(
           key: _formKey,
@@ -113,7 +115,10 @@ class _UserLogin extends State<UserLogin> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => Register()));
                   },
-                  child: Text('新規登録はこちらから')),
+                  child: Text(
+                    '新規登録はこちらから',
+                    style: TextStyle(color: Colors.green),
+                  )),
               // メールアドレスを入力後、パスワードリセットボタンを押下
               ElevatedButton(
                   child: const Text('パスワードリセット'),

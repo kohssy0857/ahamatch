@@ -41,6 +41,7 @@ class ChatMane extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('チャット'),
+          backgroundColor: Color.fromARGB(255, 255, 166, 077),
           bottom: const TabBar(
             isScrollable: true, // スクロールを有効化
             tabs: <Widget>[

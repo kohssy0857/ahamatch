@@ -153,6 +153,19 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
         title: 'Flutter app',
+        // 背景しょく
+        theme: ThemeData(
+          appBarTheme:
+              AppBarTheme(backgroundColor: Color.fromARGB(255, 255, 166, 077)),
+          scaffoldBackgroundColor: Color.fromARGB(255, 255, 219, 153),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.green,
+              elevation: 10,
+              shadowColor: Colors.grey,
+            ),
+          ),
+        ),
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
@@ -176,7 +189,7 @@ class App extends StatelessWidget {
                 // ないなら
               } else if (snapshot.data!.displayName!.contains("-") == true) {
                 return SysHome();
-              }else {
+              } else {
                 print("Footer東リマース");
                 return Footer();
               }
@@ -187,13 +200,6 @@ class App extends StatelessWidget {
         ),
       );
 }
-
-
-
-
-
-
-
 
 // class MyApp extends StatelessWidget {
 //   // This widget is the root of your application.
@@ -286,4 +292,3 @@ class App extends StatelessWidget {
 //     );
 //   }
 // }
-
