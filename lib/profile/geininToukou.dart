@@ -133,9 +133,7 @@ class _geininFollwToukouState extends State<geininFollwToukou> {
                                 ),
                               ],
                             );
-                          })
-                          )
-                          ),
+                          }))),
             ],
           );
         } else {
@@ -250,21 +248,43 @@ class _geininToukouState extends State<geininToukou> {
                                     height: 300,
                                   ),
                                 ),
-                                IconButton(
-                                  onPressed: () async {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                FullscreenVideo(videoId[index],
-                                                    100, 99))).then((value) {
-                                      // 再描画
-                                      setState(() {});
-                                    });
-                                    ;
-                                  },
-                                  icon: Icon(Icons.fullscreen),
-                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () async {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    FullscreenVideo(
+                                                        videoId[index],
+                                                        100,
+                                                        99))).then((value) {
+                                          // 再描画
+                                          setState(() {});
+                                        });
+                                        ;
+                                      },
+                                      icon: Icon(Icons.fullscreen),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete ),
+                                      onPressed: () async {
+                                        // ボタンが押された際の動作を記述する
+                                        final String? selectedText =
+                                            await showDialog<String>(
+                                                context: context,
+                                                builder: (_) {
+                                                  return SimpleDialogSample(
+                                                      videoId[index]);
+                                                });
+                                          setState(() {
+                                          });
+                                      },
+                                    )
+                                  ],
+                                )
                               ],
                             );
                           }))),
@@ -282,5 +302,48 @@ class _geininToukouState extends State<geininToukou> {
       },
     );
     // bottomNavigationBar: Footer(),
+  }
+}
+
+class SimpleDialogSample extends StatefulWidget {
+  String videoId;
+  SimpleDialogSample(this.videoId, {Key? key}) : super(key: key);
+
+  @override
+  State<SimpleDialogSample> createState() => _SimpleDialogSampleState();
+}
+
+class _SimpleDialogSampleState extends State<SimpleDialogSample> {
+  // アカウント削除
+  void deleteNeta(String videoId) async {
+    FirebaseFirestore.instance.collection("T05_Toukou").doc(videoId).delete();
+    print('ボタンが押されました!');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: const Text('　　ネタ動画削除'),
+      children: [
+        const Text("          本当にネタを削除しますか"),
+        SimpleDialogOption(
+          child: const Text('削除'),
+          onPressed: () async {
+            deleteNeta(widget.videoId);
+            Navigator.pop(context);
+            print('ネタを削除しました!');
+          },
+        ),
+        SimpleDialogOption(
+          child: const Text('キャンセル'),
+          onPressed: () {
+            Navigator.pop(context);
+            // Navigator.push(context,
+            //     MaterialPageRoute(builder: (context) => HomePage()));
+            print('キャンセルされました!');
+          },
+        )
+      ],
+    );
   }
 }

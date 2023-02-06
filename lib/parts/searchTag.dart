@@ -20,6 +20,7 @@ class _searchTag {
   late DocumentReference<Map<String, dynamic>> T02_GeininId ;
   Timestamp T02_Create=Timestamp(2020, 10);
   String T02_UnitName = "";
+  List T02_Tags = [];
 
   // ドキュメントを扱うDocumentSnapshotを引数にしたコンストラクタを作る
   _searchTag(DocumentSnapshot doc) {
@@ -31,6 +32,8 @@ class _searchTag {
     T02_Create = doc['T02_Create'];
     // 　ドキュメントの持っているフィールド'T05_Name'取得
     T02_UnitName = doc['T02_UnitName'];
+    // ドキュメントの持っているフィールド'T02_Tags'取得
+    T02_Tags = doc['T02_Tags'];
     // ドキュメントのid取得
     ID = doc.id;
   }
@@ -116,7 +119,8 @@ class searchTag extends StatelessWidget {
                       child: ListTile(
                         // leading: Image.network(T02_Convention[index].T06_image),
                         title: Text(T02Geinin[index].T02_UnitName),
-                        subtitle: Text(T02Geinin[index].ID), // 商品名
+                        // subtitle: Text(T02Geinin[index].ID), // 商品名
+                        trailing: Text("タグ：${T02Geinin[index].T02_Tags}"),
                         onTap: () async {
                                     Navigator.push(
                                       // ボタン押下でオーディション編集画面に遷移する

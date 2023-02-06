@@ -89,6 +89,7 @@ class Conventions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 255, 219, 153),
       appBar: const Header(),
       body: MaterialApp(
         home: ChangeNotifierProvider<MainModel>(

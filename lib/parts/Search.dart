@@ -13,8 +13,7 @@ import 'searchTag.dart';
 // void searchNeta() {}
 class SearchResult extends StatefulWidget {
   final String _editController;
-  SearchResult(this._editController, {Key? key})
-      : super(key: key);
+  SearchResult(this._editController, {Key? key}) : super(key: key);
   // Home(){
   // }
   @override
@@ -29,38 +28,37 @@ class _SearchResultState extends State<SearchResult> {
   List documentList = [];
   List toukouList = [];
 
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 0,
+        initialIndex: 0,
         length: 3,
         child: Scaffold(
-          appBar: AppBar(
-            title: Text('検索結果'),
-            bottom: TabBar(
-              tabs: [
-                Tab(text: "ネタ"),
-                Tab(text: "アカウント"),
-                Tab(text: "タグ")
-              ]),
-          ),
-          body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Center(child: Text("ログイン情報:${user!.displayName}")),
-          Expanded(
-              child: TabBarView(
-                  // physics: NeverScrollableScrollPhysics(),
-                  children: <Widget>[
-                searchNeta(word: widget._editController,),
-                SearchResultMane(word: widget._editController,),
-                searchTag(word: widget._editController,),
-                // Center(child: Text("RIGHT"))
-              ]
-            )
-          )
-        ]
-      )
-      )
-    );
+            appBar: AppBar(
+              title: Text('検索結果'),
+              backgroundColor: Color.fromARGB(255, 255, 166, 077),
+              bottom: TabBar(
+                  tabs: [Tab(text: "ネタ"), Tab(text: "アカウント"), Tab(text: "タグ")]),
+            ),
+            body: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(child: Text("ログイン情報:${user!.displayName}")),
+                  Expanded(
+                      child: TabBarView(
+                          // physics: NeverScrollableScrollPhysics(),
+                          children: <Widget>[
+                        searchNeta(
+                          word: widget._editController,
+                        ),
+                        SearchResultMane(
+                          word: widget._editController,
+                        ),
+                        searchTag(
+                          word: widget._editController,
+                        ),
+                        // Center(child: Text("RIGHT"))
+                      ]))
+                ])));
   }
 }

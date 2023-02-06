@@ -23,6 +23,7 @@ class _sendAnnounceState extends State<sendAnnounce> {
   // 入力された内容を保持するコントローラ
   // final inputController = TextEditingController();
   VideoPlayerController? MovieController = null;
+  List allUserId = [];
 
 
   
@@ -53,8 +54,27 @@ class _sendAnnounceState extends State<sendAnnounce> {
             },
           ),
         });
-        // print("idは本当に入っているのか？？");
-        // print(documentId);
+
+        await FirebaseFirestore.instance
+        .collection('T01_Person')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        /// usersコレクションのドキュメントIDを取得する
+        allUserId.add(doc.id);
+      });
+    });
+    for(int i=0;i<allUserId.length;i++){
+      await FirebaseFirestore.instance
+        .collection('T01_Person')
+        .doc(allUserId[i])
+        .collection("Notification")
+        .doc().set({
+      "Create": Timestamp.fromDate(DateTime.now()),
+      "Text": "${unitName}が告知を投稿しました",
+      "unread": true,
+});
+    }
 
       final id = await FirebaseFirestore.instance
         .collection("T02_Geinin")

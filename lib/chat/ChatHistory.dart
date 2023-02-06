@@ -91,10 +91,13 @@ class _ChatHistoryState extends State<ChatHistory> {
           .get()
           .then((QuerySnapshot snapshot) {
         if (snapshot.docs.isEmpty) {
-          newText.add("");
+          // newText.add("");
+          create = DateTime.now().millisecondsSinceEpoch;
+          createList.add(create);
+          map1[create] = "メッセージを送信していません";
         } else {
           snapshot.docs.forEach((doc) {
-            newText.add(doc.get('text'));
+            // newText.add(doc.get('text'));
             map1[doc.get('createdAt')] = doc.get('text');
             create = doc.get('createdAt');
             createList.add(doc.get('createdAt'));

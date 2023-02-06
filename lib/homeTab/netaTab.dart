@@ -163,7 +163,7 @@ class _netaResultState extends State<netaResult> {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.blue),
                                   ),
-                                  child: Text("概要：" + "${videoShoukai[index]}"),
+                                  child: Text("紹介文：" + "${videoShoukai[index]}"),
                                 ),
                                 IconButton(
                                   onPressed: () async {
