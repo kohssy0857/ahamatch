@@ -157,19 +157,19 @@ class _sendNetaState extends State<sendNeta> {
       "T05_Thumbnail":thumbnail,
     });
 
-    await FirebaseFirestore.instance
-      .collection("T04_Event")
-      .doc("cvabc8IsVAGQjYwPv0fR")
-      .collection("T02_Convention")
-      .doc(conid)
-      .collection("Vote_Name")
-      .where("PersonId", isEqualTo: user!.uid)
-      .get()
-      .then((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((doc) {
-        idList.add(doc["PersonId"]);
-      });
-    });
+    // await FirebaseFirestore.instance
+    //   .collection("T04_Event")
+    //   .doc("cvabc8IsVAGQjYwPv0fR")
+    //   .collection("T02_Convention")
+    //   .doc(conid)
+    //   .collection("Vote_Name")
+    //   .where("PersonId", isEqualTo: user!.uid)
+    //   .get()
+    //   .then((QuerySnapshot snapshot) {
+    //   snapshot.docs.forEach((doc) {
+    //     idList.add(doc["PersonId"]);
+    //   });
+    // });
 
     if (value == '大会選択なし') {
       print('ok');
