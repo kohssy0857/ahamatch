@@ -88,6 +88,7 @@ class geininProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     aikataEdit();
+    nameCut(user!.displayName);
     return Scaffold(
       appBar: const Header(),
       drawer: Drawer(
@@ -132,7 +133,9 @@ class geininProfile extends StatelessWidget {
                             title: const Text("現金化"),
                             content: TextField(
                                 onChanged: (value) {
-                                  coin = int.parse(value);
+                                  if (double.tryParse(value) != null) {
+                                    coin = int.parse(value);
+                                  }
                                 },
                                 maxLength: 7,
                                 decoration: const InputDecoration(
@@ -301,10 +304,10 @@ class geininProfile extends StatelessWidget {
               height: 30,
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-              primary: Colors.red, // background
-              onPrimary: Colors.white, // foreground
-            ),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.red, // background
+                  onPrimary: Colors.white, // foreground
+                ),
                 onPressed: () async {
                   final String? selectedText = await showDialog<String>(
                       context: context,
@@ -351,7 +354,7 @@ class geininProfile extends StatelessWidget {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text('プロフィール名：${user!.displayName}====2'),
+                            Text('プロフィール名：${nameCut(user!.displayName)}'),
                             // Text("$shoukai"),
                             Container(
                               padding: const EdgeInsets.all(5.0),
@@ -436,5 +439,15 @@ class _SimpleDialogSampleState extends State<SimpleDialogSample> {
         )
       ],
     );
+  }
+}
+
+String nameCut(String? s) {
+  if (s!.contains("#")) {
+    return s.substring(0, s.indexOf("#"));
+  } else if (s.contains("@")) {
+    return s.substring(0, s.indexOf("@"));
+  } else {
+    return "";
   }
 }

@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Notification.dart';
 import 'footer.dart';
 import 'Search.dart';
+import 'package:intl/intl.dart';
 
 import 'Billing.dart';
 
@@ -26,6 +27,11 @@ class Header extends StatefulWidget with PreferredSizeWidget {
 class _Header extends State<Header> {
   bool _searchBoolean = false;
   final User? user = FirebaseAuth.instance.currentUser;
+  bool unread = false;
+  bool notfiExist = false;
+  int notfiLen = 0;
+  List notfiList = [];
+  List refList = [];
 
   Future<String> fetchCoin() async {
     final docs = await FirebaseFirestore.instance
@@ -33,7 +39,48 @@ class _Header extends State<Header> {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
     var data = docs.exists ? docs.data() : null;
+
+    var ndocref = await FirebaseFirestore.instance
+        .collection("T01_Person")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("Notification")
+        .orderBy("Create", descending: true);
+    var ndoc = await ndocref.get();
+
+    print(ndoc.size);
+    notfiLen = ndoc.size;
+    if (ndoc.size == 0) {
+    } else {
+      notfiExist = true;
+      for (var element in ndoc.docs) {
+        refList.add(element);
+        if (element["unread"]) {
+          unread = true;
+          refList.add(element);
+          // var el=   element.reference;
+        }
+      }
+      // var ref = await FirebaseFirestore.instance
+      //     .collection("T01_Person")
+      //     .doc(FirebaseAuth.instance.currentUser!.uid)
+      //     .collection("Notification");
+      // ref.doc().update({"unread": false});
+    }
+
     return data!['T01_AhaCoin'].toString();
+  }
+
+  String DateFormat(Timestamp stamp) {
+    var date = stamp.toDate();
+    var now = DateTime.now();
+    int diff = now.difference(date).inMinutes;
+    if (diff > 1440) {
+      return "${date.month}月${date.day}日";
+    } else if (diff > 60) {
+      return "${(diff / 60).floor()}時間前";
+    } else {
+      return "$diff分前";
+    }
   }
 
   String _coin = "";
@@ -91,12 +138,61 @@ class _Header extends State<Header> {
                   },
                 ),
                 IconButton(
-                    icon: const Icon(Icons.notifications),
-                    onPressed: () async {
+                    icon: unread
+                        ? const Icon(Icons.notification_important_outlined)
+                        : const Icon(Icons.notifications),
+                    onPressed: () {
+                      for (var Q in refList) {
+                        Q.reference.update({"unread": false});
+                      }
+                      setState(() {
+                        unread = false;
+                      });
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SimpleDialog(
+                              title: const Text("通知"),
+                              insetPadding: notfiExist
+                                  ? const EdgeInsets.symmetric(
+                                      horizontal: 80, vertical: 100)
+                                  : const EdgeInsets.symmetric(
+                                      horizontal: 40.0, vertical: 24.0),
+                              children: [
+                                notfiExist
+                                    ? SizedBox(
+                                        width: 600,
+                                        height: 800,
+                                        child: ListView.separated(
+                                          padding: const EdgeInsets.only(bottom: 0),
+                                          shrinkWrap: true,
+                                            itemCount: notfiLen,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return ListTile(
+                                                title: Text(
+                                                    refList[index]["Text"]),
+                                                subtitle: Text(DateFormat(
+                                                    refList[index]["Create"])),
+                                                    isThreeLine: true,
+                                              );
+                                            }, separatorBuilder: (BuildContext context, int index) { 
+                                              return const Divider();
+                                             },),
+                                      )
+                                    : const Text("通知はありません"),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("閉じる"))
+                              ],
+                            );
+                          });
+
                       // await Navigator.push(
                       //               // ボタン押下でオーディション編集画面に遷移する
                       //                 context, MaterialPageRoute(builder: (context) => NotificationMane()));
-                      // setState(() {});
                     }),
                 IconButton(
                   icon: const Icon(Icons.logout),
