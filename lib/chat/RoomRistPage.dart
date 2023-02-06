@@ -48,8 +48,10 @@ class _ChatState extends State<Chat> {
           .doc(documentList[i].path.replaceFirst("T02_Geinin/", ""))
           .get()
           .then((DocumentSnapshot snapshot) {
-        personIdList.add(snapshot.get('T02_GeininId'));
-        unitNameList.add(snapshot.get('T02_UnitName'));
+        if (personIdList.contains(snapshot.get('T02_GeininId')) == false) {
+          personIdList.add(snapshot.get('T02_GeininId'));
+          unitNameList.add(snapshot.get('T02_UnitName'));
+        }
       });
     }
     yield unitNameList;
@@ -73,28 +75,41 @@ class _ChatState extends State<Chat> {
               //     Expanded(
               //         child: SizedBox(
               //             child:
-              ListView.builder(
-                  shrinkWrap: true,
-                  // padding: EdgeInsets.all(250),
-                  itemCount: unitNameList.length,
-                  itemBuilder: (context, index) {
-                    return 
-                        Card(
-                          margin: const EdgeInsets.all(10),
-                          child: ListTile(
-                            // leading: Image.network(T02_Convention[index].T06_image),
-                            title: Text("芸名：" + unitNameList[index]),
-                            // subtitle: Text(T02Geinin[index].ID), // 商品名
-                            onTap: () async {
-                                        Navigator.push(
-
-                                            context, MaterialPageRoute(builder: (context) => ChatPage(unitNameList[index],personIdList[index])));
-                                        /* --- 省略 --- */
-                                      } ,
-                            // subtitle: Text(T01_Audition['price'].toString()), // 価格
-                          ),
-                        );
-                  });
+              Column(
+            children: [
+              Text(
+                "フォロー覧",
+                style: TextStyle(
+                  fontSize: 60,
+                ),
+              ),
+              Flexible(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    // padding: EdgeInsets.all(250),
+                    itemCount: unitNameList.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        margin: const EdgeInsets.all(10),
+                        child: ListTile(
+                          // leading: Image.network(T02_Convention[index].T06_image),
+                          title: Text(unitNameList[index]),
+                          // subtitle: Text(T02Geinin[index].ID), // 商品名
+                          onTap: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatPage(
+                                        unitNameList[index], personIdList[index])));
+                            /* --- 省略 --- */
+                          },
+                          // subtitle: Text(T01_Audition['price'].toString()), // 価格
+                        ),
+                      );
+                    }),
+              )
+            ],
+          );
         } else {
           return Column(
             children: [

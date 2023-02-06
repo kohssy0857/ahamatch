@@ -37,6 +37,7 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
   Stream<QuerySnapshot>? chats;
   String elementId = "";
   bool laughTF = false;
+  int typeTF = 0;
 
 // コメントを獲得
   getChats() async {
@@ -131,6 +132,12 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
               // print("ないよ")
             }
         });
+    final ref5 = await FirebaseFirestore.instance
+        .collection("T05_Toukou")
+        .doc(widget.movieId)
+        .get();
+    print("typeはなんだえ" + "${ref5.data()!["T05_Type"]}");
+    typeTF = ref5.data()!["T05_Type"];
   }
 
 // 視聴回数を＋１
@@ -211,6 +218,7 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
   void initState() {
     getChatandAdmin();
     addShityoukaisu();
+    _takeAhapoint();
     // 動画プレーヤーの初期化
     _controller = VideoPlayerController.network(
       widget.movieURL,
@@ -234,7 +242,6 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
   Widget build(BuildContext context) {
     if (_controller == null) return Container();
     if (_controller.value.isInitialized) {
-      _takeAhapoint();
       return Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -320,62 +327,80 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
             // |||||||||||||||||||
             Row(
               children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('笑い声をON'),
-                        ),
-                      );
-                      laughTF = true;
-                    } catch (e) {}
-                  },
-                  child: const Text('笑い声再生'),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.red, // background
+                if (typeTF == 1)
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('笑い声をON'),
+                          ),
+                        );
+                        laughTF = true;
+                      } catch (e) {}
+                    },
+                    child: const Text('笑い声再生'),
                   ),
-                  onPressed: () async {
-                    try {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('笑い声をOFF'),
-                        ),
-                      );
-                      laughTF = false;
-                    } catch (e) {}
-                  },
-                  child: const Text('笑い声停止'),
-                ),
+                if (typeTF == 1)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.red, // background
+                    ),
+                    onPressed: () async {
+                      try {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('笑い声をOFF'),
+                          ),
+                        );
+                        laughTF = false;
+                      } catch (e) {}
+                    },
+                    child: const Text('笑い声停止'),
+                  ),
                 SizedBox(width: 150),
-                ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('アハポイントを追加しました'),
-                        ),
-                      );
-                      smilePoint(_controller.value.position);
-                    } catch (e) {}
-                  },
-                  child: const Text('アハポイント'),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('マイリストに追加しました'),
-                        ),
-                      );
-                      addMylist(widget.movieURL, widget.movieId);
-                    } catch (e) {}
-                  },
-                  child: const Text('マイリスト'),
-                ),
+                if (typeTF == 1)
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('アハポイントを追加しました'),
+                          ),
+                        );
+                        smilePoint(_controller.value.position);
+                      } catch (e) {}
+                    },
+                    child: const Text('アハポイント'),
+                  ),
+                if (typeTF == 1)
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('アハポイントを追加しました'),
+                          ),
+                        );
+                        smilePoint(_controller.value.position);
+                      } catch (e) {}
+                    },
+                    child: const Text('アハポイント'),
+                  ),
+                if (typeTF == 1)
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('マイリストに追加しました'),
+                          ),
+                        );
+                        addMylist(widget.movieURL, widget.movieId);
+                      } catch (e) {}
+                    },
+                    child: const Text('マイリスト'),
+                  ),
                 ElevatedButton(
                   onPressed: () async {
                     try {
@@ -383,7 +408,7 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
                     } catch (e) {}
                   },
                   child: const Text('コメント'),
-                ),
+                )
               ],
             )
             // chatMessages(),

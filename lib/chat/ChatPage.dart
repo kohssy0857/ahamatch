@@ -33,6 +33,7 @@ class _ChatPageState extends State<ChatPage> {
   Map<String, bool> joinedUsers = {};
   String elementId = "";
   Stream<QuerySnapshot>? chats;
+  String sendUserName = "";
 
   // ^^^^^^^^^^^^^^^^^^^^
   String userName = "名無し";
@@ -190,7 +191,42 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  sendMessage() {
+  sendMessage() async {
+    // await FirebaseFirestore.instance
+    //     .collection('T01_Person')
+    //     .get()
+    //     .then((QuerySnapshot snapshot) {
+    //   snapshot.docs.forEach((doc) {
+    //     /// usersコレクションのドキュメントIDを取得する
+    //     allUserId.add(doc.id);
+    //   });
+    // });
+    // for(int i=0;i<allUserId.length;i++){
+    final gid =
+        FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid);
+
+    await FirebaseFirestore.instance
+        .collection('T02_Geinin')
+        .where(
+          'T02_GeininId',
+          isEqualTo: gid,
+        )
+        .get()
+        .then((QuerySnapshot snapshot) async => {
+              snapshot.docs.forEach((doc) async {
+                sendUserName = doc.get("T02_UnitName");
+              })
+            });
+      await FirebaseFirestore.instance
+        .collection('T01_Person')
+        .doc(widget.PersonId)
+        .collection("Notification")
+        .doc().set({
+      "Create": Timestamp.fromDate(DateTime.now()),
+      "Text": "${sendUserName}から新着メッセージが送られました",
+      "unread": true,
+});
+//     }
     String message = messageController.text;
     if (messageController.text.isNotEmpty) {
       FirebaseFirestore.instance
