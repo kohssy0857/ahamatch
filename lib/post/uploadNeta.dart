@@ -27,6 +27,7 @@ class _sendNetaState extends State<sendNeta> {
   int i = 0;
   // 入力された内容を保持するコントローラ
 
+  // String nocon = "大会選択なし";
   List<String> list = ["大会選択なし"];
   String dropdownValue = "大会選択なし";
 
@@ -157,21 +158,9 @@ class _sendNetaState extends State<sendNeta> {
       "T05_Thumbnail":thumbnail,
     });
 
-    // await FirebaseFirestore.instance
-    //   .collection("T04_Event")
-    //   .doc("cvabc8IsVAGQjYwPv0fR")
-    //   .collection("T02_Convention")
-    //   .doc(conid)
-    //   .collection("Vote_Name")
-    //   .where("PersonId", isEqualTo: user!.uid)
-    //   .get()
-    //   .then((QuerySnapshot snapshot) {
-    //   snapshot.docs.forEach((doc) {
-    //     idList.add(doc["PersonId"]);
-    //   });
-    // });
 
-    if (value == '大会選択なし') {
+    if (value == "大会選択なし") {
+
       print('ok');
     } else if (idList.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -199,6 +188,20 @@ class _sendNetaState extends State<sendNeta> {
       await ref.set({
         "PersonId": FirebaseAuth.instance.currentUser!.uid,
       });
+
+      await FirebaseFirestore.instance
+      .collection("T04_Event")
+      .doc("cvabc8IsVAGQjYwPv0fR")
+      .collection("T02_Convention")
+      .doc(conid)
+      .collection("Vote_Name")
+      .where("PersonId", isEqualTo: user!.uid)
+      .get()
+      .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        idList.add(doc["PersonId"]);
+      });
+    });
 
     }
     print("登録できました");

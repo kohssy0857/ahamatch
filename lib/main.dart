@@ -1,5 +1,4 @@
 
-
 // 認証
 import 'package:ahamatch/parts/footer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -83,5 +82,4 @@ class App extends StatelessWidget {
         ),
       );
 }
-
 
