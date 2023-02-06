@@ -25,43 +25,58 @@ class _sendSinmeState extends State<sendSinme> {
   // 入力された内容を保持するコントローラ
   // final inputController = TextEditingController();
   VideoPlayerController? MovieController = null;
-
-
-  
+  List allUserId = [];
 
   // title,,
   void _upload(String bosyuu) async {
-
     String? video;
     String? documentId;
     String? unitName;
 
-    final doc = FirebaseFirestore.instance
-        .collection('T05_Toukou').doc();
+    final doc = FirebaseFirestore.instance.collection('T05_Toukou').doc();
 
-    final gid = FirebaseFirestore.instance
-        .collection("T01_Person")
-        .doc(user!.uid);
+    final gid =
+        FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid);
     // print("gidってなにーー？？");
     // print(gid);
 
+    await FirebaseFirestore.instance
+        .collection('T02_Geinin')
+        .where('T02_GeininId', isEqualTo: gid)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach(
+                (doc) {
+                  documentId = doc.id;
+                  unitName = doc["T02_UnitName"];
+                },
+              ),
+            });
+    await FirebaseFirestore.instance
+        .collection('T01_Person')
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        /// usersコレクションのドキュメントIDを取得する
+        allUserId.add(doc.id);
+      });
+    });
+    for (int i = 0; i < allUserId.length; i++) {
       await FirebaseFirestore.instance
-        .collection('T02_Geinin').where('T02_GeininId', isEqualTo: gid).get().then(
-      (QuerySnapshot querySnapshot) => {
-          querySnapshot.docs.forEach(
-            (doc) {
-              documentId=doc.id;
-              unitName=doc["T02_UnitName"];
-            },
-          ),
-        });
-        // print("idは本当に入っているのか？？");
-        // print(documentId);
+          .collection('T01_Person')
+          .doc(allUserId[i])
+          .collection("Notification")
+          .doc()
+          .set({
+        "Create": Timestamp.fromDate(DateTime.now()),
+        "Text": "${unitName}が新芽を投稿しました",
+        "unread": true,
+      });
+    }
 
-      final id = await FirebaseFirestore.instance
+    final id = await FirebaseFirestore.instance
         .collection("T02_Geinin")
         .doc(documentId);
-
 
     // 紹介文、視聴回数は0
     await doc.set({
@@ -83,42 +98,40 @@ class _sendSinmeState extends State<sendSinme> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: TextFormField(
-                  maxLength: 50,
-                  decoration: const InputDecoration(labelText: "ネタの募集内容"),
-                  onChanged: (value) {
-                    bosyuu = value;
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "必須です";
-                    }
-                    return null;
-                  },
-                )),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: TextFormField(
+                maxLength: 50,
+                decoration: const InputDecoration(labelText: "ネタの募集内容"),
+                onChanged: (value) {
+                  bosyuu = value;
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "必須です";
+                  }
+                  return null;
+                },
+              )),
           // Column2
           // Column3
           // Text(inputText),
           ElevatedButton(
-              onPressed: () async {
-                // _tachikame();
-                if (_formKey.currentState!.validate()) {
-                      print("登録完了");
-                      _upload(bosyuu);
+            onPressed: () async {
+              // _tachikame();
+              if (_formKey.currentState!.validate()) {
+                print("登録完了");
+                _upload(bosyuu);
                 try {
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => App()));
                 } catch (e) {}
-                    }
-                
-              },
-              child: const Text('投稿'),
-            ),
+              }
+            },
+            child: const Text('投稿'),
+          ),
         ],
       ),
     );
   }
 }
-

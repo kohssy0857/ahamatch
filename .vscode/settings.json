@@ -1,4 +1,8 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "vscode-pets.petType": "fox",
+    "vscode-pets.petSize": "medium",
+    "vscode-pets.theme": "castle",
+    "vscode-pets.petColor": "red"
 }
