@@ -16,6 +16,9 @@ import 'aikataBosyu.dart';
 import 'geininInfoEdit.dart';
 import 'mylist.dart';
 import 'geininToukou.dart';
+import 'geininShinme.dart';
+import 'geininAhapuchi.dart';
+import 'geininKokuchi.dart';
 import 'package:flutter/services.dart';
 
 class geininProfile extends StatelessWidget {
@@ -88,6 +91,7 @@ class geininProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     aikataEdit();
+    nameCut(user!.displayName);
     return Scaffold(
       appBar: const Header(),
       drawer: Drawer(
@@ -132,7 +136,9 @@ class geininProfile extends StatelessWidget {
                             title: const Text("現金化"),
                             content: TextField(
                                 onChanged: (value) {
-                                  coin = int.parse(value);
+                                  if (double.tryParse(value) != null) {
+                                    coin = int.parse(value);
+                                  }
                                 },
                                 maxLength: 7,
                                 decoration: const InputDecoration(
@@ -301,10 +307,10 @@ class geininProfile extends StatelessWidget {
               height: 30,
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-              primary: Colors.red, // background
-              onPrimary: Colors.white, // foreground
-            ),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.red, // background
+                  onPrimary: Colors.white, // foreground
+                ),
                 onPressed: () async {
                   final String? selectedText = await showDialog<String>(
                       context: context,
@@ -321,7 +327,7 @@ class geininProfile extends StatelessWidget {
       ),
       body: SafeArea(
           child: DefaultTabController(
-              length: 2,
+              length: 5,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -351,7 +357,7 @@ class geininProfile extends StatelessWidget {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text('プロフィール名：${user!.displayName}====2'),
+                            Text('プロフィール名：${nameCut(user!.displayName)}'),
                             // Text("$shoukai"),
                             Container(
                               padding: const EdgeInsets.all(5.0),
@@ -372,13 +378,16 @@ class geininProfile extends StatelessWidget {
                     const TabBar(
                         labelColor: Colors.blue,
                         unselectedLabelColor: Colors.black12,
-                        tabs: [Tab(text: "マイリスト"), Tab(text: "投稿")]),
+                        tabs: [Tab(text: "マイリスト"), Tab(text: "ネタ"),Tab(text: "アハプチ"),Tab(text: "新芽"),Tab(text: "告知")]),
                     Expanded(
                         child: TabBarView(
                             physics: const NeverScrollableScrollPhysics(),
                             children: <Widget>[
                           mylist(),
                           geininToukou(),
+                          geininAhapuchi(),
+                          geininShinme(),
+                          geininKokuchi()
                         ]))
                   ]))),
     );
@@ -436,5 +445,15 @@ class _SimpleDialogSampleState extends State<SimpleDialogSample> {
         )
       ],
     );
+  }
+}
+
+String nameCut(String? s) {
+  if (s!.contains("#")) {
+    return s.substring(0, s.indexOf("#"));
+  } else if (s.contains("@")) {
+    return s.substring(0, s.indexOf("@"));
+  } else {
+    return "";
   }
 }

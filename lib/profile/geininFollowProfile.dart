@@ -235,16 +235,24 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                 value: isOn,
                 onChanged: (bool? value) {},
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    _Follow();
-                  } catch (e) {}
-                },
-                child: isFollwing == false
-                    ? const Text('フォロー')
-                    : const Text('フォローー解除'),
-              ),
+              isFollwing == false
+                  ? ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          _Follow();
+                        } catch (e) {}
+                      },
+                      child: Text('フォロー'))
+                  : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.red, // background
+                      ),
+                      onPressed: () async {
+                        try {
+                          _Follow();
+                        } catch (e) {}
+                      },
+                      child: Text('フォロー解除')),
               ElevatedButton(
                   onPressed: () {
                     showDialog(
@@ -254,7 +262,8 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                               title: const Text("ギフトを送る"),
                               content: TextField(
                                   onChanged: (value) {
-                                    giftCoin = int.parse(value);
+                                    if (double.tryParse(value) != null)
+                                    {giftCoin = int.parse(value);}
                                   },
                                   maxLength: 7,
                                   decoration: const InputDecoration(
@@ -294,8 +303,8 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                                       showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                                content:
-                                                    const Text("0より大きい数値を入力してください"),
+                                                content: const Text(
+                                                    "0より大きい数値を入力してください"),
                                                 actions: [
                                                   TextButton(
                                                       onPressed: () {
@@ -308,7 +317,8 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                                       showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                                content: const Text("所持コインが足りません"),
+                                                content:
+                                                    const Text("所持コインが足りません"),
                                                 actions: [
                                                   TextButton(
                                                       onPressed: () {
@@ -345,13 +355,16 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
-                                              content: Text("$giftCoinポイントをギフトしました"),
-                                              actions: [TextButton(onPressed: (){
-                                                Navigator.pop(context);
-                                                Navigator.pop(context);
-
-                                              }, child: const Text("確認"))],
-
+                                              content:
+                                                  Text("$giftCoinポイントをギフトしました"),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text("確認"))
+                                              ],
                                             );
                                           });
                                     }
@@ -362,7 +375,7 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                     // async{try{
                     // }catch(e){}
                   },
-                  child: const Text("ギフトを送る")),
+                  child: const Text("アハコインを送る")),
               const TabBar(
                   labelColor: Colors.blue,
                   unselectedLabelColor: Colors.black12,
