@@ -119,6 +119,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.name}'),
+        backgroundColor: Color.fromARGB(255, 255, 166, 077),
       ),
       body: Stack(
         children: <Widget>[

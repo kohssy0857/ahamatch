@@ -33,7 +33,7 @@ class MainModel extends ChangeNotifier {
     this.auditions = auditions;
     // for (var i = 0; i >= auditions.length; i ++) {
     //   if(now.isBefore(auditions[i].schedule.toDate())) {
-        
+
     //   }
     // }
     print('len = ' + auditions.length.toString());
@@ -51,8 +51,6 @@ class Auditions extends StatelessWidget {
       .collection('T02_Convention')
       .doc();
 
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -60,6 +58,7 @@ class Auditions extends StatelessWidget {
         // createでfetchEvents()も呼び出すようにしておく。
         create: (_) => MainModel()..fetchEvents(),
         child: Scaffold(
+          backgroundColor: Color.fromARGB(255, 255, 219, 153),
           // appBar: const Header(),
           body: Consumer<MainModel>(
             builder: (context, model, child) {
@@ -79,17 +78,17 @@ class Auditions extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return SizedBox(
                       height: 80,
-                    // Row(
-                    //   children: <Widget>[
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     Navigator.push(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //             builder: (context) =>
-                        //                 AudiOverview(auditions, index)));
-                        //   },
-                          child: 
+                      // Row(
+                      //   children: <Widget>[
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) =>
+                      //                 AudiOverview(auditions, index)));
+                      //   },
+                      child:
                           // Container(
                           //   height: 50,
                           //   // color: books[index]['color'],
@@ -99,19 +98,19 @@ class Auditions extends StatelessWidget {
                           //   ),
                           // ),
                           ListTile(
-                            // color: books[index]['color'],
-                            title: Text(
-                              auditions[index].name,
-                              // style: TextStyle(fontSize: ),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AudiOverview(
-                                          auditions, index)));
-                            },
-                          ),
+                        // color: books[index]['color'],
+                        title: Text(
+                          auditions[index].name,
+                          // style: TextStyle(fontSize: ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AudiOverview(auditions, index)));
+                        },
+                      ),
                       //   ),
                       // ],
                     );

@@ -262,7 +262,8 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                               title: const Text("ギフトを送る"),
                               content: TextField(
                                   onChanged: (value) {
-                                    giftCoin = int.parse(value);
+                                    if (double.tryParse(value) != null)
+                                    {giftCoin = int.parse(value);}
                                   },
                                   maxLength: 7,
                                   decoration: const InputDecoration(

@@ -19,8 +19,9 @@ class ConFullMoviePlayer extends StatefulWidget {
   String movieId;
   List events;
   int index;
-  
-  ConFullMoviePlayer(this.movieURL, this.movieId, this.events, this.index) : super();
+
+  ConFullMoviePlayer(this.movieURL, this.movieId, this.events, this.index)
+      : super();
 
   @override
   _FullMoviePlayerWidgetState createState() => _FullMoviePlayerWidgetState();
@@ -116,9 +117,10 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
         .collection("T02_Convention")
         .doc(widget.events[widget.index].docid)
         .collection("Vote_Name");
-    doc.where("PersonId", isEqualTo: user!.uid)
-      .get()
-      .then((QuerySnapshot snapshot) {
+    doc
+        .where("PersonId", isEqualTo: user!.uid)
+        .get()
+        .then((QuerySnapshot snapshot) {
       snapshot.docs.forEach((doc) {
         // if (doc["T05_Type"] == 1) {
         list.add(doc["PersonId"]);
@@ -126,16 +128,14 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
     });
 
     await FirebaseFirestore.instance
-      .collection("T07_Convention")
-      .where("T07_VideoUrl", isEqualTo: widget.movieURL)
-      .get()
-      .then((QuerySnapshot snapshot) {
-        snapshot.docs.forEach((doc) {
-          id.add(doc.id);
-        });
+        .collection("T07_Convention")
+        .where("T07_VideoUrl", isEqualTo: widget.movieURL)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        id.add(doc.id);
       });
-
-
+    });
   }
 
 // マイリストに追加
@@ -243,13 +243,13 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
                     //   );
                     // } else {
                     //   // print("スマイルリストはありませんよ");
-                      return Text(
-                        _videoDuration(value.position),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                        ),
-                      );
+                    return Text(
+                      _videoDuration(value.position),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                      ),
+                    );
                     // }
                   },
                 ),
@@ -314,35 +314,33 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
                   },
                   child: const Text('コメント'),
                 ),
-                
               ],
-              
             ),
             ButtonBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white, // background
-                  onPrimary: Colors.black, // foreground
+              alignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.white, // background
+                    onPrimary: Colors.black, // foreground
+                  ),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('戻る'),
                 ),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('戻る'),
-              ),
-            ],
-          ),
+              ],
+            ),
 
             // ||||||||||||||||||||
           ],
         ),
         floatingActionButton: FloatingActionButton(
-              child: const Icon(Icons.how_to_vote),
-              onPressed: () async {
-                _vote();
-              },
-            ),
+          child: const Icon(Icons.how_to_vote),
+          onPressed: () async {
+            _vote();
+          },
+        ),
       );
     } else {
       /*
@@ -387,6 +385,7 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
 
   _vote() async {
     if (list.isEmpty) {
+
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -400,19 +399,19 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
               TextButton(
                 child: Text("OK"),
                 onPressed: () {
-                  _countVote().then({
-                    setState(() {})
-                  });
+                  _countVote();
+                  Navigator.pop(context);
                 },
               ),
             ],
           ),
         );
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('すでに投票しています'),
-                  ),
+        SnackBar(
+          content: Text('すでに投票しています'),
+        ),
       );
     }
   }
@@ -424,16 +423,16 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
         .collection("T02_Convention")
         .doc(widget.events[widget.index].docid)
         .collection("Vote_Name");
-      final ref = doc.doc();
+    final ref = doc.doc();
 
-      await ref.set({
-        "PersonId": FirebaseAuth.instance.currentUser!.uid,
-      });
+    await ref.set({
+      "PersonId": FirebaseAuth.instance.currentUser!.uid,
+    });
 
     FirebaseFirestore.instance
-      .collection("T07_Convention")
-      .doc(id[0])
-      .update({"T07_votes" : FieldValue.increment(1)});
+        .collection("T07_Convention")
+        .doc(id[0])
+        .update({"T07_votes": FieldValue.increment(1)});
     print("投票数＋1");
   }
 }
