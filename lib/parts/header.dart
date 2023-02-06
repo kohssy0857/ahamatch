@@ -203,6 +203,7 @@ class _Header extends State<Header> {
                       //               // ボタン押下でオーディション編集画面に遷移する
                       //                 context, MaterialPageRoute(builder: (context) => NotificationMane()));
                     }),
+
                 IconButton(
                   icon: const Icon(
                     Icons.logout,
@@ -221,6 +222,7 @@ class _Header extends State<Header> {
                     );
                   },
                 ),
+
               ]
             : [
                 IconButton(
