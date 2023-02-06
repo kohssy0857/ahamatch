@@ -158,7 +158,9 @@ class _sendNetaState extends State<sendNeta> {
       "T05_Thumbnail":thumbnail,
     });
 
+
     if (value == "大会選択なし") {
+
       print('ok');
     } else if (idList.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(

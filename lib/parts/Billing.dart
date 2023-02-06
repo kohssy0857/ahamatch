@@ -28,40 +28,61 @@ class _BillingState extends State<Billing> {
               children: [
                 const Text(
                   "アハコイン購入",
+                  style: TextStyle(
+                    fontSize: 60,
+                  ),
                   textAlign: TextAlign.center,
                 ),
+                Spacer(),
                 billingContainer(140, 120),
+                Spacer(),
                 billingContainer(650, 650),
+                Spacer(),
                 billingContainer(1300, 1400),
+                Spacer(),
                 billingContainer(5000, 5400),
-                billingContainer(15000, 17000)
+                Spacer(),
+                billingContainer(15000, 17000),
+                Spacer(),
               ]),
         ));
   }
 
   Container billingContainer(int price, int amount) {
     return Container(
-      width: 400,
-      height: 50,
+      width: double.infinity,
+      height: 100,
       decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 1),
-          borderRadius: const BorderRadius.all(Radius.circular(10))),
+          color: Colors.orange[200],
+          border: Border.all(color: Color.fromARGB(255, 255, 126, 20), width: 3),
+          borderRadius: const BorderRadius.all(Radius.circular(100))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text("$amountアハコイン"),
+          Text(
+            "$amountアハコイン",
+            style: TextStyle(
+            fontSize: 30,
+            ),
+          ),
           Container(
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 1),
+                color: Color.fromARGB(255, 255, 221, 170),
+                border: Border.all(color: Color.fromARGB(255, 255, 147, 58), width: 3),
                   borderRadius: const BorderRadius.all(
-                    Radius.circular(10),
+                    Radius.circular(100),
                   )),
               child: GestureDetector(
                 onTap: () {
                   BillingDialog(price, amount);
                 },
-                child: Text("$price円"),
-              ))
+                child: Text(
+                  "¥$price円",
+                  style: TextStyle(
+                    fontSize: 30,
+                  ),
+                ),
+              )),
         ],
       ),
     );
