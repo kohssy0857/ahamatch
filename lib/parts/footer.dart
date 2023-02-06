@@ -108,6 +108,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:get/get.dart';
 import '../functions.dart';
 import '../profile/owaraizukiProfile.dart';
@@ -135,25 +136,30 @@ class _Footer extends State {
   String shoukai = "";
   String documentId = "";
 
-  void aikataEdit() async{
-    final userGid =await FirebaseFirestore.instance
+  void aikataEdit() async {
+    final userGid = await FirebaseFirestore.instance
         .collection("T01_Person")
-        .doc(user!.uid).get();
+        .doc(user!.uid)
+        .get();
 
-    final gid = FirebaseFirestore.instance
-        .collection("T01_Person")
-        .doc(user!.uid);
+    final gid =
+        FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid);
     // T02_Geininの自分のdocumentIdを取得
     await FirebaseFirestore.instance
-        .collection('T02_Geinin').where('T02_GeininId', isEqualTo: gid).get().then(
-      (QuerySnapshot querySnapshot) => {
-          querySnapshot.docs.forEach(
-            (doc) {
-              documentId=doc.id;
-            },
-          ),
-        });
-    final ref = await FirebaseFirestore.instance.collection('T02_Geinin').doc(documentId).get();
+        .collection('T02_Geinin')
+        .where('T02_GeininId', isEqualTo: gid)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach(
+                (doc) {
+                  documentId = doc.id;
+                },
+              ),
+            });
+    final ref = await FirebaseFirestore.instance
+        .collection('T02_Geinin')
+        .doc(documentId)
+        .get();
     shoukai = ref.data()!["T02_describe"];
   }
 
@@ -183,6 +189,8 @@ class _Footer extends State {
         return Scaffold(
             body: _pages[_selectIndex],
             bottomNavigationBar: BottomNavigationBar(
+              // お笑い好きフッター色
+              backgroundColor: Color.fromARGB(255, 255, 166, 077),
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),
@@ -208,13 +216,10 @@ class _Footer extends State {
 
         break;
       case 1:
-      aikataEdit();
+        aikataEdit();
         var _pages = <Widget>[
           Home(),
-
-
           geininProfile(shoukai),
-
           Events(),
           ChatMane(),
           Ranking(),
@@ -222,9 +227,15 @@ class _Footer extends State {
         return Scaffold(
             body: _pages[_selectIndex],
             bottomNavigationBar: BottomNavigationBar(
+              // 芸人フッター色
+              selectedItemColor: Colors.white,
+              backgroundColor: Color.fromARGB(255, 255, 166, 077),
               items: const [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
+                  icon: Icon(
+                    Icons.home,
+                    // color: Colors.white,
+                  ),
                   label: "芸人",
                 ),
                 BottomNavigationBarItem(
