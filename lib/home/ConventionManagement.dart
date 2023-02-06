@@ -10,8 +10,8 @@ import '../login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../parts/footer.dart';
-
 import '../parts/header.dart';
+import 'ConventionResult.dart';
 
 class Convention {
 
@@ -22,6 +22,7 @@ class Convention {
   Timestamp T04_Create=Timestamp(2020, 10);
   String T05_Name = "";
   String? T06_image = "";
+  int T07_flag = 0;
 
   // ドキュメントを扱うDocumentSnapshotを引数にしたコンストラクタを作る
   Convention(DocumentSnapshot doc) {
@@ -39,6 +40,8 @@ class Convention {
     ID = doc.id;
     // ドキュメントの持っているフィールド'T06_image'取得
     T06_image = doc['T06_image'];
+    // ドキュメントの持っているフィールド'T07_flag'取得
+    T07_flag = doc['T07_flag'];
   }
 }
 
@@ -63,6 +66,7 @@ class MainModel extends ChangeNotifier {
 }
 
 class ConventionMane extends StatelessWidget {
+  DateTime now = DateTime.now();
 
   // FirebaseFirestoreに対して削除を促している関数
   Future deleteProduct(String productId) {
@@ -130,6 +134,9 @@ class ConventionMane extends StatelessWidget {
                     child: ListTile(
                       // leading: Image.network(T02_Convention[index].T06_image),
                       title: Text(T02Convention[index].T05_Name), // 商品名
+                      subtitle: T02Convention[index].T02_Schedule.toDate().isAfter(now)
+                      ?Text("期限：${T02Convention[index].T02_Schedule.toDate()}")
+                      : Text("期限：${T02Convention[index].T02_Schedule.toDate()}", style: TextStyle(color: Colors.red),),
                       // subtitle: Text(T01_Audition['price'].toString()), // 価格
                       trailing: SizedBox(
                         width: 100,
@@ -155,6 +162,11 @@ class ConventionMane extends StatelessWidget {
                           ],
                         ),
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          // ボタン押下でオーディション編集画面に遷移する
+                          context, MaterialPageRoute(builder: (context) => ConventionResult(model: model,index: index)));
+                      },
                     ),
                   );
                 },

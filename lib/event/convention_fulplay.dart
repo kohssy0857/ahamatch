@@ -400,9 +400,8 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
               TextButton(
                 child: Text("OK"),
                 onPressed: () {
-                  _countVote().then({
-                    setState(() {})
-                  });
+                  _countVote();
+                  Navigator.pop(context);
                 },
               ),
             ],
