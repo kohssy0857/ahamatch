@@ -126,114 +126,114 @@ class _netaConState extends State<netaCon> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
+        body: StreamBuilder(
       stream: getVideo(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text("ロード中");
         } else if (snapshot.hasData) {
           List photo = snapshot.data!;
-          return
-              Column(
-                children: [
-                  Text("大会名：${widget.events[widget.index].name}"),
-              //     Expanded(
-              //         child: SizedBox(
-              //             child:
-              ListView.builder(
-                  shrinkWrap: true,
-                  // padding: EdgeInsets.all(250),
-                  itemCount: videoThumbnails.length,
-                  itemBuilder: (context, index) {
-                    return Row(
-                      children: [
-                        // Text("${geininUnitNameList[geininIdList[index]]}"),
-                        ElevatedButton(
-                            onPressed: () async {
-                              try {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SearchResultMane(
-                                            word:
-                                                "${geininUnitNameList[geininIdList[index]]}")));
-                              } catch (e) {}
-                            },
-                            child: SizedBox(
-                              width: 100,
-                              child: Text(
-                                  '${geininUnitNameList[geininIdList[index]]}'),
-                            )),
-                        Column(
-                          children: [
-                            Text("タイトル：" + "${videoTitle[index]}"),
-                            SizedBox(
-                              width: 300,
-                              height: 300,
-                              child: Image.network(photo[index],
-                                  height: 150, fit: BoxFit.fill),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 500,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.blue),
-                                  ),
-                                  child: Text("概要：" + "${videoShoukai[index]}"),
+          return Column(children: [
+            Text("大会名：${widget.events[widget.index].name}"),
+            //     Expanded(
+            //         child: SizedBox(
+            //             child:
+            ListView.builder(
+                shrinkWrap: true,
+                // padding: EdgeInsets.all(250),
+                itemCount: videoThumbnails.length,
+                itemBuilder: (context, index) {
+                  return Row(
+                    children: [
+                      // Text("${geininUnitNameList[geininIdList[index]]}"),
+                      ElevatedButton(
+                          onPressed: () async {
+                            try {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SearchResultMane(
+                                          word:
+                                              "${geininUnitNameList[geininIdList[index]]}")));
+                            } catch (e) {}
+                          },
+                          child: SizedBox(
+                            width: 100,
+                            child: Text(
+                                '${geininUnitNameList[geininIdList[index]]}'),
+                          )),
+                      Column(
+                        children: [
+                          Text("タイトル：" + "${videoTitle[index]}"),
+                          SizedBox(
+                            width: 300,
+                            height: 300,
+                            child: Image.network(photo[index],
+                                height: 150, fit: BoxFit.fill),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 500,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.brown),
                                 ),
-                                IconButton(
-                                  onPressed: () async {
-                                    final result =
-                                        await DialogUtils.showEditingDialog(
-                                            context, videoId[index]);
-                                    // setState(() {
-                                    //   // shinmeToukouList[index] = result ?? shinmeToukouList[index];
-                                    // });
-                                  },
-                                  icon: Icon(Icons.textsms),
-                                ),
-                                IconButton(
-                                  onPressed: () async {
-                                    addShityoukaisu(videoId[index]);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ConFullscreenVideo(
-                                                    videoId[index],
-                                                    100,99,widget.events,index))).then((value) {
-                                      // 再描画
-                                      setState(() {});
-                                    });
-                                  },
-                                  icon: Icon(Icons.fullscreen),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ],
-                    );
-                  }),
-                  ButtonBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white, // background
-                  onPrimary: Colors.black, // foreground
+                                child: Text("概要：" + "${videoShoukai[index]}"),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  final result =
+                                      await DialogUtils.showEditingDialog(
+                                          context, videoId[index]);
+                                  // setState(() {
+                                  //   // shinmeToukouList[index] = result ?? shinmeToukouList[index];
+                                  // });
+                                },
+                                icon: Icon(Icons.textsms),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  addShityoukaisu(videoId[index]);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ConFullscreenVideo(
+                                                  videoId[index],
+                                                  100,
+                                                  99,
+                                                  widget.events,
+                                                  index))).then((value) {
+                                    // 再描画
+                                    setState(() {});
+                                  });
+                                },
+                                icon: Icon(Icons.fullscreen),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ],
+                  );
+                }),
+            ButtonBar(
+              alignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.white, // background
+                    onPrimary: Colors.black, // foreground
+                  ),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('戻る'),
                 ),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('戻る'),
-              ),
-            ],
-          ),
-                ]
-              );
+              ],
+            ),
+          ]);
         } else {
           return Column(
             children: [
