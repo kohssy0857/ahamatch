@@ -42,6 +42,7 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
   Stream<QuerySnapshot>? chats;
   String elementId = "";
   bool laughTF = false;
+  
 
 // コメントを獲得
   getChats() async {
@@ -292,6 +293,7 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
             ),
             // |||||||||||||||||||
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(
                   onPressed: () async {
@@ -316,25 +318,19 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
                 ),
               ],
             ),
-            ButtonBar(
-              alignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.white, // background
-                    onPrimary: Colors.black, // foreground
-                  ),
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('戻る'),
-                ),
-              ],
-            ),
-
-            // ||||||||||||||||||||
-          ],
+            // Positioned(
+            //   left: 100,
+            //   bottom: 45,
+            //   child: FloatingActionButton(
+            //     child: const Icon(Icons.how_to_vote),
+            //     onPressed: () async {
+            //       _vote();
+            //     },
+            //   )
+            // ),
+          ]
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.how_to_vote),
           onPressed: () async {

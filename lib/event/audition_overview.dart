@@ -6,6 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:video_player/video_player.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import '../parts/MoviePlayerWidget .dart';
 import '../firebase_options.dart';
 import '../login/login.dart';
@@ -14,7 +16,6 @@ import '../parts/header.dart';
 import 'events_list.dart';
 import '../functions.dart';
 import 'audition_list.dart';
-
 class AudiOverview extends StatefulWidget {
   final List<Audition> model;
   // AuditionManagement画面にあるそれぞれのindex番号を取得している
@@ -24,6 +25,7 @@ class AudiOverview extends StatefulWidget {
   @override
   _AudiOverview createState() => _AudiOverview();
 }
+
 
 class _AudiOverview extends State<AudiOverview> {
   final user = FirebaseAuth.instance.currentUser;
@@ -67,7 +69,7 @@ class _AudiOverview extends State<AudiOverview> {
         .collection('T04_Event') // コレクションID
         .doc("cvabc8IsVAGQjYwPv0fR")
         .collection('T01_Audition')
-        .doc(widget.model[widget.index].id)
+        .doc(widget.model[widget.index].docid)
         .collection('T01_Audition')
         .doc();
     
@@ -123,11 +125,16 @@ class _AudiOverview extends State<AudiOverview> {
 
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting('ja');
     DateTime schedule = widget.model[widget.index].schedule.toDate();
     return Scaffold(
+      appBar: const Header(),
       body: SingleChildScrollView(
         // ユーザー情報を表示
-        child: Column(children: [
+        child: Column(
+          
+        mainAxisAlignment: MainAxisAlignment.start,
+          children: [
           Container(
             // height: 50,
             child: Text('オーディション名：${widget.model[widget.index].name}'),
@@ -155,7 +162,7 @@ class _AudiOverview extends State<AudiOverview> {
           const Divider(),
           Container(
             child: Text('期限：' +
-                schedule.toString() +
+                DateFormat('yMMMEd', 'ja').format(schedule) +
                 '\n募集要項：${widget.model[widget.index].item}'),
           ),
           const Divider(),
@@ -203,22 +210,9 @@ class _AudiOverview extends State<AudiOverview> {
                   return null;
                 },
               )),
-          ButtonBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white, // background
-                  onPrimary: Colors.black, // foreground
-                ),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('戻る'),
-              ),
               ElevatedButton(
                 onPressed: () async {
-                _upload(unitName, oubo);
+                // _upload(unitName, oubo);
                   try {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -230,8 +224,6 @@ class _AudiOverview extends State<AudiOverview> {
                 },
                 child: const Text('投稿'),
               ),
-            ],
-          ),
         ]),
       ),
     );
