@@ -162,7 +162,7 @@ class geininProfile extends StatelessWidget {
                               TextButton(
                                   child: const Text(
                                     "現金化",
-                                    style: TextStyle(color: Colors.blue),
+                                    style: TextStyle(color: Colors.brown),
                                   ),
                                   onPressed: () {
                                     bill = (coin / 3).floor();
@@ -376,9 +376,16 @@ class geininProfile extends StatelessWidget {
                       ],
                     ),
                     const TabBar(
-                        labelColor: Colors.blue,
+                        labelColor: Colors.brown,
+                        indicatorColor: Colors.brown,
                         unselectedLabelColor: Colors.black12,
-                        tabs: [Tab(text: "マイリスト"), Tab(text: "ネタ"),Tab(text: "アハプチ"),Tab(text: "新芽"),Tab(text: "告知")]),
+                        tabs: [
+                          Tab(text: "マイリスト"),
+                          Tab(text: "ネタ"),
+                          Tab(text: "アハプチ"),
+                          Tab(text: "新芽"),
+                          Tab(text: "告知")
+                        ]),
                     Expanded(
                         child: TabBarView(
                             physics: const NeverScrollableScrollPhysics(),
