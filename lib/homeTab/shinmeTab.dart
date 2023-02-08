@@ -28,128 +28,135 @@ class _ShinmeResultState extends State<ShinmeResult> {
   List toukousyaId = [];
   var name = 'こんぶ';
 
-    Stream<List> getVideo() async* {
-      // final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
-      // 自身がフォローしている相手のidを取得
-      await FirebaseFirestore.instance.collection('T01_Person').doc(user!.uid).collection("Follow").get().
-    then((QuerySnapshot snapshot) async  {
-      if(snapshot.docs.isNotEmpty){
+  Stream<List> getVideo() async* {
+    // final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
+    // 自身がフォローしている相手のidを取得
+    await FirebaseFirestore.instance
+        .collection('T01_Person')
+        .doc(user!.uid)
+        .collection("Follow")
+        .get()
+        .then((QuerySnapshot snapshot) async {
+      if (snapshot.docs.isNotEmpty) {
         snapshot.docs.forEach((doc) {
-     documentList.add(doc.get('T05_GeininId'));
-   });
-  }
-});
-      if(documentList.isNotEmpty==true){
-        for(int i = 0;i<documentList.length; i++){
+          documentList.add(doc.get('T05_GeininId'));
+        });
+      }
+    });
+    if (documentList.isNotEmpty == true) {
+      for (int i = 0; i < documentList.length; i++) {
         // フォローしているリストを使用し、T05_Toukouの中のT05_VideoUrlを取得しリストに入れる
-      await FirebaseFirestore.instance.collection('T05_Toukou').where("T05_Geinin", isEqualTo: documentList[i]).get().
-    then((QuerySnapshot snapshot) {
-   snapshot.docs.forEach((doc) {
-    if(doc["T05_Type"]==3){
-      if(toukouDocId.contains(doc.id)==false){
-        toukouDocId.add(doc.id);
-      bosyuList.add(doc["T05_Bosyu"]);
-      unitNameList.add(doc["T05_UnitName"]);
-      shinmeToukouList.add(doc["T05_Toukou"]);
-      secretList.add(doc["T05_Secret"]);
-      // print("チョモランマーーーーーーーーーー");
-      // print(doc["T05_ToukouId"]);
-      // print(user!.uid);
-      toukousyaId.add(doc["T05_ToukouId"]);
+        await FirebaseFirestore.instance
+            .collection('T05_Toukou')
+            .where("T05_Geinin", isEqualTo: documentList[i])
+            .get()
+            .then((QuerySnapshot snapshot) {
+          snapshot.docs.forEach((doc) {
+            if (doc["T05_Type"] == 3) {
+              if (toukouDocId.contains(doc.id) == false) {
+                toukouDocId.add(doc.id);
+                bosyuList.add(doc["T05_Bosyu"]);
+                unitNameList.add(doc["T05_UnitName"]);
+                shinmeToukouList.add(doc["T05_Toukou"]);
+                secretList.add(doc["T05_Secret"]);
+                // print("チョモランマーーーーーーーーーー");
+                // print(doc["T05_ToukouId"]);
+                // print(user!.uid);
+                toukousyaId.add(doc["T05_ToukouId"]);
+              }
+            }
+          });
+        });
       }
-    }
-   });
-});
-        }
 
-      final all = await  FirebaseStorage.instance.ref().child('post/neta/').listAll();
+      final all =
+          await FirebaseStorage.instance.ref().child('post/neta/').listAll();
       yield bosyuList;
-      }
-}
+    }
+  }
 
   Widget build(BuildContext context) {
-    return 
-    StreamBuilder(stream: getVideo(),builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.waiting){
-                      return const Text("ロード中");
-                    }else if (snapshot.hasData){
-                      List photo = snapshot.data!;
-                          return Column(
-                                children: [
-                                      ListView.builder(
-                                        shrinkWrap: true,
-                                      // padding: EdgeInsets.all(250),
-                                    itemCount: bosyuList.length,
-                                    itemBuilder: (context, index){
-                                      if(secretList[index]==0 || toukousyaId[index]==user!.uid){
-                                        return  Column(
-                                        children: [
-                                          // if(secretList[index]){
-                                            
-                                          // },
-                                          Text("${unitNameList[index]}"),
-                                          ElevatedButton(
-                                              onPressed: () async {
-                                                final result = await DialogUtils.showEditingDialog(context, shinmeToukouList[index],toukouDocId[index]);
-                                                // setState(() {
-                                                // });
-                                              },
-                                              child: Card(
-                                          child: ListTile(
-                                            // leading: Image.network(T02_Convention[index].T06_image),
-                                            title: Text("リクエスト："+bosyuList[index]),
-                                            subtitle: Text("原稿："+shinmeToukouList[index]), // 商品名
-                                          ),
-                                        ),
-                                            ),
-                                          
-                                        ],
-                                      );
-                                      }
-                                      return  Column(
-                                        children: [
-                                        ],
-                                      );
-                                      // Card(
-                                      //     child: ListTile(
-                                      //       // leading: Image.network(T02_Convention[index].T06_image),
-                                      //       title: Text(bosyuList[index]),
-                                      //       subtitle: Text(unitNameList[index]), // 商品名
-                                      //     ),
-                                      //   );
-                                      
-                                    }
-                                      )
-                                  
-                            ],
-                          );
-                    } else {
+    return StreamBuilder(
+      stream: getVideo(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text("ロード中");
+        } else if (snapshot.hasData) {
+          List photo = snapshot.data!;
+          return Column(
+            children: [
+              ListView.builder(
+                  shrinkWrap: true,
+                  // padding: EdgeInsets.all(250),
+                  itemCount: bosyuList.length,
+                  itemBuilder: (context, index) {
+                    if (secretList[index] == 0 ||
+                        toukousyaId[index] == user!.uid) {
                       return Column(
                         children: [
-                          Text("ログイン情報:${user!.displayName}"),
-                          Text("芸人をフォローしてください"),
+                          // if(secretList[index]){
+
+                          // },
+                          Text("${unitNameList[index]}"),
+                          ElevatedButton(
+                            onPressed: () async {
+                              final result =
+                                  await DialogUtils.showEditingDialog(
+                                      context,
+                                      shinmeToukouList[index],
+                                      toukouDocId[index]);
+                              // setState(() {
+                              // });
+                            },
+                            child: Card(
+                              child: ListTile(
+                                // leading: Image.network(T02_Convention[index].T06_image),
+                                title: Text("リクエスト：" + bosyuList[index]),
+                                subtitle: Text(
+                                    "原稿：" + shinmeToukouList[index]), // 商品名
+                              ),
+                            ),
+                          ),
                         ],
                       );
-                      // return const Text("not photo");
                     }
-                    },);
+                    return Column(
+                      children: [],
+                    );
+                    // Card(
+                    //     child: ListTile(
+                    //       // leading: Image.network(T02_Convention[index].T06_image),
+                    //       title: Text(bosyuList[index]),
+                    //       subtitle: Text(unitNameList[index]), // 商品名
+                    //     ),
+                    //   );
+                  })
+            ],
+          );
+        } else {
+          return Column(
+            children: [
+              Text("ログイン情報:${user!.displayName}"),
+              Text("芸人をフォローしてください"),
+            ],
+          );
+          // return const Text("not photo");
+        }
+      },
+    );
   }
 }
-
 
 class DialogUtils {
   DialogUtils._();
 
   /// 入力した文字列を返すダイアログを表示する
   static Future<String?> showEditingDialog(
-    BuildContext context,
-    String text,
-    String id
-  ) async {
+      BuildContext context, String text, String id) async {
     return showDialog<String>(
       context: context,
       builder: (context) {
-        return TextEditingDialog(text: text,id:id);
+        return TextEditingDialog(text: text, id: id);
       },
     );
   }
@@ -157,7 +164,7 @@ class DialogUtils {
 
 /// 状態を持ったダイアログ
 class TextEditingDialog extends StatefulWidget {
-  const TextEditingDialog({Key? key, this.text,this.id}) : super(key: key);
+  const TextEditingDialog({Key? key, this.text, this.id}) : super(key: key);
   final String? text;
   final String? id;
 
@@ -187,7 +194,8 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
       () {
         // フォーカスが当たったときに文字列が選択された状態にする
         if (focusNode.hasFocus) {
-          controller.selection = TextSelection(baseOffset: 0, extentOffset: controller.text.length);
+          controller.selection = TextSelection(
+              baseOffset: 0, extentOffset: controller.text.length);
         }
       },
     );
@@ -200,35 +208,38 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
         .doc(id);
 
     return doc.update({
-      "T05_Secret":1,
+      "T05_Secret": 1,
       "T05_Toukou": toukou,
-      "T05_ToukouId" : user!.uid,
+      "T05_ToukouId": user!.uid,
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: 
-      Form(
-            key: formKey,
-            child: 
-                TextFormField(
-                  autofocus: true, // ダイアログが開いたときに自動でフォーカスを当てる
-                  focusNode: focusNode,
-                  controller: controller,
-                  onFieldSubmitted: (_) {
-                    // エンターを押したときに実行される
-                    Navigator.of(context).pop(controller.text);
-                  },
-                  validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '入力されていません';
-                        }
-                        return null;
-                      },
-                ),
-            ),
+      content: Container(
+        width: 700,
+        child: Form(
+          key: formKey,
+          child: TextFormField(
+            maxLength: 300,
+            maxLines:null,
+            autofocus: true, // ダイアログが開いたときに自動でフォーカスを当てる
+            focusNode: focusNode,
+            controller: controller,
+            onFieldSubmitted: (_) {
+              // エンターを押したときに実行される
+              Navigator.of(context).pop(controller.text);
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return '入力されていません';
+              }
+              return null;
+            },
+          ),
+        ),
+      ),
       actions: [
         TextButton(
           onPressed: () {
@@ -238,9 +249,9 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
         ),
         TextButton(
           onPressed: () {
-            if (formKey.currentState!.validate()){
-                Navigator.of(context).pop(controller.text);
-                ShinmeToukou(controller.text,widget.id);
+            if (formKey.currentState!.validate()) {
+              Navigator.of(context).pop(controller.text);
+              ShinmeToukou(controller.text, widget.id);
             }
           },
           child: const Text('完了'),
@@ -249,4 +260,3 @@ class _TextEditingDialogState extends State<TextEditingDialog> {
     );
   }
 }
-
