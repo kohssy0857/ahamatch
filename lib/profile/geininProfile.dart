@@ -165,7 +165,7 @@ class geininProfile extends StatelessWidget {
                                     style: TextStyle(color: Colors.brown),
                                   ),
                                   onPressed: () {
-                                    bill = coin ~/ 3;
+                                    bill = (coin / 3).floor();
                                     showDialog(
                                         context: context,
                                         builder: (context) {
@@ -202,7 +202,7 @@ class geininProfile extends StatelessWidget {
                                                       userCoin =
                                                           data!["T01_AhaCoin"];
 
-                                                      if (coin <= 0) {
+                                                      if (coin <= 2) {
                                                         showDialog(
                                                             context: context,
                                                             builder:
@@ -210,7 +210,7 @@ class geininProfile extends StatelessWidget {
                                                                     AlertDialog(
                                                                       content:
                                                                           const Text(
-                                                                              "0より大きい数値を入力してください"),
+                                                                              "現金化できるのは3ポイントからです"),
                                                                       actions: [
                                                                         TextButton(
                                                                             onPressed:

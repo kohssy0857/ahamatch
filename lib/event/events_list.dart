@@ -15,20 +15,24 @@ import 'package:flutter/cupertino.dart';
 import '../functions.dart';
 import 'package:provider/provider.dart';
 import 'convention_list.dart';
-import 'convention_overview.dart';
 import 'audition_overview.dart';
 import 'audition_list.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 List videourl = [];
 List list = [];
+class Events extends StatefulWidget {
+  Events({Key? key}) : super(key: key);
+  @override
+  _Events createState() => _Events();
+}
 
-class MainModel extends ChangeNotifier {
-  // ListView.builderで使うためのBookのList booksを用意しておく。
+class _Events extends State<Events> {
   List<Convention> events = [];
 
-  Future<void> fetchConventions() async {
-    // Firestoreからコレクション'books'(QuerySnapshot)を取得してdocsに代入。
-    // final docs = await FirebaseFirestore.instance.collection('books').get();
+  Stream<List> fetchConventions() async* {
+    // Firestoreからコレクション'Convention'(QuerySnapshot)を取得してeventに代入。
     final event = await FirebaseFirestore.instance
         .collection('T04_Event')
         .doc("cvabc8IsVAGQjYwPv0fR")
@@ -50,20 +54,25 @@ class MainModel extends ChangeNotifier {
         await doc.update({
           "T07_flag": 0,
         });
-
         events.removeAt(i);
       }
     }
-
     this.events = events;
-
-    print('len = ' + events.length.toString());
-    notifyListeners();
+    if (events.isNotEmpty) {
+      for (int i = 0; i < events.length; i++) {
+        await FirebaseFirestore.instance
+            .collection("T07_Convention")
+            .where("T07_ConventionId", isEqualTo: events[i].docid)
+            .get()
+            .then((QuerySnapshot snapshot) {
+          snapshot.docs.forEach((doc) {
+            videourl.add(doc["T07_VideoUrl"]);
+          });
+        });
+      }
+      yield videourl;
+    }
   }
-}
-
-class Events extends StatelessWidget {
-  const Events({Key? key}) : super(key: key);
 
   Stream<List> getAvatarUrlForProfile(List<Convention> events) async* {
     for (int i = 0; i < events.length; i++) {
@@ -78,151 +87,141 @@ class Events extends StatelessWidget {
       });
     }
     yield videourl;
+  }
 
-    // print('url = ${events[index].url}');
+  AlertDialogSample(index) {
+    initializeDateFormatting('ja');
+    showDialog(
+      context:  context,
+      builder: (context) => AlertDialog(
+        title: Text('大会名：${events[index].name}'),
+        content: Container(
+          width: 400,
+          child: Text('大会概要\n' +
+                '条件：${events[index].condition}\n' +
+                '期限：' +
+                DateFormat('yMMMEd', 'ja').format(events[index].schedule.toDate()) +
+                '\n' +
+                '賞品：${events[index].prize}'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('閉じる'),
+          ),
+        ],
+      ),
+    );
+  }
 
-    // yield Image.network(
-    //   url,
-    //   height: 100,
-    //   width: 100,
-    // );
+  fromAtNow(DateTime date) {
+    final Duration difference = date.difference(DateTime.now());
+    final int sec = difference.inSeconds;
+
+    if (sec >= 60 * 60 * 24) {
+      return
+       Text('あと${difference.inDays.toString()}日');
+    } else if (sec >= 60 * 60) {
+      return Text('あと${difference.inHours.toString()}時間');
+    } else {
+      return Text('あと${difference.inMinutes.toString()}分');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     bool flag = true;
-    return
-        // DefaultTabController(
-        //   initialIndex: 0, // 最初に表示するタブ
-        //   length: 2, // タブの数
-        //   child:
-        Scaffold(
-            backgroundColor: Color.fromARGB(255, 255, 219, 153),
-            appBar: const Header(),
-            body: SafeArea(
-                child: DefaultTabController(
-                    length: 2,
-                    child: Column(
-                      children: [
-                        const TabBar(
-                          tabs: <Widget>[
-                            Tab(text: '大会'),
-                            Tab(text: 'オーディション'),
-                          ],
-                          labelColor: Colors.brown,
-                          indicatorColor: Colors.brown,
-                          unselectedLabelColor: Colors.black12,
-                        ),
-                        Expanded(
-                          child: TabBarView(
-                            physics: NeverScrollableScrollPhysics(),
-                            children: <Widget>[
-                              MaterialApp(
-                                home: ChangeNotifierProvider<MainModel>(
-                                  // createでfetchBooks()も呼び出すようにしておく。
-                                  create: (_) =>
-                                      MainModel()..fetchConventions(),
-                                  child: Scaffold(
-                                    backgroundColor:
-                                        Color.fromARGB(255, 255, 219, 153),
-                                    body: Consumer<MainModel>(
-                                      builder: (context, model, child) {
-                                        final events = model.events;
-                                        if (events.isEmpty) {
-                                          return const Text("大会は現在開催されていません。");
-                                        } else {
-                                          return StreamBuilder(
-                                            stream:
-                                                getAvatarUrlForProfile(events),
-                                            builder: (BuildContext context,
-                                                AsyncSnapshot<dynamic>
-                                                    snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return const Text("wait");
-                                              } else if (snapshot.hasData) {
-                                                // Image photo = snapshot.data!;
-                                                return Container(
-                                                  // height: 500,
-                                                  padding: EdgeInsets.all(2),
-                                                  // 各アイテムの間にスペースなどを挟みたい場合
-                                                  child: ListView.separated(
-                                                    itemCount: events.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      return SizedBox(
-                                                          height: 100,
-                                                          child: ListTile(
-                                                            minVerticalPadding:
-                                                                0,
-                                                            minLeadingWidth:
-                                                                100,
-                                                            title: Text(
-                                                                events[index]
-                                                                    .name),
-                                                            leading:
-                                                                Image.network(
-                                                              events[index].url,
-                                                              width: 100,
-                                                              height: 100,
-                                                              fit: BoxFit.fill,
-                                                            ),
-                                                            trailing:
-                                                                IconButton(
-                                                              icon: Icon(
-                                                                  Icons.info),
-                                                              onPressed: () {
-                                                                Navigator.push(
-                                                                    // ボタン押下でオーディション編集画面に遷移する
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => ConOverview(
-                                                                            model:
-                                                                                events,
-                                                                            index:
-                                                                                index)));
-                                                                // AlertDialog(
-                                                                //   title: Text('大会名：${}'),);
-                                                              },
-                                                            ),
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) => netaCon(
-                                                                          events:
-                                                                              events,
-                                                                          index:
-                                                                              index))).then(
-                                                                  (value) {
-                                                                // 再描画
-                                                                // setState(() {});
-                                                              });
-                                                            },
-                                                          ));
-                                                    },
-                                                    separatorBuilder:
-                                                        (context, index) {
-                                                      return Divider();
-                                                    },
-                                                  ),
-                                                );
-                                              } else {
-                                                return const Text("not photo");
-                                              }
-                                            },
-                                          );
-                                        }
+
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 255, 219, 153),
+      appBar: const Header(),
+      body: SafeArea(
+        child: DefaultTabController(
+          length: 2,
+          child: Column(
+            children: [
+              const TabBar(
+                tabs: <Widget>[
+                  Tab(text: '大会'),
+                  Tab(text: 'オーディション'),
+                ],
+                labelColor: Colors.blue,
+                unselectedLabelColor: Colors.black12,
+              ),
+              Expanded(
+                child: TabBarView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: <Widget>[
+                    StreamBuilder(
+                      stream: fetchConventions(),
+                      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Text("wait");
+                        } else if (snapshot.hasData) {
+                          return Container(
+                            padding: const EdgeInsets.all(2),
+                            // 各アイテムの間にスペースなどを挟みたい場合
+                            child: ListView.separated(
+                              itemCount: events.length,
+                              itemBuilder: (context, index) {
+                                return SizedBox(
+                                  height: 100,
+                                  child: ListTile(
+                                    minVerticalPadding: 0,
+                                    minLeadingWidth: 200,
+                                    title: Text(events[index].name),
+                                    subtitle: fromAtNow(events[index].schedule.toDate()),
+                                    leading: Image.network(
+                                      events[index].url,
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.fill,
+                                    ),
+                                    trailing: IconButton(
+                                    icon: const Icon(Icons.info),
+                                      onPressed: () {
+                                        // Navigator.push(
+                                        //   // ボタン押下で大会詳細に遷移する
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) =>
+                                        //     ConOverview(model: events, index: index)
+                                        //   )
+                                        // );
+                                        AlertDialogSample(index);
+
                                       },
                                     ),
-                                  ),
-                                ),
-                              ),
-                              Auditions(),
-                            ],
-                          ),
-                        )
-                      ],
-                    ))));
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                            netaCon(events: events, index: index)
+                                        )
+                                      ).then((value) {});
+                                    },
+                                  )
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const Divider();
+                              },
+                            ),
+                          );
+                        } else {
+                          return const Text("not photo");
+                        }
+                      },
+                    ),
+                    Auditions(),
+                  ],
+                ),
+              )
+            ],
+          )
+        )
+      )
+    );
   }
 }

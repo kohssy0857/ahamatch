@@ -76,7 +76,6 @@ class _FullscreenVideoState extends State<FullscreenVideo> {
             // }else{
             return Column(
               children: [
-                Text("ログイン情報:${user!.displayName}"),
                 Expanded(
                     child: FullMoviePlayerWidget(photo[0], widget.movieId)),
               ],
@@ -85,8 +84,7 @@ class _FullscreenVideoState extends State<FullscreenVideo> {
 
           } else {
             return Column(
-              children: [
-                Text("ログイン情報:${user!.displayName}"),
+              children: const [
                 Text("芸人をフォローしてください"),
               ],
             );

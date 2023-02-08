@@ -51,10 +51,8 @@ class _FullscreenVideoState extends State<ConFullscreenVideo> {
     print(size.width);
 
     return Scaffold(
+      appBar: const Header(),
       body:
-          // Center(
-          //   child: Text("あいうえお"),
-          //   )
           StreamBuilder(
         stream: getVideo(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

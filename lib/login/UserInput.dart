@@ -89,6 +89,8 @@ class _UserInput extends State<UserInput> {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "必須です";
+                    } else if (value.contains("@") || value.contains("#")|| value.contains("-")) {
+                      return "「@、＃、-」は使えません";
                     }
                     return null;
                   },
@@ -103,6 +105,10 @@ class _UserInput extends State<UserInput> {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "必須です";
+                    } else if (value.contains("@") ||
+                        value.contains("#") ||
+                        value.contains("-")) {
+                      return "「@、＃、-」は使えません";
                     }
                     return null;
                   },

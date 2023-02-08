@@ -56,7 +56,7 @@ class _Header extends State<Header> {
         refList.add(element);
         if (element["unread"]) {
           unread = true;
-          refList.add(element);
+          // refList.add(element);
           // var el=   element.reference;
         }
       }
@@ -117,7 +117,7 @@ class _Header extends State<Header> {
               )
             : searchTextField(),
         // ヘッダーカラー
-        backgroundColor: Color.fromARGB(255, 255, 166, 077),
+        backgroundColor: const Color.fromARGB(255, 255, 166, 077),
         actions: !_searchBoolean
             ? [
                 IconButton(
@@ -145,10 +145,15 @@ class _Header extends State<Header> {
                   },
                 ),
                 IconButton(
-
                     icon: unread
-                        ? const Icon(Icons.notification_important_outlined)
-                        : const Icon(Icons.notifications),
+                        ? const Icon(
+                            Icons.notification_important_outlined,
+                            color: Colors.red,
+                          )
+                        : const Icon(
+                            Icons.notifications,
+                            color: Colors.brown,
+                          ),
                     onPressed: () {
                       for (var Q in refList) {
                         Q.reference.update({"unread": false});
@@ -172,21 +177,26 @@ class _Header extends State<Header> {
                                         width: 600,
                                         height: 800,
                                         child: ListView.separated(
-                                          padding: const EdgeInsets.only(bottom: 0),
+                                          padding:
+                                              const EdgeInsets.only(bottom: 0),
                                           shrinkWrap: true,
-                                            itemCount: notfiLen,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              return ListTile(
-                                                title: Text(
-                                                    refList[index]["Text"]),
-                                                subtitle: Text(DateFormat(
-                                                    refList[index]["Create"])),
-                                                    isThreeLine: true,
-                                              );
-                                            }, separatorBuilder: (BuildContext context, int index) { 
-                                              return const Divider();
-                                             },),
+                                          itemCount: notfiLen,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return ListTile(
+                                              title:
+                                                  Text(refList[index]["Text"]),
+                                              subtitle: Text(DateFormat(
+                                                  refList[index]["Create"])),
+                                              isThreeLine: true,
+                                            );
+                                          },
+                                          separatorBuilder:
+                                              (BuildContext context,
+                                                  int index) {
+                                            return const Divider();
+                                          },
+                                        ),
                                       )
                                     : const Text("通知はありません"),
                                 TextButton(
@@ -198,12 +208,10 @@ class _Header extends State<Header> {
                             );
                           });
 
-
                       // await Navigator.push(
                       //               // ボタン押下でオーディション編集画面に遷移する
                       //                 context, MaterialPageRoute(builder: (context) => NotificationMane()));
                     }),
-
                 IconButton(
                   icon: const Icon(
                     Icons.logout,
@@ -222,7 +230,6 @@ class _Header extends State<Header> {
                     );
                   },
                 ),
-
               ]
             : [
                 IconButton(
