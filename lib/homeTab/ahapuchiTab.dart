@@ -122,7 +122,7 @@ class _ahapuchiResultState extends State<ahapuchiResult> {
                       children: [
                         Container(
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.blue),
+                              border: Border.all(color: Colors.brown),
                             ),
                             child: Row(
                               children: [

@@ -12,21 +12,24 @@ import '../parts/header.dart';
 import 'package:flutter/cupertino.dart';
 import '../functions.dart';
 import 'package:provider/provider.dart';
-import 'convention_overview.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'events_list.dart';
 import 'convention_movie.dart';
 
-List geininId = [];
-List<String> list = [];
+List videourl = [];
+List list = [];
+class Conventions extends StatefulWidget {
+  Conventions({Key? key}) : super(key: key);
+  @override
+  _Conventions createState() => _Conventions();
+}
 
-class MainModel extends ChangeNotifier {
-  // ListView.builderで使うためのBookのList booksを用意しておく。
+class _Conventions extends State<Conventions> {
   List<Convention> events = [];
-  DateTime now = DateTime.now();
 
-  Future<void> fetchConventions() async {
-    // Firestoreからコレクション'books'(QuerySnapshot)を取得してdocsに代入。
-    // final docs = await FirebaseFirestore.instance.collection('books').get();
+  Stream<List> fetchConventions() async* {
+    // Firestoreからコレクション'Convention'(QuerySnapshot)を取得してeventに代入。
     final event = await FirebaseFirestore.instance
         .collection('T04_Event')
         .doc("cvabc8IsVAGQjYwPv0fR")
@@ -51,25 +54,22 @@ class MainModel extends ChangeNotifier {
         events.removeAt(i);
       }
     }
-
     this.events = events;
-
-    print('len = ' + events.length.toString());
-    notifyListeners();
+    if (events.isNotEmpty) {
+      for (int i = 0; i < events.length; i++) {
+        await FirebaseFirestore.instance
+            .collection("T07_Convention")
+            .where("T07_ConventionId", isEqualTo: events[i].docid)
+            .get()
+            .then((QuerySnapshot snapshot) {
+          snapshot.docs.forEach((doc) {
+            videourl.add(doc["T07_VideoUrl"]);
+          });
+        });
+      }
+      yield videourl;
+    }
   }
-}
-
-class Conventions extends StatelessWidget {
-  User? user = FirebaseAuth.instance.currentUser;
-  late Image img;
-  int i = 0;
-  bool flag = true;
-
-  final docs = FirebaseFirestore.instance
-      .collection('T04_Event') // コレクションID
-      .doc("cvabc8IsVAGQjYwPv0fR")
-      .collection('T02_Convention')
-      .doc();
 
   Stream<List> getAvatarUrlForProfile(List<Convention> events) async* {
     for (int i = 0; i < events.length; i++) {
@@ -86,93 +86,109 @@ class Conventions extends StatelessWidget {
     yield videourl;
   }
 
+  AlertDialogSample(index) {
+    initializeDateFormatting('ja');
+    showDialog(
+      context:  context,
+      builder: (context) => AlertDialog(
+        title: Text('大会名：${events[index].name}'),
+        content: Container(
+          width: 400,
+          child: Text('大会概要\n' +
+                '条件：${events[index].condition}\n' +
+                '期限：' +
+                DateFormat('yMMMEd', 'ja').format(events[index].schedule.toDate()) +
+                '\n' +
+                '賞品：${events[index].prize}'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('閉じる'),
+          ),
+        ],
+      ),
+    );
+  }
+  fromAtNow(DateTime date) {
+    final Duration difference = date.difference(DateTime.now());
+    final int sec = difference.inSeconds;
+
+    if (sec >= 60 * 60 * 24) {
+      return
+       Text('あと${difference.inDays.toString()}日');
+    } else if (sec >= 60 * 60) {
+      return Text('あと${difference.inHours.toString()}時間');
+    } else {
+      return Text('あと${difference.inMinutes.toString()}分');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 219, 153),
       appBar: const Header(),
       body: MaterialApp(
-        home: ChangeNotifierProvider<MainModel>(
-          // createでfetchBooks()も呼び出すようにしておく。
-          create: (_) => MainModel()..fetchConventions(),
-          child: Scaffold(
-            body: Consumer<MainModel>(
-              builder: (context, model, child) {
-                final events = model.events;
-                if (events.isEmpty) {
-                  return const Text("大会は現在開催されていません。");
-                } else {
-                  return StreamBuilder(
-                    stream: getAvatarUrlForProfile(events),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<dynamic> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Text("wait");
-                      } else if (snapshot.hasData) {
-                        // Image photo = snapshot.data!;
-                        return Container(
-                          // height: 500,
-                          padding: EdgeInsets.all(2),
-                          // 各アイテムの間にスペースなどを挟みたい場合
-                          child: ListView.separated(
-                            itemCount: events.length,
-                            itemBuilder: (context, index) {
-                              return SizedBox(
-                                  height: 100,
-                                  child: ListTile(
-                                    minVerticalPadding: 0,
-                                    minLeadingWidth: 100,
-                                    title: Text(events[index].name),
-                                    leading: Image.network(
-                                      events[index].url,
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    trailing: IconButton(
-                                      icon: Icon(Icons.info),
-                                      onPressed: () {
-                                        Navigator.push(
-                                            // ボタン押下でオーディション編集画面に遷移する
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ConOverview(
-                                                        model: events,
-                                                        index: index)));
-                                        // AlertDialog(
-                                        //   title: Text('大会名：${}'),);
-                                      },
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => netaCon(
-                                                  events: events,
-                                                  index: index))).then((value) {
-                                        // 再描画
-                                        // setState(() {});
-                                      });
-                                    },
-                                  ));
+        home: Scaffold(
+            body: StreamBuilder(
+              stream: fetchConventions(),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text("wait");
+                } else if (snapshot.hasData) {
+                  return Container(
+                    padding: const EdgeInsets.all(2),
+                    // 各アイテムの間にスペースなどを挟みたい場合
+                    child: 
+                    ListView.separated(
+                    shrinkWrap: true,
+                      itemCount: events.length,
+                      itemBuilder: (context, index) {
+                        return SizedBox(
+                          height: 100,
+                          child: ListTile(
+                            minVerticalPadding: 0,
+                            minLeadingWidth: 200,
+                            title: Text(events[index].name),
+                            subtitle: fromAtNow(events[index].schedule.toDate()),
+                            leading: Image.network(
+                              events[index].url,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.fill,
+                            ),
+                            trailing: IconButton(
+                            icon: const Icon(Icons.info),
+                              onPressed: () {
+                                AlertDialogSample(index);
+                              },
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                    netaCon(events: events, index: index)
+                                )
+                              ).then((value) {});
                             },
-                            separatorBuilder: (context, index) {
-                              return Divider();
-                            },
-                          ),
+                          )
                         );
-                      } else {
-                        return const Text("not photo");
-                      }
-                    },
+                      },
+                      separatorBuilder: (context, index) {
+                        return const Divider();
+                      },
+                    ),
                   );
+                } else {
+                  return const Text("not photo");
                 }
               },
             ),
           ),
         ),
-      ),
+      
     );
   }
 }

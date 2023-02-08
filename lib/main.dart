@@ -4,6 +4,7 @@ import 'package:ahamatch/parts/footer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'firebase_options.dart';
 import 'home/home.dart';
 import 'login/login.dart';
@@ -35,10 +36,13 @@ class App extends StatelessWidget {
 
         // 背景しょく
         theme: ThemeData(
+          primarySwatch: Colors.orange,
           fontFamily: "Noto Sans JP",
           appBarTheme:
-              AppBarTheme(backgroundColor: Color.fromARGB(255, 255, 166, 077)),
+
+              AppBarTheme(backgroundColor: Colors.brown),
           scaffoldBackgroundColor: Color.fromARGB(255, 255, 219, 153),
+
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               primary: Colors.green,
@@ -72,7 +76,6 @@ class App extends StatelessWidget {
               } else if (snapshot.data!.displayName!.contains("-") == true) {
                 return SysHome();
               } else {
-                print("Footer東リマース");
                 return Footer();
               }
             }
