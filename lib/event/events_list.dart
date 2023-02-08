@@ -109,7 +109,8 @@ class Events extends StatelessWidget {
                             Tab(text: '大会'),
                             Tab(text: 'オーディション'),
                           ],
-                          labelColor: Colors.blue,
+                          labelColor: Colors.brown,
+                          indicatorColor: Colors.brown,
                           unselectedLabelColor: Colors.black12,
                         ),
                         Expanded(

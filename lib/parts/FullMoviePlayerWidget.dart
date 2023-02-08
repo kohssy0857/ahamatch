@@ -430,7 +430,7 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
         height: 150.0,
         child: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.brown),
           ),
         ),
       );

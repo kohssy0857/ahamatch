@@ -37,7 +37,7 @@ class App extends StatelessWidget {
         theme: ThemeData(
           fontFamily: "Noto Sans JP",
           appBarTheme:
-              AppBarTheme(backgroundColor: Color.fromARGB(255, 255, 166, 077)),
+              AppBarTheme(backgroundColor: Colors.brown),
           scaffoldBackgroundColor: Color.fromARGB(255, 255, 219, 153),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(

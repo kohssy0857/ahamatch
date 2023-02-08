@@ -38,7 +38,10 @@ class _SearchResultState extends State<SearchResult> {
               title: Text('検索結果'),
               backgroundColor: Color.fromARGB(255, 255, 166, 077),
               bottom: TabBar(
-                  tabs: [Tab(text: "ネタ"), Tab(text: "アカウント"), Tab(text: "タグ")]),
+                  tabs: [Tab(text: "ネタ"), Tab(text: "アカウント"), Tab(text: "タグ")],
+                  labelColor: Colors.brown,
+                  indicatorColor: Colors.brown,
+                  ),
             ),
             body: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
