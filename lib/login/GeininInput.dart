@@ -29,14 +29,6 @@ class _GeininInput extends State<GeininInput> {
     final id = await FirebaseFirestore.instance
         .collection("T01_Person")
         .doc(user!.uid);
-    //     .get();
-    // final data = document.exists ? document.data() : null;
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(
-    //     content: Text(data!["T01_DisplayName"] + "ffffff"),
-    //   ),
-    // );
-    //  var doclist = document.docs;
 
     await FirebaseFirestore.instance
         .collection('T02_Geinin') // コレクションID
@@ -67,7 +59,6 @@ class _GeininInput extends State<GeininInput> {
 
   @override
   Widget build(BuildContext context) {
-    // RadioValue _gValue = RadioValue.FALSE;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -114,36 +105,6 @@ class _GeininInput extends State<GeininInput> {
                     return null;
                   },
                 )),
-            // Text('相方(トリオも含む)を募集しますか？'),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //   children: [
-            //     Row(
-            //       children: [
-            //         RadioListTile(
-            //           value: RadioValue.TRUE,
-            //           groupValue: _gValue,
-            //           onChanged: (value){
-            //             isOn = true;
-            //           },
-            //         ),
-            //         Text('はい'),
-            //       ],
-            //     ),
-            //     Row(
-            //       children: [
-            //         RadioListTile(
-            //           value: RadioValue.FALSE,
-            //           groupValue: _gValue,
-            //           onChanged: (value) {
-            //             isOn = false;
-            //           },
-            //         ),
-            //         Text('いいえ'),
-            //       ],
-            //     ),
-            //   ],
-            // ),
             SwitchListTile(
               title: const Text('相方募集中'),
               value: isOn,
@@ -221,24 +182,3 @@ class _GeininInput extends State<GeininInput> {
   }
 }
 
-
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     key: _scaffoldKey,
-  //     body: Form(
-  //       key: _formKey,
-  //       child: Column(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           ElevatedButton(
-  //             onPressed: () async {
-  //               try {} catch (e) {}
-  //             },
-  //             child: const Text('送信'),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-// }

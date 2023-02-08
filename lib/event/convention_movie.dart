@@ -126,21 +126,27 @@ class _netaConState extends State<netaCon> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      appBar: const Header(),
       body: StreamBuilder(
+
       stream: getVideo(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text("ロード中");
         } else if (snapshot.hasData) {
           List photo = snapshot.data!;
-          return
-              Column(
-                children: [
-                  Text("大会名：${widget.events[widget.index].name}"),
-              //     Expanded(
-              //         child: SizedBox(
-              //             child:
-              ListView.builder(
+
+          return 
+          Column(
+            children: [
+              Text("${widget.events[widget.index].name}",
+                style: TextStyle(
+                  fontSize: 60,
+                ),),
+              Flexible(
+                child:
+                ListView.builder(
                   shrinkWrap: true,
                   // padding: EdgeInsets.all(250),
                   itemCount: videoThumbnails.length,
@@ -216,24 +222,12 @@ class _netaConState extends State<netaCon> {
                         ),
                       ],
                     );
-                  }),
-                  ButtonBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white, // background
-                  onPrimary: Colors.black, // foreground
-                ),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('戻る'),
-              ),
-            ],
-          ),
+                  }
+                  ),
+              )
                 ]
               );
+
         } else {
           return Column(
             children: [

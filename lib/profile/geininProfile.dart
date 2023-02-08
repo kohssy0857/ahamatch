@@ -162,10 +162,10 @@ class geininProfile extends StatelessWidget {
                               TextButton(
                                   child: const Text(
                                     "現金化",
-                                    style: TextStyle(color: Colors.blue),
+                                    style: TextStyle(color: Colors.brown),
                                   ),
                                   onPressed: () {
-                                    bill = coin ~/ 3;
+                                    bill = (coin / 3).floor();
                                     showDialog(
                                         context: context,
                                         builder: (context) {
@@ -202,7 +202,7 @@ class geininProfile extends StatelessWidget {
                                                       userCoin =
                                                           data!["T01_AhaCoin"];
 
-                                                      if (coin <= 0) {
+                                                      if (coin <= 2) {
                                                         showDialog(
                                                             context: context,
                                                             builder:
@@ -210,7 +210,7 @@ class geininProfile extends StatelessWidget {
                                                                     AlertDialog(
                                                                       content:
                                                                           const Text(
-                                                                              "0より大きい数値を入力してください"),
+                                                                              "現金化できるのは3ポイントからです"),
                                                                       actions: [
                                                                         TextButton(
                                                                             onPressed:
@@ -376,9 +376,16 @@ class geininProfile extends StatelessWidget {
                       ],
                     ),
                     const TabBar(
-                        labelColor: Colors.blue,
+                        labelColor: Colors.brown,
+                        indicatorColor: Colors.brown,
                         unselectedLabelColor: Colors.black12,
-                        tabs: [Tab(text: "マイリスト"), Tab(text: "ネタ"),Tab(text: "アハプチ"),Tab(text: "新芽"),Tab(text: "告知")]),
+                        tabs: [
+                          Tab(text: "マイリスト"),
+                          Tab(text: "ネタ"),
+                          Tab(text: "アハプチ"),
+                          Tab(text: "新芽"),
+                          Tab(text: "告知")
+                        ]),
                     Expanded(
                         child: TabBarView(
                             physics: const NeverScrollableScrollPhysics(),

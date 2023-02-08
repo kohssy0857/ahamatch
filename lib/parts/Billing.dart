@@ -7,6 +7,8 @@ import '../firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../parts/header.dart';
 
+import 'package:intl/intl.dart';
+
 class Billing extends StatefulWidget {
   Billing({Key? key}) : super(key: key);
   @override
@@ -49,6 +51,8 @@ class _BillingState extends State<Billing> {
   }
 
   Container billingContainer(int price, int amount) {
+    final formatter = NumberFormat("#,###");
+    var result = formatter.format(price);
     return Container(
       width: double.infinity,
       height: 100,
@@ -60,12 +64,13 @@ class _BillingState extends State<Billing> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(
-            "$amountアハコイン",
+            "$resultアハコイン",
             style: TextStyle(
             fontSize: 30,
             ),
           ),
           Container(
+              padding: EdgeInsets.all(5),
               decoration: BoxDecoration(
                 color: Color.fromARGB(255, 255, 221, 170),
                 border: Border.all(color: Color.fromARGB(255, 255, 147, 58), width: 3),
@@ -77,7 +82,7 @@ class _BillingState extends State<Billing> {
                   BillingDialog(price, amount);
                 },
                 child: Text(
-                  "¥$price円",
+                  "¥$result円",
                   style: TextStyle(
                     fontSize: 30,
                   ),

@@ -50,7 +50,8 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           TabBar(
-                              labelColor: Colors.blue,
+                              labelColor: Colors.brown,
+                              indicatorColor: Colors.brown,
                               unselectedLabelColor: Colors.black12,
                               tabs: [
                                 Tab(text: "ネタ"),
@@ -94,7 +95,8 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         TabBar(
-                            labelColor: Colors.blue,
+                            labelColor: Color.fromARGB(255, 255, 166, 077),
+                            // indicatorColor: Color.fromARGB(255, 255, 166, 077),
                             unselectedLabelColor: Colors.black12,
                             tabs: [
                               Tab(text: "ネタ"),
