@@ -66,6 +66,7 @@ class _AuditionInput extends State<AuditionInput> {
       "T05_Name": AuditionName,
       "T06_image": T06_image,
       "T07_DocumentId": doc.id,
+      "T08_flag": 1,
     });
     print("登録できました");
   }
