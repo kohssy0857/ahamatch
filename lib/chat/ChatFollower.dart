@@ -14,7 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../chat/message_title.dart';
 import 'ChatPage.dart';
 
-class ChatHistory extends StatefulWidget {
+class ChatFollowerHistory extends StatefulWidget {
   // const ChatPage(this.name, {Key? key}) : super(key: key);
 
   // final String name;
@@ -24,10 +24,10 @@ class ChatHistory extends StatefulWidget {
     // PersonId = GeininId.path.replaceFirst("T01_Person/", "");
   }
   @override
-  _ChatHistoryState createState() => _ChatHistoryState();
+  _ChatFollowerHistoryState createState() => _ChatFollowerHistoryState();
 }
 
-class _ChatHistoryState extends State<ChatHistory> {
+class _ChatFollowerHistoryState extends State<ChatFollowerHistory> {
   final user = FirebaseAuth.instance.currentUser;
   final userId = FirebaseAuth.instance.currentUser!.uid;
   // 二人のユーザーリスト
@@ -112,7 +112,7 @@ class _ChatHistoryState extends State<ChatHistory> {
               })
             });
     for (int i = 0; i < documentId.length; i++) {
-      if (followIdList.contains(elementId[i])) {
+      if (followIdList.contains(elementId[i]) == false ) {
         final gid = FirebaseFirestore.instance
             .collection("T01_Person")
             .doc(elementId[i]);

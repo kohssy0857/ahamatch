@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:flutter/services.dart'; // use rootBundle
 import 'package:audioplayers/audioplayers.dart';
+import 'dart:collection';
 
 /*
  * 動画ウィジェット
@@ -122,7 +123,10 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
                   .get()
                   .then((QuerySnapshot snapshot) {
                 snapshot.docs.forEach((doc) {
-                  smileList.add(doc["Point"]);
+                  if (smileList.contains(doc["Point"]) == false) {
+                    smileList.add(doc["Point"]);
+                    smileList.sort();
+                  }
                 });
               }),
               // print(smileList),
@@ -136,7 +140,7 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
         .collection("T05_Toukou")
         .doc(widget.movieId)
         .get();
-    print("typeはなんだえ" + "${ref5.data()!["T05_Type"]}");
+    // print("typeはなんだえ" + "${ref5.data()!["T05_Type"]}");
     typeTF = ref5.data()!["T05_Type"];
   }
 
@@ -146,20 +150,26 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
         .collection('T05_Toukou')
         .doc(widget.movieId)
         .update({"T05_ShityouKaisu": FieldValue.increment(1.0)});
-    print("視聴回数＋１");
   }
 
 // 笑い声を再生
-  void _laughVoice(Duration duration, List smileList) async {
+  void _laughVoice(Duration duration, List smileList, Duration time) async {
     for (int i = 0; i < smileList.length; i++) {
-      if (duration.inSeconds.remainder(3600) == smileList[i]) {
-        // print("OK~~~~~~~~~~~~~");
-        int soundId = await rootBundle
-            .load("assets/se/sample-3s.mp3")
-            .then((ByteData soundData) {
-          return _pool.load(soundData);
-        });
-        int streamId = await _pool.play(soundId);
+      // print("現在の再生時間");
+      // print(duration);
+      if (time.inSeconds == duration.inSeconds)
+        break;
+      if (duration.inSeconds== smileList[i]) {
+        // print("笑い動画が再生し続ける");
+        // print(duration.inSeconds);
+        if (laughTF) {
+          int soundId = await rootBundle
+              .load("assets/se/sample-3s.mp3")
+              .then((ByteData soundData) {
+            return _pool.load(soundData);
+          });
+          int streamId = await _pool.play(soundId);
+        }
       } else {
         // print("No~~~~~~~~~~~~~~~~");
       }
@@ -266,7 +276,8 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
                       // print("スマイルリストはありますよ");
                       // print(value.position.inSeconds.remainder(3600));
                       if (laughTF == true) {
-                        _laughVoice(value.position, smileList);
+                        _laughVoice(value.position, smileList,
+                            _controller.value.duration);
                       }
                       return Text(
                         _videoDuration(value.position),
@@ -379,20 +390,6 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
                       try {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('アハポイントを追加しました'),
-                          ),
-                        );
-                        smilePoint(_controller.value.position);
-                      } catch (e) {}
-                    },
-                    child: const Text('アハポイント'),
-                  ),
-                if (typeTF == 1)
-                  ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
                             content: Text('マイリストに追加しました'),
                           ),
                         );
@@ -430,7 +427,7 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
         height: 150.0,
         child: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.brown),
           ),
         ),
       );

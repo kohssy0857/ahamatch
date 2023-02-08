@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'RoomRistPage.dart';
 import 'ChatHistory.dart';
+import 'ChatFollower.dart';
 // import 'RoomPage.dart';
 // import 'uploadAhaPuch.dart';
 // import 'uploadAnnounce.dart';
@@ -37,7 +38,7 @@ class ChatMane extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0, // 最初に表示するタブ
-      length: 2, // タブの数
+      length: 3, // タブの数
       child: Scaffold(
         appBar: AppBar(
           title: const Text('チャット'),
@@ -47,9 +48,12 @@ class ChatMane extends StatelessWidget {
             tabs: <Widget>[
               Tab(text: '相手'),
               Tab(text: '履歴'),
+              Tab(text: 'フォローしていないユーザー'),
               // Tab(text: '新芽'),
               // Tab(text: '告知'),
             ],
+            labelColor: Colors.white,
+            indicatorColor: Colors.brown,
           ),
         ),
         body: TabBarView(
@@ -57,8 +61,9 @@ class ChatMane extends StatelessWidget {
             // type1
             Chat(),
             // // type2
-            ChatHistory()
+            ChatHistory(),
             // // type3
+            ChatFollowerHistory(),
             // sendSinme(),
             // // type4
             // sendAnnounce(),

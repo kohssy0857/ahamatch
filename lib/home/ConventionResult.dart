@@ -29,16 +29,14 @@ class ConventionResult extends StatefulWidget {
   String prize = "ちゃめ放送";
   String? T06Image;
 
-  ConventionResult({Key? key,
-    required this.model, required this.index
-    }) : super(key: key);
-  
+  ConventionResult({Key? key, required this.model, required this.index})
+      : super(key: key);
+
   @override
   _ConventionResult createState() => _ConventionResult();
 }
 
 class _ConventionResult extends State<ConventionResult> {
-  
   final user = FirebaseAuth.instance.currentUser;
   final _formKey = GlobalKey<FormState>();
   List geininlist = [];
@@ -48,45 +46,49 @@ class _ConventionResult extends State<ConventionResult> {
   List idlist = [];
   bool i = true;
   String text = "";
-  
+
   // 画像の取得に必要なもの
   final picker = ImagePicker();
   File? imageFile;
-  Future pickImage() async{
+  Future pickImage() async {
     final pickerFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
 
-        if(pickerFile != null){
-          imageFile = File(pickerFile.path);
-        }
+    if (pickerFile != null) {
+      imageFile = File(pickerFile.path);
+    }
   }
 
   Stream<List> getMovieList() async* {
     await FirebaseFirestore.instance
-      .collection("T07_Convention")
-      .orderBy("T07_votes", descending: true)
-      .get()
-      .then((QuerySnapshot snapshot) {
-        snapshot.docs.forEach((doc) {
-          if (doc["T07_ConventionId"] == widget.model.T02_Convention[widget.index].ID) {
-            geininlist.add([doc["T07_Geinin"].path.replaceFirst("T02_Geinin/", ""),doc["T07_votes"]]);
-            votelist.add(doc["T07_votes"]);
-          
+        .collection("T07_Convention")
+        .orderBy("T07_votes", descending: true)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((doc) {
+        if (doc["T07_ConventionId"] ==
+            widget.model.T02_Convention[widget.index].ID) {
+          geininlist.add([
+            doc["T07_Geinin"].path.replaceFirst("T02_Geinin/", ""),
+            doc["T07_votes"]
+          ]);
+          votelist.add(doc["T07_votes"]);
 
-            if (geininlist.isNotEmpty) {
-              FirebaseFirestore.instance
-              .collection("T02_Geinin")
-              // .where("T07_ConventionId", isEqualTo: widget.model.T02_Convention[widget.index].ID)
-              // .where("T07_votes", isEqualTo: votelist[0])
-              .doc("${doc["T07_Geinin"].path.replaceFirst("T02_Geinin/", "")}")
-              .get()
-              .then((DocumentSnapshot snapshot) {
-                list.add(snapshot.get("T02_UnitName"));
-              });
-            }
+          if (geininlist.isNotEmpty) {
+            FirebaseFirestore.instance
+                .collection("T02_Geinin")
+                // .where("T07_ConventionId", isEqualTo: widget.model.T02_Convention[widget.index].ID)
+                // .where("T07_votes", isEqualTo: votelist[0])
+                .doc(
+                    "${doc["T07_Geinin"].path.replaceFirst("T02_Geinin/", "")}")
+                .get()
+                .then((DocumentSnapshot snapshot) {
+              list.add(snapshot.get("T02_UnitName"));
+            });
           }
-        });
+        }
       });
+    });
 
     yield list;
   }
@@ -98,23 +100,28 @@ class _ConventionResult extends State<ConventionResult> {
         itemCount: list.length,
         itemBuilder: ((context, index) {
           return SizedBox(
-            height: 100,
-            child: ListTile(
-              minVerticalPadding: 0,
-              minLeadingWidth: 100,
-               title: Text(
-                "${name[index].padRight(200)}${votelist[index]}票"
-              ),
-              leading:
-                Container(
+              height: 100,
+              child: ListTile(
+                minVerticalPadding: 0,
+                minLeadingWidth: 100,
+                title: Text("${name[index].padRight(200)}${votelist[index]}票"),
+                leading: Container(
                   height: 100,
                   width: 100,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.blue,
-                  ),child: Text("${index+1}位",textAlign: TextAlign.center,style: const TextStyle(fontWeight: FontWeight.w800,color: Colors.white,fontSize: 24),),),
-            )
-          );
+                    color: Colors.brown,
+                  ),
+                  child: Text(
+                    "${index + 1}位",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        fontSize: 24),
+                  ),
+                ),
+              ));
         }),
       );
     } else {
@@ -124,14 +131,14 @@ class _ConventionResult extends State<ConventionResult> {
 
   Future _upload(String text) async {
     await FirebaseFirestore.instance
-      .collection("T01_Person")
-      // .where('T01_kind', isNotEqualTo: 0)
-      .get()
-      .then((QuerySnapshot snapshot) {
-        snapshot.docs.forEach((element) {
-          idlist.add(element.id);
-        });
+        .collection("T01_Person")
+        // .where('T01_kind', isNotEqualTo: 0)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((element) {
+        idlist.add(element.id);
       });
+    });
     for (int j = 0; j < idlist.length; j++) {
       await FirebaseFirestore.instance
           .collection('T01_Person') // コレクションID
@@ -147,80 +154,77 @@ class _ConventionResult extends State<ConventionResult> {
   }
 
   @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
             title: Text('大会結果！！！！！！！！'),
-            actions: i 
-            ? [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: () {
-                  setState(() {
-                    i = false;
-                  });
-                }
-               )
-            ]
-          : []
-          ),
-      body: StreamBuilder(
-        stream: getMovieList(),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-
-            return const Text("ロード中");
-        } else if (snapshot.hasData) {
-          print(snapshot);
-          name = snapshot.data!;
-          return Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  ranking(),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: TextFormField(
-                      maxLength: 50,
-                      decoration: InputDecoration(labelText: "通知内容"),
-                      onChanged: (value) {
-                      text = value;
-                    },
-                      validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "必須です";
-                    }
-                    return null;
-                  },
-                    ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        // _tachikame();
-                        if (_formKey.currentState!.validate()) {
-                          await _upload(text);
-                          print("登録完了");
-                          try {
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => App()));
-                          } catch (e) {
-                            print(e);
-                          }
-                        }
-                      },
-                      child: const Text('投稿'),
-                    ),
-                ]),
-            )
-          );
-        } else {
-          return Container();
-        }
-        },
-      )
-    );
+            actions: i
+                ? [
+                    IconButton(
+                        icon: const Icon(Icons.refresh),
+                        onPressed: () {
+                          setState(() {
+                            i = false;
+                          });
+                        })
+                  ]
+                : []),
+        body: StreamBuilder(
+          stream: getMovieList(),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text("ロード中");
+            } else if (snapshot.hasData) {
+              print(snapshot);
+              name = snapshot.data!;
+              return Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          ranking(),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            child: TextFormField(
+                              maxLength: 50,
+                              decoration: InputDecoration(labelText: "通知内容"),
+                              onChanged: (value) {
+                                text = value;
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "必須です";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              // _tachikame();
+                              if (_formKey.currentState!.validate()) {
+                                await _upload(text);
+                                print("登録完了");
+                                try {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => App()));
+                                } catch (e) {
+                                  print(e);
+                                }
+                              }
+                            },
+                            child: const Text('投稿'),
+                          ),
+                        ]),
+                  ));
+            } else {
+              return Container();
+            }
+          },
+        ));
   }
 }
 

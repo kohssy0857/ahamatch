@@ -86,7 +86,7 @@ class _RegisterState extends State<Register> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => UserLogin()));
+                                builder: (context) => const UserLogin()));
                       }
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'email-already-in-use') {

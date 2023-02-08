@@ -47,9 +47,9 @@ class _RankingState extends State<Ranking> {
                           Tab(text: "アハポ数"),
                           Tab(text: "コメント数")
                         ],
-                        labelColor: Colors.blue,
+                        labelColor: Colors.brown,
+                        indicatorColor: Colors.brown,
                         unselectedLabelColor: Colors.black12,
-                        indicatorWeight: 10 ,
                       ),
                       Expanded(
 
