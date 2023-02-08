@@ -56,7 +56,7 @@ class _Header extends State<Header> {
         refList.add(element);
         if (element["unread"]) {
           unread = true;
-          refList.add(element);
+          // refList.add(element);
           // var el=   element.reference;
         }
       }
@@ -117,7 +117,7 @@ class _Header extends State<Header> {
               )
             : searchTextField(),
         // ヘッダーカラー
-        backgroundColor: Color.fromARGB(255, 255, 166, 077),
+        backgroundColor: const Color.fromARGB(255, 255, 166, 077),
         actions: !_searchBoolean
             ? [
                 IconButton(
