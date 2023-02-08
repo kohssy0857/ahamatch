@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../chat/message_title.dart';
+import '../parts/searchAccount.dart';
 
 class ChatPage extends StatefulWidget {
   // const ChatPage(this.name, {Key? key}) : super(key: key);
@@ -118,7 +119,20 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.name}'),
+        title: ElevatedButton(
+                          onPressed: () async {
+                            try {
+                                Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SearchResultMane(word: "${widget.name}"))
+                                                    );
+                            } catch (e) {}
+                          },
+                          child: SizedBox(width: 800,
+                                    child: Text('${widget.name}'),)
+                        ),
         backgroundColor: Color.fromARGB(255, 255, 166, 077),
       ),
       body: Stack(

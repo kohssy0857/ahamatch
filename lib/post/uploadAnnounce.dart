@@ -61,7 +61,9 @@ class _sendAnnounceState extends State<sendAnnounce> {
         .then((QuerySnapshot snapshot) {
       snapshot.docs.forEach((doc) {
         /// usersコレクションのドキュメントIDを取得する
-        allUserId.add(doc.id);
+        if (doc.id != user!.uid) {
+          allUserId.add(doc.id);
+        }
       });
     });
     for(int i=0;i<allUserId.length;i++){

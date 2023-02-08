@@ -25,7 +25,7 @@ class _sendNetaState extends State<sendNeta> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey();
   int i = 0;
-  List allUserId=[];
+  List allUserId = [];
   // 入力された内容を保持するコントローラ
 
   // String nocon = "大会選択なし";
@@ -111,19 +111,24 @@ class _sendNetaState extends State<sendNeta> {
         .then((QuerySnapshot snapshot) {
       snapshot.docs.forEach((doc) {
         /// usersコレクションのドキュメントIDを取得する
-        allUserId.add(doc.id);
+        if (doc.id != user!.uid) {
+          allUserId.add(doc.id);
+        }
       });
     });
-    for(int i=0;i<allUserId.length;i++){
-      await FirebaseFirestore.instance
-        .collection('T01_Person')
-        .doc(allUserId[i])
-        .collection("Notification")
-        .doc().set({
-      "Create": Timestamp.fromDate(DateTime.now()),
-      "Text": "${unitName}がネタを投稿しました",
-      "unread": true,
-});
+    for (int i = 0; i < allUserId.length; i++) {
+      if (allUserId[i] != user!.uid) {
+        await FirebaseFirestore.instance
+            .collection('T01_Person')
+            .doc(allUserId[i])
+            .collection("Notification")
+            .doc()
+            .set({
+          "Create": Timestamp.fromDate(DateTime.now()),
+          "Text": "${unitName}がネタを投稿しました",
+          "unread": true,
+        });
+      }
     }
 
     await FirebaseFirestore.instance
@@ -180,9 +185,7 @@ class _sendNetaState extends State<sendNeta> {
       "T05_Thumbnail": thumbnail,
     });
 
-
     if (value == "大会選択なし") {
-
       print('ok');
     } else if (idList.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -211,21 +214,19 @@ class _sendNetaState extends State<sendNeta> {
         "PersonId": FirebaseAuth.instance.currentUser!.uid,
       });
 
-
       await FirebaseFirestore.instance
-      .collection("T04_Event")
-      .doc("cvabc8IsVAGQjYwPv0fR")
-      .collection("T02_Convention")
-      .doc(conid)
-      .collection("Vote_Name")
-      .where("PersonId", isEqualTo: user!.uid)
-      .get()
-      .then((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((doc) {
-        idList.add(doc["PersonId"]);
+          .collection("T04_Event")
+          .doc("cvabc8IsVAGQjYwPv0fR")
+          .collection("T02_Convention")
+          .doc(conid)
+          .collection("Vote_Name")
+          .where("PersonId", isEqualTo: user!.uid)
+          .get()
+          .then((QuerySnapshot snapshot) {
+        snapshot.docs.forEach((doc) {
+          idList.add(doc["PersonId"]);
+        });
       });
-    });
-
     }
     print("登録できました");
   }
