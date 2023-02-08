@@ -43,47 +43,52 @@ class _HitTabState extends State<HitTab> {
     return StreamBuilder(
         stream: getNetaList(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          return
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: netaList.length,
-                  itemBuilder: (context, index) {
-                    return SizedBox(
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: netaList.length,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                    height: 100,
+                    child: ListTile(
+                      minVerticalPadding: 0,
+                      minLeadingWidth: 100,
+                      title: Text(
+                          "${netaList[index]["T05_Title"].padRight(40)}${netaList[index]["T05_ShityouKaisu"].round()}回"),
+                      trailing: Image.network(
+                        netaList[index]["T05_Thumbnail"],
+                        width: 100,
                         height: 100,
-                        child: ListTile(
-                          minVerticalPadding: 0,
-                          minLeadingWidth: 100,
-                          title: Text("${netaList[index]["T05_Title"].padRight(40)}${netaList[index]["T05_ShityouKaisu"].round()}回"),
-                          trailing: Image.network(
-                            netaList[index]["T05_Thumbnail"],
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.fill,
-                          ),
-                          subtitle: Text(netaList[index]["T05_UnitName"]),
-                          leading:
-                           Container(
-                            height: 100,
-                            width: 100,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.blue,
-                            ),child: Text("${index+1}位",textAlign: TextAlign.center,style: const TextStyle(fontWeight: FontWeight.w800,color: Colors.white,fontSize: 24),),),
-                          onTap: () {
-                            Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FullscreenVideo(
-                                            netaIdList[index], 100, 99)))
-                                .then((value) {
-                              // 再描画
-                              setState(() {});
-                            });
-                          },
-                        ));
-                  }
-
-          );
+                        fit: BoxFit.fill,
+                      ),
+                      subtitle: Text(netaList[index]["T05_UnitName"]),
+                      leading: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.brown,
+                        ),
+                        child: Text(
+                          "${index + 1}位",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              fontSize: 24),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FullscreenVideo(
+                                    netaIdList[index], 100, 99))).then((value) {
+                          // 再描画
+                          setState(() {});
+                        });
+                      },
+                    ));
+              });
         });
   }
 }

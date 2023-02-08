@@ -346,7 +346,7 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
         height: 150.0,
         child: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.brown),
           ),
         ),
       );
@@ -381,28 +381,26 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
 
   _vote() async {
     if (list.isEmpty) {
-
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("一度投票すると再度投票することはできません"),
-            content: const Text("このネタに投票しますか？"),
-            actions: [
-              TextButton(
-                child: Text("Cancel"),
-                onPressed: () => Navigator.pop(context),
-              ),
-              TextButton(
-                child: Text("OK"),
-                onPressed: () {
-                  _countVote();
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("一度投票すると再度投票することはできません"),
+          content: const Text("このネタに投票しますか？"),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                _countVote();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

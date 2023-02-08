@@ -161,7 +161,7 @@ class _netaResultState extends State<netaResult> {
                                 Container(
                                   width: 500,
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.blue),
+                                    border: Border.all(color: Color.fromARGB(255, 255, 166, 77)),
                                   ),
                                   child: Text("紹介文：" + "${videoShoukai[index]}"),
                                 ),

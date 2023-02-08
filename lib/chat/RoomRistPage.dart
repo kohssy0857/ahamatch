@@ -78,7 +78,7 @@ class _ChatState extends State<Chat> {
               Column(
             children: [
               Text(
-                "フォロー覧",
+                "フォロー欄",
                 style: TextStyle(
                   fontSize: 60,
                 ),

@@ -50,6 +50,8 @@ class ChatMane extends StatelessWidget {
               // Tab(text: '新芽'),
               // Tab(text: '告知'),
             ],
+            labelColor: Colors.white,
+            indicatorColor: Colors.brown,
           ),
         ),
         body: TabBarView(

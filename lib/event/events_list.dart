@@ -131,6 +131,7 @@ class _Events extends State<Events> {
   @override
   Widget build(BuildContext context) {
     bool flag = true;
+
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 219, 153),
       appBar: const Header(),
@@ -188,6 +189,7 @@ class _Events extends State<Events> {
                                         //   )
                                         // );
                                         AlertDialogSample(index);
+
                                       },
                                     ),
                                     onTap: () {

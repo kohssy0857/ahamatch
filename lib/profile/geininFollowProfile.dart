@@ -262,8 +262,9 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                               title: const Text("ギフトを送る"),
                               content: TextField(
                                   onChanged: (value) {
-                                    if (double.tryParse(value) != null)
-                                    {giftCoin = int.parse(value);}
+                                    if (double.tryParse(value) != null) {
+                                      giftCoin = int.parse(value);
+                                    }
                                   },
                                   maxLength: 7,
                                   decoration: const InputDecoration(
@@ -287,7 +288,7 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                                 TextButton(
                                   child: const Text(
                                     "送る",
-                                    style: TextStyle(color: Colors.blue),
+                                    style: TextStyle(color: Colors.brown),
                                   ),
                                   onPressed: () async {
                                     final docs = await FirebaseFirestore
@@ -377,7 +378,8 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                   },
                   child: const Text("アハコインを送る")),
               const TabBar(
-                  labelColor: Colors.blue,
+                  labelColor: Colors.brown,
+                  indicatorColor: Colors.brown,
                   unselectedLabelColor: Colors.black12,
                   tabs: [Tab(text: "投稿")]),
               Expanded(

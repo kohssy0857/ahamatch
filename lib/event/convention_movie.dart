@@ -126,14 +126,17 @@ class _netaConState extends State<netaCon> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: const Header(),
       body: StreamBuilder(
+
       stream: getVideo(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text("ロード中");
         } else if (snapshot.hasData) {
           List photo = snapshot.data!;
+
           return 
           Column(
             children: [
@@ -224,6 +227,7 @@ class _netaConState extends State<netaCon> {
               )
                 ]
               );
+
         } else {
           return Column(
             children: [
