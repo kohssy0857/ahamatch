@@ -229,12 +229,16 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                   }
                 },
               ),
-              SwitchListTile(
-                tileColor: Colors.yellow,
-                title: const Text('相方募集中'),
-                value: isOn,
-                onChanged: (bool? value) {},
-              ),
+              if (isOn)
+                const  Text(
+                  "相方募集中",
+                  style: TextStyle(fontSize: 40),
+                ),
+              if (isOn == false)
+                const  Text(
+                  "相方募集をしていない",
+                  style: TextStyle(fontSize: 40),
+                ),
               isFollwing == false
                   ? ElevatedButton(
                       onPressed: () async {
@@ -262,8 +266,9 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                               title: const Text("ギフトを送る"),
                               content: TextField(
                                   onChanged: (value) {
-                                    if (double.tryParse(value) != null)
-                                    {giftCoin = int.parse(value);}
+                                    if (double.tryParse(value) != null) {
+                                      giftCoin = int.parse(value);
+                                    }
                                   },
                                   maxLength: 7,
                                   decoration: const InputDecoration(
