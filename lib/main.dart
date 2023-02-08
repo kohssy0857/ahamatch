@@ -37,8 +37,8 @@ class App extends StatelessWidget {
         theme: ThemeData(
           fontFamily: "Noto Sans JP",
           appBarTheme:
-              AppBarTheme(backgroundColor: Color.fromARGB(255, 255, 166, 077)),
-          scaffoldBackgroundColor: Color.fromARGB(255, 255, 219, 153),
+              const AppBarTheme(backgroundColor: Color.fromARGB(255, 255, 166, 077)),
+          scaffoldBackgroundColor: const Color.fromARGB(255, 255, 219, 153),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               primary: Colors.green,
@@ -72,7 +72,6 @@ class App extends StatelessWidget {
               } else if (snapshot.data!.displayName!.contains("-") == true) {
                 return SysHome();
               } else {
-                print("Footer東リマース");
                 return Footer();
               }
             }
