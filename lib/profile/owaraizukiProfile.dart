@@ -126,7 +126,6 @@ class owaraizukiProfile extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Center(child: Text("ログイン情報:${user!.displayName}")),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
