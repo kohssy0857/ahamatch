@@ -156,14 +156,6 @@ class _HomeState extends State<Home> {
           //           }
           //           },),
 
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () async {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const UserLogin()));
-              /* --- 省略 --- */
-            },
-          ),
           // bottomNavigationBar: Footer(),
         );
 
