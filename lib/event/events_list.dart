@@ -19,6 +19,7 @@ import 'audition_overview.dart';
 import 'audition_list.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'convention.dart';
 
 List videourl = [];
 List list = [];
@@ -152,68 +153,7 @@ class _Events extends State<Events> {
                 child: TabBarView(
                   physics: const NeverScrollableScrollPhysics(),
                   children: <Widget>[
-                    StreamBuilder(
-                      stream: fetchConventions(),
-                      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Text("wait");
-                        } else if (snapshot.hasData) {
-                          return Container(
-                            padding: const EdgeInsets.all(2),
-                            // 各アイテムの間にスペースなどを挟みたい場合
-                            child: ListView.separated(
-                              itemCount: events.length,
-                              itemBuilder: (context, index) {
-                                return SizedBox(
-                                  height: 100,
-                                  child: ListTile(
-                                    minVerticalPadding: 0,
-                                    minLeadingWidth: 200,
-                                    title: Text(events[index].name),
-                                    subtitle: fromAtNow(events[index].schedule.toDate()),
-                                    leading: Image.network(
-                                      events[index].url,
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    trailing: IconButton(
-                                    icon: const Icon(Icons.info),
-                                      onPressed: () {
-                                        // Navigator.push(
-                                        //   // ボタン押下で大会詳細に遷移する
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) =>
-                                        //     ConOverview(model: events, index: index)
-                                        //   )
-                                        // );
-                                        AlertDialogSample(index);
-
-                                      },
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                            netaCon(events: events, index: index)
-                                        )
-                                      ).then((value) {});
-                                    },
-                                  )
-                                );
-                              },
-                              separatorBuilder: (context, index) {
-                                return const Divider();
-                              },
-                            ),
-                          );
-                        } else {
-                          return const Text("not photo");
-                        }
-                      },
-                    ),
+                    Con(),
                     Auditions(),
                   ],
                 ),

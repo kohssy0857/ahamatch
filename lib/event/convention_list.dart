@@ -16,6 +16,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'events_list.dart';
 import 'convention_movie.dart';
+import 'convention.dart';
 
 List videourl = [];
 List list = [];
@@ -129,89 +130,9 @@ class _Conventions extends State<Conventions> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 219, 153),
       appBar: const Header(),
-      body: MaterialApp(
-        home: Scaffold(
-            body: StreamBuilder(
-              stream: fetchConventions(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text("wait");
-                } else if (snapshot.hasData) {
-                  return Container(
-                    padding: const EdgeInsets.all(2),
-                    // 各アイテムの間にスペースなどを挟みたい場合
-                    child: 
-                    ListView.separated(
-                    shrinkWrap: true,
-                      itemCount: events.length,
-                      itemBuilder: (context, index) {
-                        return SizedBox(
-                          height: 100,
-                          child: ListTile(
-                            minVerticalPadding: 0,
-                            minLeadingWidth: 200,
-                            title: Text(events[index].name),
-                            subtitle: fromAtNow(events[index].schedule.toDate()),
-                            leading: Image.network(
-                              events[index].url,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.fill,
-                            ),
-                            trailing: IconButton(
-                            icon: const Icon(Icons.info),
-                              onPressed: () {
-                                AlertDialogSample(index);
-                              },
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                    netaCon(events: events, index: index)
-                                )
-                              ).then((value) {});
-                            },
-                          )
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                    ),
-                  );
-                } else {
-                  return const Text("not photo");
-                }
-              },
-            ),
-          ),
-        ),
-      
+      body: 
+            Con(),
     );
   }
 }
 
-class Convention {
-  // Conventionで扱うフィールドを定義しておく。
-  String name = "";
-  String condition = "";
-  Timestamp schedule = Timestamp(2020, 10);
-  String prize = "";
-  String url = "";
-  int flag = 1;
-  String docid = "";
-
-  // ドキュメントを扱うDocumentSnapshotを引数にしたコンストラクタを作る
-  Convention(DocumentSnapshot doc) {
-    //　ドキュメントの持っているフィールド'T05_Name'をこのConventionのフィールドnameに代入
-    name = doc['T05_Name'];
-    condition = doc['T01_Conditions'];
-    schedule = doc['T02_Schedule'];
-    prize = doc['T03_Prize'];
-    url = doc['T06_image'];
-    flag = doc['T07_flag'];
-    docid = doc['T08_DocumentId'];
-  }
-}

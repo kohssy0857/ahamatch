@@ -146,9 +146,7 @@ class _Auditions extends State<Auditions> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 219, 153),
-      body: StreamBuilder(
+    return StreamBuilder(
         stream: fetchEvents(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -183,7 +181,6 @@ class _Auditions extends State<Auditions> {
             return const Text("not photo");
           }
         },
-      ),
     );
   }
 }
