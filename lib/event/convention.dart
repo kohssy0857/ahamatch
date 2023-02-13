@@ -188,7 +188,7 @@ class _Con extends State<Con> {
                             ),
                           );
                         } else {
-                          return const Text("not photo");
+                          return const Text("大会は開催されていません",style: TextStyle(fontSize: 30,));
                         }
                       },
                     );
