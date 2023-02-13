@@ -53,6 +53,7 @@ class _BillingState extends State<Billing> {
   Container billingContainer(int price, int amount) {
     final formatter = NumberFormat("#,###");
     var result = formatter.format(price);
+    var result_amount = formatter.format(amount);
     return Container(
       width: double.infinity,
       height: 100,
@@ -64,7 +65,7 @@ class _BillingState extends State<Billing> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(
-            "$resultアハコイン",
+            "$result_amountアハコイン",
             style: TextStyle(
             fontSize: 30,
             ),

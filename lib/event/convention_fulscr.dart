@@ -85,9 +85,8 @@ class _FullscreenVideoState extends State<ConFullscreenVideo> {
 
           } else {
             return Column(
-              children: [
-                Text("ログイン情報:${user!.displayName}"),
-                Text("芸人をフォローしてください"),
+              children: const [
+
               ],
             );
             // return const Text("not photo");

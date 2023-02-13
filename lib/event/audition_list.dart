@@ -178,7 +178,7 @@ class _Auditions extends State<Auditions> {
               },
             );
           } else {
-            return const Text("not photo");
+            return const Text("オーディションは開催されていません",style: TextStyle(fontSize: 30,));
           }
         },
     );

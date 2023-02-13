@@ -181,10 +181,6 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-          body: Center(
-            // ユーザー情報を表示
-            child: Text('ログイン情報：${user!.displayName}'),
-          ),
           floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () async {
