@@ -152,7 +152,7 @@ class owaraizukiProfile extends StatelessWidget {
                         new Flexible(
                           child: Column(
                             children: [
-                              Text('プロフィール名：${user!.displayName}====1'),
+                              Text('プロフィール名：${nameCut(user!.displayName)}'),
                             ],
                           ),
                         ),
@@ -224,5 +224,14 @@ class _SimpleDialogSampleState extends State<SimpleDialogSample> {
         )
       ],
     );
+  }
+}
+String nameCut(String? s) {
+  if (s!.contains("#")) {
+    return s.substring(0, s.indexOf("#"));
+  } else if (s.contains("@")) {
+    return s.substring(0, s.indexOf("@"));
+  } else {
+    return "";
   }
 }
