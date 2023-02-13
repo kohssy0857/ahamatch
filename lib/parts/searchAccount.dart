@@ -89,13 +89,16 @@ class MainModel extends ChangeNotifier {
     } else {
       searchedNames =
           UnitName.where((element) => element.contains(word)).toList();
-      final docs = await FirebaseFirestore.instance
+      if(searchedNames.isNotEmpty){
+        final docs = await FirebaseFirestore.instance
               .collection("T02_Geinin")
               .where("T02_UnitName", whereIn: searchedNames)
               .get();
 
           final T02Geinin = docs.docs.map((doc) => searchAccount(doc)).toList();
           this.T02_Geinin = T02Geinin;
+      }
+      
     }
     // }
     // ignore: unrelated_type_equality_checks

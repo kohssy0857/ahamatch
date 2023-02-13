@@ -131,7 +131,6 @@ class _geininShinmeState extends State<geininShinme> {
         } else {
           return Column(
             children: [
-              Text("ログイン情報:${user!.displayName}"),
               Text("芸人をフォローしてください"),
             ],
           );

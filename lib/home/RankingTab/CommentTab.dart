@@ -92,6 +92,7 @@ class _CommentTabState extends State<CommentTab> {
             netaList = netaList.reversed.toList();
 
             if (netaList.length == 10 && j == 0) {
+              print("###################################################");
               j++;
               netaList.asMap().forEach((index, netadata) async {
                 await FirebaseFirestore.instance
@@ -126,7 +127,7 @@ class _CommentTabState extends State<CommentTab> {
                     child: ListTile(
                       minVerticalPadding: 0,
                       minLeadingWidth: 100,
-                          title: Text(
+                      title: Text(
                           "${netaList[index]["T05_Title"].padRight(40)}${pointMap[netaList[index]["T05_Title"]].toString()}コメント"),
                       trailing: Image.network(
                         netaList[index]["T05_Thumbnail"],
