@@ -200,7 +200,6 @@ class _ChatHistoryState extends State<ChatHistory> {
         } else {
           return Column(
             children: [
-              Text("ログイン情報:${user!.displayName}"),
               Text("芸人をフォローしてください"),
             ],
           );

@@ -41,7 +41,6 @@ class _AhaPointTabState extends State<AhaPointTab> {
       });
       // print(lenk);
       netaIdList.forEach((element) async {
-        
         await FirebaseFirestore.instance
             .collection("T05_Toukou")
             .doc(element)
