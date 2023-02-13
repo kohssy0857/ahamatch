@@ -46,7 +46,7 @@ class _SearchResultState extends State<SearchResult> {
             body: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Center(child: Text("ログイン情報:${user!.displayName}")),
+
                   Expanded(
                       child: TabBarView(
                           // physics: NeverScrollableScrollPhysics(),

@@ -139,7 +139,6 @@ class _geininFollwToukouState extends State<geininFollwToukou> {
         } else {
           return Column(
             children: [
-              Text("ログイン情報:${user!.displayName}"),
               Text("芸人をフォローしてください"),
             ],
           );
@@ -293,7 +292,6 @@ class _geininToukouState extends State<geininToukou> {
         } else {
           return Column(
             children: [
-              Text("ログイン情報:${user!.displayName}"),
               Text("芸人をフォローしてください"),
             ],
           );

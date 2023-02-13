@@ -163,7 +163,6 @@ class _geininAhapuchiState extends State<geininAhapuchi> {
         } else {
           return Column(
             children: [
-              Text("ログイン情報:${user!.displayName}"),
               Text("芸人をフォローしてください"),
             ],
           );

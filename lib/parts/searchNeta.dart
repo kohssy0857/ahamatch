@@ -93,7 +93,6 @@ class _searchNetaState extends State<searchNeta> {
           print(toukouList);
           return Column(
             children: [
-              Text("ログイン情報:${user!.displayName}"),
               Expanded(
                   child: SizedBox(
                       height: 250,

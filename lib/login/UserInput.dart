@@ -118,6 +118,7 @@ class _UserInput extends State<UserInput> {
             ),
             DropdownButton(
               items: const [
+
                 DropdownMenuItem(
                   value: 1,
                   child: Text('芸人'),
