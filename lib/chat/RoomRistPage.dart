@@ -113,7 +113,6 @@ class _ChatState extends State<Chat> {
         } else {
           return Column(
             children: [
-              Text("ログイン情報:${user!.displayName}"),
               Text("芸人をフォローしてください"),
             ],
           );

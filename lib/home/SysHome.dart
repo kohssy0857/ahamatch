@@ -29,8 +29,9 @@ class SysHome extends StatelessWidget {
       body: Center(
         // ユーザー情報を表示
         child: ListView(
-          children: <Widget>[
-            Text('システムログイン情報：${user!.displayName}'),
+
+          children:  <Widget>[
+
             ListTile(title: Text('オーディション管理')),
             Divider(),
             ListTile(

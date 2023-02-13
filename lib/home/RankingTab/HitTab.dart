@@ -26,7 +26,7 @@ class _HitTabState extends State<HitTab> {
   Stream<List> getNetaList() async* {
     if (netaList.length < 10) {
       await FirebaseFirestore.instance
-          .collection("T05_Toukou")
+          .collection("T05_Toukou").where("T05_Type",isEqualTo: 1)
           .orderBy('T05_ShityouKaisu', descending: true)
           .limit(10)
           .get()
