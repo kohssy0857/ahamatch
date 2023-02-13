@@ -1,4 +1,3 @@
-
 // 認証
 import 'package:ahamatch/parts/footer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,18 +30,15 @@ Future<void> main() async {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
-
+        debugShowCheckedModeBanner: false,
         title: 'Flutter app',
 
         // 背景しょく
         theme: ThemeData(
           primarySwatch: Colors.orange,
           fontFamily: "Noto Sans JP",
-          appBarTheme:
-
-              AppBarTheme(backgroundColor: Colors.brown),
+          appBarTheme: AppBarTheme(backgroundColor: Colors.brown),
           scaffoldBackgroundColor: Color.fromARGB(255, 255, 219, 153),
-
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               primary: Colors.green,
@@ -85,4 +81,3 @@ class App extends StatelessWidget {
         ),
       );
 }
-
