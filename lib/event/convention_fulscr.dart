@@ -46,9 +46,6 @@ class _FullscreenVideoState extends State<ConFullscreenVideo> {
 
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    print("画面のサイズーーーーー");
-    print(size.height);
-    print(size.width);
 
     return Scaffold(
       appBar: const Header(),
@@ -76,7 +73,7 @@ class _FullscreenVideoState extends State<ConFullscreenVideo> {
             // }else{
             return Column(
               children: [
-                Text("大会名：${widget.events[widget.index].name}"),
+                Text("大会名：${widget.events[0].name}"),
                 Expanded(
                     child: ConFullMoviePlayer(photo[0], widget.movieId,widget.events, widget.index)),
               ],

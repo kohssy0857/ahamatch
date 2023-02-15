@@ -120,19 +120,21 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: ElevatedButton(
-                          onPressed: () async {
-                            try {
-                                Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SearchResultMane(word: "${widget.name}"))
-                                                    );
-                            } catch (e) {}
-                          },
-                          child: SizedBox(width: 800,
-                                    child: Text('${widget.name}'),)
-                        ),
+            onPressed: () async {
+              try {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchResultMane(
+                              word: "${widget.name}",
+                              type: 2,
+                            )));
+              } catch (e) {}
+            },
+            child: SizedBox(
+              width: 800,
+              child: Text('${widget.name}'),
+            )),
         backgroundColor: Color.fromARGB(255, 255, 166, 077),
       ),
       body: Stack(
@@ -145,15 +147,34 @@ class _ChatPageState extends State<ChatPage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               width: MediaQuery.of(context).size.width,
+
               color: Color.fromARGB(255, 184, 75, 17),
+
               child: Row(children: [
                 Expanded(
                     child: TextFormField(
                   controller: messageController,
                   style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor:Color.fromARGB(255, 255, 219, 153),
+                    enabledBorder: new OutlineInputBorder(
+                      borderRadius: new BorderRadius.circular(25.0),
+                      borderSide: BorderSide(
+                        color: Colors.brown,
+                        width: 3.0,
+                      ),
+                    ),
+                    //Focusしているとき
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: new BorderRadius.circular(25.0),
+                      borderSide: BorderSide(
+                        color: Colors.brown,
+                        width: 3.0,
+                      ),
+                    ),
                     hintText: "Send a message...",
-                    hintStyle: TextStyle(color: Colors.white, fontSize: 16),
+                    hintStyle: TextStyle(color: Colors.brown, fontSize: 16),
                     border: InputBorder.none,
                   ),
                 )),
@@ -168,13 +189,13 @@ class _ChatPageState extends State<ChatPage> {
                     height: 50,
                     width: 50,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
+                      color: Colors.brown,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: const Center(
                         child: Icon(
                       Icons.send,
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 255, 219, 153),
                     )),
                   ),
                 )
@@ -231,15 +252,16 @@ class _ChatPageState extends State<ChatPage> {
                 sendUserName = doc.get("T02_UnitName");
               })
             });
-      await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('T01_Person')
         .doc(widget.PersonId)
         .collection("Notification")
-        .doc().set({
+        .doc()
+        .set({
       "Create": Timestamp.fromDate(DateTime.now()),
       "Text": "${sendUserName}から新着メッセージが送られました",
       "unread": true,
-});
+    });
 //     }
     String message = messageController.text;
     if (messageController.text.isNotEmpty) {
