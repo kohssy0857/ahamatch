@@ -56,6 +56,7 @@ class _SearchResultState extends State<SearchResult> {
                         ),
                         SearchResultMane(
                           word: widget._editController,
+                          type:1
                         ),
                         searchTag(
                           word: widget._editController,
