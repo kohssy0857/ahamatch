@@ -35,7 +35,7 @@ class _SearchResultState extends State<SearchResult> {
         length: 3,
         child: Scaffold(
             appBar: AppBar(
-              title: Text('検索結果'),
+              title: Text('\"${widget._editController}\"の検索結果'),
               backgroundColor: Color.fromARGB(255, 255, 166, 077),
               bottom: TabBar(
                   tabs: [Tab(text: "ネタ"), Tab(text: "アカウント"), Tab(text: "タグ")],
