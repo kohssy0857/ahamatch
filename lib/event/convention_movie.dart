@@ -231,7 +231,7 @@ class _netaConState extends State<netaCon> {
         } else {
           return Column(
             children: [
-              Text("芸人をフォローしてください"),
+              Text("動画が投稿されていません"),
             ],
           );
           // return const Text("not photo");
