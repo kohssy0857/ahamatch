@@ -116,7 +116,7 @@ class _FullMoviePlayerWidgetState extends State<ConFullMoviePlayer> {
         .collection("T04_Event")
         .doc("cvabc8IsVAGQjYwPv0fR")
         .collection("T02_Convention")
-        .doc(widget.events[widget.index].docid)
+        .doc(widget.events[0].docid)
         .collection("Vote_Name");
     doc
         .where("PersonId", isEqualTo: user!.uid)
