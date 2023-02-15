@@ -103,8 +103,6 @@ class MainModel extends ChangeNotifier {
     // }
     // ignore: unrelated_type_equality_checks
 
-          
-
     notifyListeners();
   }
 }
@@ -114,9 +112,11 @@ class MainModel extends ChangeNotifier {
 // ^^^^^^^^^^^^^^^^^^^^^^^^^
 class SearchResultMane extends StatelessWidget {
   final String word;
+  final int type;
   SearchResultMane({
     Key? key,
     required this.word,
+    required this.type,
   }) : super(key: key);
   final user = FirebaseAuth.instance.currentUser;
   List documentList = [];
@@ -124,7 +124,67 @@ class SearchResultMane extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    if(type == 2){
+      return Scaffold(
+      body: ChangeNotifierProvider<MainModel>(
+        // createでfetchBooks()も呼び出すようにしておく。
+        create: (_) => MainModel()..fetchConvention(word),
+        child: Scaffold(
+          appBar: const Header(),
+          body: Consumer<MainModel>(
+            builder: (context, model, child) {
+              // FirestoreのドキュメントのList booksを取り出す。
+              final T02Geinin = model.T02_Geinin;
+              if (T02Geinin.isNotEmpty == true) {
+                return ListView.builder(
+                  // Listの長さを先ほど取り出したbooksの長さにする。
+                  itemCount: T02Geinin.length,
+                  // indexにはListのindexが入る。
+                  itemBuilder: (context, index) {
+                    if (user!.uid ==
+                        T02Geinin[index]
+                            .T02_GeininId
+                            .path.replaceFirst("T01_Person/", "")) {
+                      return Card();
+                    } else {
+                      return Card(
+                        color: Colors.green,
+                        margin: const EdgeInsets.all(10),
+                        child: ListTile(
+                          // leading: Image.network(T02_Convention[index].T06_image),
+                          title: Text(T02Geinin[index].T02_UnitName),
+                          // subtitle: Text(userid[index]), // 商品名
+                          onTap: () async {
+                            Navigator.push(
+                                // ボタン押下でオーディション編集画面に遷移する
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => geininFollowProfile(
+                                        model,
+                                        index,
+                                        T02Geinin[index].T02_GeininId)));
+                            /* --- 省略 --- */
+                          },
+                          // subtitle: Text(T01_Audition['price'].toString()), // 価格
+                        ),
+                      );
+                    }
+                  },
+                );
+              } else {
+                return Column(
+                  children: [
+                    Text("該当するデータはありません"),
+                  ],
+                );
+              }
+            },
+          ),
+        ),
+      ),
+    );
+    }else{
+      return Scaffold(
       body: ChangeNotifierProvider<MainModel>(
         // createでfetchBooks()も呼び出すようにしておく。
         create: (_) => MainModel()..fetchConvention(word),
@@ -180,6 +240,8 @@ class SearchResultMane extends StatelessWidget {
         ),
       ),
     );
+    }
+    
   }
 }
 
