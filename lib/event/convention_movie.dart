@@ -109,7 +109,6 @@ class _netaConState extends State<netaCon> {
           });
         });
       }
-
       yield videoThumbnails;
     }
   }
@@ -122,6 +121,7 @@ class _netaConState extends State<netaCon> {
         .update({"T05_ShityouKaisu": FieldValue.increment(1.0)});
     print("視聴回数＋１");
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +162,7 @@ class _netaConState extends State<netaCon> {
                                     MaterialPageRoute(
                                         builder: (context) => SearchResultMane(
                                             word:
-                                                "${geininUnitNameList[geininIdList[index]]}")));
+                                                "${geininUnitNameList[geininIdList[index]]}",type: 2,)));
                               } catch (e) {}
                             },
                             child: SizedBox(
@@ -231,7 +231,7 @@ class _netaConState extends State<netaCon> {
         } else {
           return Column(
             children: [
-              Text("芸人をフォローしてください"),
+              Text("動画が投稿されていません"),
             ],
           );
           // return const Text("not photo");
