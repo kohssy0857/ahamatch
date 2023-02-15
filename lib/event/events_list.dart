@@ -146,7 +146,7 @@ class _Events extends State<Events> {
                   Tab(text: '大会'),
                   Tab(text: 'オーディション'),
                 ],
-                labelColor: Colors.blue,
+                labelColor: Colors.brown,
                 unselectedLabelColor: Colors.black12,
               ),
               Expanded(
