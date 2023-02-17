@@ -140,12 +140,14 @@ class _searchNetaState extends State<searchNeta> {
                         )),
                     Column(
                       children: [
+
                         Text("タイトル：" + "${videoTitle[index]}"),
                         SizedBox(
                           width: 300,
                           height: 300,
                           child: Image.network(videoThumbnails[index],
                               height: 150, fit: BoxFit.fill),
+
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
