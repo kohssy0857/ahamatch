@@ -154,7 +154,7 @@ class _ChatPageState extends State<ChatPage> {
                 Expanded(
                     child: TextFormField(
                   controller: messageController,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor:Color.fromARGB(255, 255, 219, 153),
