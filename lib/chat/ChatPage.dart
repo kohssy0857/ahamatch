@@ -147,9 +147,7 @@ class _ChatPageState extends State<ChatPage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               width: MediaQuery.of(context).size.width,
-
               color: Color.fromARGB(255, 184, 75, 17),
-
               child: Row(children: [
                 Expanded(
                     child: TextFormField(
@@ -157,7 +155,7 @@ class _ChatPageState extends State<ChatPage> {
                   style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor:Color.fromARGB(255, 255, 219, 153),
+                    fillColor: Color.fromARGB(255, 255, 219, 153),
                     enabledBorder: new OutlineInputBorder(
                       borderRadius: new BorderRadius.circular(25.0),
                       borderSide: BorderSide(
