@@ -43,7 +43,6 @@ class _searchNetaState extends State<searchNeta> {
   Map<String, String> geininUnitNameList = {};
   List<String> geininIdList = [];
 
-
   Stream<Map> getVideo(String word) async* {
     // final ref =  FirebaseStorage.instance.ref().child('post/shinme/マルセロ1.mp4');
     // if (documentList.isNotEmpty == true) {
@@ -57,27 +56,30 @@ class _searchNetaState extends State<searchNeta> {
         // if (doc["T05_Type"] == 1) {
         title.add(doc["T05_Title"]);
         FirebaseFirestore.instance
-                  .collection('T02_Geinin')
-                  .doc(
-                      "${doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", "")}")
-                  .get()
-                  .then((DocumentSnapshot snapshot) {
-                // geininUnitNameList.add(snapshot.get('T02_UnitName'));
-                geininUnitNameList["${doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", "")}"] 
-                = snapshot.get('T02_UnitName');
-              });
+            .collection('T02_Geinin')
+            .doc(
+                "${doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", "")}")
+            .get()
+            .then((DocumentSnapshot snapshot) {
+          // geininUnitNameList.add(snapshot.get('T02_UnitName'));
+          geininUnitNameList[
+                  "${doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", "")}"] =
+              snapshot.get('T02_UnitName');
+        });
       });
     });
     if (widget.word.trim().isEmpty) {
       searchedNames = [];
-    } else {
+
       if (searchedNames.isEmpty) {
         searchedNames =
             title.where((element) => element.contains(word)).toList();
       }
+
     }
     
     if (searchedNames.isNotEmpty && toukouList.isEmpty) {
+
       print("search = ${searchedNames}");
       print("length = ${toukouList.length}");
       for(int i = 0;i<searchedNames.length; i++){
@@ -106,8 +108,10 @@ class _searchNetaState extends State<searchNeta> {
               //   = snapshot.get('T02_UnitName');
               // });
             });
+
           });
-        }
+        });
+      }
       yield geininUnitNameList;
     }
     // yield videoThumbnails;
@@ -118,8 +122,6 @@ class _searchNetaState extends State<searchNeta> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return StreamBuilder(
       stream: getVideo(widget.word),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -129,12 +131,34 @@ class _searchNetaState extends State<searchNeta> {
           // List photo = snapshot.data!;
           print(snapshot);
           return ListView.builder(
-                  shrinkWrap: true,
-                  // padding: EdgeInsets.all(250),
-                  itemCount: videoThumbnails.length,
-                  itemBuilder: (context, index) {
-                    return Row(
+              shrinkWrap: true,
+              // padding: EdgeInsets.all(250),
+              itemCount: videoThumbnails.length,
+              itemBuilder: (context, index) {
+                return Row(
+                  children: [
+                    // Text("${geininUnitNameList[geininIdList[index]]}"),
+                    ElevatedButton(
+                        onPressed: () async {
+                          try {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchResultMane(
+                                          word:
+                                              "${geininUnitNameList[geininIdList[index]]}",
+                                          type: 2,
+                                        )));
+                          } catch (e) {}
+                        },
+                        child: SizedBox(
+                          width: 100,
+                          child: Text(
+                              '${geininUnitNameList[geininIdList[index]]}'),
+                        )),
+                    Column(
                       children: [
+
                         // Text("${geininUnitNameList[geininIdList[index]]}"),
                         ElevatedButton(
                           onPressed: () async {
@@ -143,65 +167,59 @@ class _searchNetaState extends State<searchNeta> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
+
                                                 SearchResultMane(word: "${geininUnitNameList[geininIdList[index]]}",type: 2,))
+
                                                     );
                             } catch (e) {}
                           },
                           child: SizedBox(width: 100,
                                     child: Text('${geininUnitNameList[geininIdList[index]]}'),)
                         ),
-                        Column(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("タイトル：" + "${videoTitle[index]}"),
-                            SizedBox(
-                              width: 300,
-                              height: 300,
-                              child: Image.network(videoThumbnails[index],
-                                  height: 150, fit: BoxFit.fill),
+                            Container(
+                              width: 500,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Color.fromARGB(255, 255, 166, 77)),
+                              ),
+                              child: Text("紹介文：" + "${videoShoukai[index]}"),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 500,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Color.fromARGB(255, 255, 166, 77)),
-                                  ),
-                                  child: Text("紹介文：" + "${videoShoukai[index]}"),
-                                ),
-                                IconButton(
-                                  onPressed: () async {
-                                    final result =
-                                        await DialogUtils.showEditingDialog(
-                                            context, toukouList[index]);
-                                    // setState(() {
-                                    //   // shinmeToukouList[index] = result ?? shinmeToukouList[index];
-                                    // });
-                                  },
-                                  icon: Icon(Icons.textsms),
-                                ),
-                                IconButton(
-                                  onPressed: () async {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                FullscreenVideo(toukouList[index],
-                                                    100, 99))).then((value) {
-                                      // 再描画
-                                      setState(() {});
-                                    });
-                                    ;
-                                  },
-                                  icon: Icon(Icons.fullscreen),
-                                ),
-                              ],
-                            )
+                            IconButton(
+                              onPressed: () async {
+                                final result =
+                                    await DialogUtils.showEditingDialog(
+                                        context, toukouList[index]);
+                                // setState(() {
+                                //   // shinmeToukouList[index] = result ?? shinmeToukouList[index];
+                                // });
+                              },
+                              icon: Icon(Icons.textsms),
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FullscreenVideo(
+                                            toukouList[index], 100, 99))).then(
+                                    (value) {
+                                  // 再描画
+                                  setState(() {});
+                                });
+                                ;
+                              },
+                              icon: Icon(Icons.fullscreen),
+                            ),
                           ],
-                        ),
+                        )
                       ],
-                    );
-                  });
+                    ),
+                  ],
+                );
+              });
         } else {
           return Column(
             children: [
@@ -212,7 +230,6 @@ class _searchNetaState extends State<searchNeta> {
         }
       },
     );
-
   }
 }
 
