@@ -178,12 +178,16 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
 
 // マイリストに追加
   void addMylist(String videoUrl, String movieId) async {
+    // print("ビデオのURLdao");
+    // print(videoUrl);
     final mylistcheck = FirebaseFirestore.instance
         .collection("T01_Person")
         .doc(user!.uid)
-        .collection("mylist");
+        .collection("mylist")
+        .where('videoUrl', isEqualTo: videoUrl);
     mylistcheck.get().then((docSnapshot) async => {
-          // 存在しない場合、フォローを行う
+      if(docSnapshot.docs.isEmpty){
+         // 存在しない場合、フォローを行う
           await FirebaseFirestore.instance
               .collection('T01_Person')
               .doc(user!.uid)
@@ -195,6 +199,8 @@ class _FullMoviePlayerWidgetState extends State<FullMoviePlayerWidget> {
             "Create": Timestamp.fromDate(DateTime.now()),
           }),
           print("登録できました"),
+      }
+         
         });
   }
 

@@ -168,7 +168,9 @@ class _searchNetaState extends State<searchNeta> {
                                         MaterialPageRoute(
                                             builder: (context) =>
 
+
                                                 SearchResultMane(word: "${geininUnitNameList[geininIdList[index]]}",type: 2,))
+
 
                                                     );
                             } catch (e) {}
