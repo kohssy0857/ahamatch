@@ -71,11 +71,15 @@ class _searchNetaState extends State<searchNeta> {
     if (widget.word.trim().isEmpty) {
       searchedNames = [];
     } else {
-      searchedNames =
-          title.where((element) => element.contains(word)).toList();
+      if (searchedNames.isEmpty) {
+        searchedNames =
+            title.where((element) => element.contains(word)).toList();
+      }
     }
-    // }
+    
     if (searchedNames.isNotEmpty && toukouList.isEmpty) {
+      print("search = ${searchedNames}");
+      print("length = ${toukouList.length}");
       for(int i = 0;i<searchedNames.length; i++){
           await FirebaseFirestore.instance
               .collection('T05_Toukou')
@@ -139,7 +143,7 @@ class _searchNetaState extends State<searchNeta> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                SearchResultMane(word: "${geininUnitNameList[geininIdList[index]]}"))
+                                                SearchResultMane(word: "${geininUnitNameList[geininIdList[index]]}",type: 2,))
                                                     );
                             } catch (e) {}
                           },
