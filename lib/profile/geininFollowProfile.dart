@@ -357,9 +357,11 @@ class _geininFollowProfile extends State<geininFollowProfile> {
                                         "T01_AhaCoin": userCoin - giftCoin
                                       });
                                       showDialog(
+                                      barrierDismissible: false,
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
+                                              
                                               content:
                                                   Text("$giftCoinポイントをギフトしました"),
                                               actions: [

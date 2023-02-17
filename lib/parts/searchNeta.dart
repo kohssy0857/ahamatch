@@ -150,12 +150,23 @@ class _searchNetaState extends State<searchNeta> {
                         )),
                     Column(
                       children: [
-                        Text("タイトル：" + "${videoTitle[index]}"),
-                        SizedBox(
-                          width: 300,
-                          height: 300,
-                          child: Image.network(videoThumbnails[index],
-                              height: 150, fit: BoxFit.fill),
+
+                        // Text("${geininUnitNameList[geininIdList[index]]}"),
+                        ElevatedButton(
+                          onPressed: () async {
+                            try {
+                                Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+
+                                                SearchResultMane(word: "${geininUnitNameList[geininIdList[index]]}",type: 2,))
+
+                                                    );
+                            } catch (e) {}
+                          },
+                          child: SizedBox(width: 100,
+                                    child: Text('${geininUnitNameList[geininIdList[index]]}'),)
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
