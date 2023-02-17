@@ -110,7 +110,7 @@ class _searchNetaState extends State<searchNeta> {
             });
 
           });
-        });
+        }
       }
       yield geininUnitNameList;
     }
@@ -118,7 +118,6 @@ class _searchNetaState extends State<searchNeta> {
 
     // 取得した動画URLのリストを
     // var url = await ref.getDownloadURL();
-  }
 
   @override
   Widget build(BuildContext context) {
