@@ -70,37 +70,45 @@ class _searchNetaState extends State<searchNeta> {
     });
     if (widget.word.trim().isEmpty) {
       searchedNames = [];
-    } else {
-      searchedNames = title.where((element) => element.contains(word)).toList();
+
+      if (searchedNames.isEmpty) {
+        searchedNames =
+            title.where((element) => element.contains(word)).toList();
+      }
+
     }
-    // }
+    
     if (searchedNames.isNotEmpty && toukouList.isEmpty) {
-      for (int i = 0; i < searchedNames.length; i++) {
-        await FirebaseFirestore.instance
-            .collection('T05_Toukou')
-            .where("T05_Title", isEqualTo: searchedNames[i])
-            .where("T05_Type", isEqualTo: 1)
-            .get()
-            .then((QuerySnapshot snapshot) {
-          snapshot.docs.forEach((doc) {
-            // if (doc["T05_Type"] == 1) {
-            videoUrls.add(doc["T05_VideoUrl"]);
-            toukouList.add(doc.id);
-            videoThumbnails.add(doc["T05_Thumbnail"]);
-            videoShoukai.add(doc["T05_Shoukai"]);
-            videoTitle.add(doc["T05_Title"]);
-            geininIdList.add(
-                doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", ""));
-            //   FirebaseFirestore.instance
-            //     .collection('T02_Geinin')
-            //     .doc(
-            //         "${doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", "")}")
-            //     .get()
-            //     .then((DocumentSnapshot snapshot) {
-            //   // geininUnitNameList.add(snapshot.get('T02_UnitName'));
-            //   geininUnitNameList["${doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", "")}"]
-            //   = snapshot.get('T02_UnitName');
-            // });
+
+      print("search = ${searchedNames}");
+      print("length = ${toukouList.length}");
+      for(int i = 0;i<searchedNames.length; i++){
+          await FirebaseFirestore.instance
+              .collection('T05_Toukou')
+              .where("T05_Title", isEqualTo: searchedNames[i])
+              .where("T05_Type", isEqualTo: 1)
+              .get()
+              .then((QuerySnapshot snapshot) {
+                snapshot.docs.forEach((doc) {
+                // if (doc["T05_Type"] == 1) {
+                videoUrls.add(doc["T05_VideoUrl"]);
+                toukouList.add(doc.id);
+                videoThumbnails.add(doc["T05_Thumbnail"]);
+                videoShoukai.add(doc["T05_Shoukai"]);
+                videoTitle.add(doc["T05_Title"]);
+                geininIdList.add(doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", ""));
+              //   FirebaseFirestore.instance
+              //     .collection('T02_Geinin')
+              //     .doc(
+              //         "${doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", "")}")
+              //     .get()
+              //     .then((DocumentSnapshot snapshot) {
+              //   // geininUnitNameList.add(snapshot.get('T02_UnitName'));
+              //   geininUnitNameList["${doc.get('T05_Geinin').path.replaceFirst("T02_Geinin/", "")}"] 
+              //   = snapshot.get('T02_UnitName');
+              // });
+            });
+
           });
         });
       }
