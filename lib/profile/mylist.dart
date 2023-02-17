@@ -190,22 +190,27 @@ class _SimpleDialogSampleState extends State<SimpleDialogSample> {
   User? user = FirebaseAuth.instance.currentUser;
   // アカウント削除
   void deleteNeta(String videoId) async {
-    FirebaseFirestore.instance.collection("T01_Person").doc(user!.uid).collection("mylist").doc(videoId).delete();
+    FirebaseFirestore.instance
+        .collection("T01_Person")
+        .doc(user!.uid)
+        .collection("mylist")
+        .doc(videoId)
+        .delete();
     print('ボタンが押されました!');
   }
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Text('　　アハプチ動画削除'),
+      title: const Text('　　マイリスト動画削除'),
       children: [
-        const Text("          本当にアハプチを削除しますか"),
+        const Text("          本当にマイリストを削除しますか"),
         SimpleDialogOption(
           child: const Text('削除'),
           onPressed: () async {
             deleteNeta(widget.videoId);
             Navigator.pop(context);
-            print('アハプチを削除しました!');
+            print('マイリストを削除しました!');
           },
         ),
         SimpleDialogOption(
